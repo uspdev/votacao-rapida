@@ -1,0 +1,12 @@
+{
+    "name": "uspdev/votacao",
+    "type": "project",
+    "license": "GPL-V3",
+    "authors": [
+        {
+            "name": "Masaki Kawabata Neto",
+            "email": "kawabata@usp.br"
+        }
+    ],
+    "require": {}
+}
