@@ -1,12 +1,27 @@
 {
     "name": "uspdev/votacao",
     "type": "project",
-    "license": "GPL-V3",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Masaki Kawabata Neto",
             "email": "kawabata@usp.br"
         }
     ],
-    "require": {}
+    "require": {
+        "uspdev/webservice": "dev-master"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/uspdev/webservice"
+        }
+    ],
+    "autoload" : {
+		"psr-4" : {
+			"Uspdev\\Votacao\\" : "src"
+		}
+	},
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
