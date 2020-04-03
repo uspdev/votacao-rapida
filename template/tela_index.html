@@ -1,0 +1,37 @@
+<html>
+
+<head>
+    <meta http-equiv="Refresh" content="3">
+</head>
+
+<body>
+    <h1>{S->nome}</h1>
+    <p>Token de tela: {S->token}</p>
+    <hr />
+    <div>
+        <!-- BEGIN block_msg -->
+        <h1>{msg}</h1>
+        <!-- END block_msg -->
+        <!-- BEGIN block_votacao -->
+        <div>
+            <h3>{V->nome} (votação {V->tipo})</h3>
+            <!-- BEGIN block_alternativa -->
+            &nbsp; &nbsp; &nbsp; <b>[ ] {alternativa}</b><br>
+            <!-- END block_alternativa -->
+            <!-- BEGIN block_resposta -->
+            &nbsp; &nbsp; &nbsp; <b>{R->texto}: {R->votos} votos</b><br>
+            <!-- END block_resposta -->
+            <br>
+        </div>
+        <hr>
+        Estado: {V->estado}
+        <!-- BEGIN block_computados -->
+        | Computados: {V->computados}
+        <!-- END block_computados -->
+
+
+        <!-- END block_votacao -->
+    </div>
+</body>
+
+</html>

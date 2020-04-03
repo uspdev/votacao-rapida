@@ -1,26 +1,31 @@
 <?php namespace Uspdev\Votacao\Model;
 
+use Uspdev\Votacao\Database as D;
+use \RedBeanPHP\R as R;
+
 class Sessao
 {
-    public function __construct($hash)
+    public function __construct($hash, $token)
     {
-        // 'select * from sessao where hash=$hash'
-        $this->id = 23;
-        $this->unidade = 'EESC';
-        $this->ano = 2020;
-        $this->nome = 'Primeira sesão de votação eletrônica';
-        $this->hash = $hash;
-        $this->estado = 'fechado';
-        $this->tipo_votacao = 'aberta';
-        $this->link_qrcode = '';
-        $this->link_manual = '';
-        $this->lista = '';
-        $this->votacoes = $this->listarVotacoes();
+        //$sessao = D::list('sessao', ['hash' => $hash]);
+        R::selectDatabase('votacao');
+        $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
+        if (empty($sessao)) {
+            return false;
+        }
+        foreach ($sessao as $k => $v) {
+            $this->$k = $v;
+        }
+        $this->token = R::findOne('token', 'sessao_id = ? and token = ?', [$this->id, $token]);
 
     }
 
     public function validaToken($token)
     {
+        R::selectDatabase('votacao');
+        $token = R::findOne('token', 'sessao_id = ? and token = ?', [$this->id, $token]);
+        return $token;
+
         switch ($token) {
             case 'tokenv':
                 return 'votacao';

@@ -1,28 +1,74 @@
 <?php
+require_once __DIR__ . '/../app/bootstrap.php';
 
-require_once __DIR__.'/../app/bootstrap.php';
-# ------------------------------------------------------------------
-# COISAS QUE GERALMENTE FICAM NO INDEX.PHP -------------------------
+use raelgc\view\Template;
+use \RedBeanPHP\R as R;
 
-use Uspdev\Ipcontrol\Ipcontrol;
-use Uspdev\Webservice\Webservice as WS;
+R::selectDatabase('votacao');
+R::useFeatureSet('latest');
 
-// vamos limitar o acesso por IP
-Ipcontrol::proteger();
+$sessoes = R::findAll('sessao');
 
-# Controlador de gerencia do webservice (opcional).
-# Se comentar essa linha não haverá uma interface de gerenciamento web.
-# Para alterar o caminho veja USPDEV_WEBSERVICE_ADMIN_ROUTE
-WS::admin();
+$tpl = new Template(__DIR__ . '/../template/index.html');
+foreach ($sessoes as $sessao) {
+    $tokens = $sessao->ownTokenList;
+    $count = 1;
+    foreach ($tokens as $token) {
+        switch ($token->tipo) {
+            case 'apoio':
+                $tpl->token_apoio = $token->token;
+                break;
+            case 'tela':
+                $tpl->token_tela = $token->token;
+                break;
+            case 'recepcao':
+                $tpl->token_recepcao = $token->token;
+                break;
+            case 'votacao':
+                $tpl->token_votacao = $token->token;
+                $tpl->count = $count;
+                $count++;
+                $tpl->block('block_votacao');
+                break;
+        }
+    }
+    $tpl->S = $sessao;
+    $tpl->block('block_sessao');
+}
 
-# Aqui chamamos como http://servidor/controlador/metodo/parametro
-WS::classes($classes);
+// vamos mostrar as relações entre estados e ações
+$estados = R::findAll('estado');
+foreach ($estados as $e) {
+    $acao_nome = '';
 
-$metodos['run'] = 'Uspdev\Votacao\Controller\Votacao::run';
-WS::metodos($metodos);
+    // vamos expandir as acoes de cada estado
+    foreach (explode(',', $e->acoes) as $acao_cod) {
+        $acao = R::findOne('acao', 'cod = ?', [intval($acao_cod)]);
+        $e_nome = R::getCell('SELECT nome FROM estado WHERE cod = ' . $acao->estado);
+        $acao_nome .= $acao->nome . ' (-> ' . $e_nome . ') | ';
+    }
+    $e->acao_nome = substr($acao_nome, 0, -2);
+    $tpl->E = $e;
+    $tpl->block('block_estado');
+}
 
-# Para listar os controladores disponíveis
-WS::raiz(array_merge($classes,$metodos));
+$acoes = R::find('acao', "escopo = 'apoio'");
+foreach ($acoes as $a) {
+    $a->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $a->estado);
+    $ini = R::getAll('SELECT nome FROM estado WHERE acoes LIKE ?', ["%$a->cod%"]);
+    if (count($ini) == 1) {
+        $a->estado_ini = $ini[0]['nome'];
+    } else {
+        $a->estado_ini = '';
+        foreach ($ini as $i) {
+            $a->estado_ini .= $i['nome'] . ', ';
+        }
+        $a->estado_ini = substr($a->estado_ini, 0, -2);
 
-# Vamos carregar tudo o que é necessário.
-WS::iniciar();
+    }
+
+    $tpl->A = $a;
+    $tpl->block('block_acao');
+}
+
+$tpl->show();

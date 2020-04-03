@@ -1,0 +1,50 @@
+<html>
+
+<head></head>
+
+<body>
+    <h1>Sessões de votação</h1>
+    <div>
+        <!-- BEGIN block_sessao -->
+        <div>
+            <h3>{S->nome} - {S->unidade}</h3>
+            <div>
+                <a href="apoio/?hash={S->hash}&token={token_apoio}" target="apoio">Apoio ({token_apoio})</a> |
+                <a href="tela/?hash={S->hash}&token={token_tela}" target="tela">Tela ({token_tela})</a> |
+                <a href="recepcao/?hash={S->hash}&token={token_recepcao}" target="recepcao">Recepção
+                    ({token_recepcao})</a>
+            </div>
+            <div>Votação
+                <!-- BEGIN block_votacao -->
+                | <a href="votacao/?hash={S->hash}&token={token_votacao}" target="votacao">{count}</a>
+                <!-- END block_votacao -->
+
+            </div>
+        </div>
+        <!-- END block_sessao -->
+
+    </div>
+    <hr />
+    <h2>Diagrama estado-ação</h2>
+
+    <p>Um estado pode ter várias ações mas uma ação aponta para um único estado.</p>
+    <div>
+        Estado => Ação<br>
+        <!-- BEGIN block_estado -->
+        {E->nome} => {E->acao_nome}<br>
+        <!-- END block_estado -->
+    </div>
+
+    <h2>Diagrama ação-estado</h2>
+
+    <div>
+        Ação: Estado inicial -> estado final<br>
+        <!-- BEGIN block_acao -->
+        {A->nome}: {A->estado_ini} -> {A->estado}<br>
+        <!-- END block_acao -->
+    </div>
+<br>
+<br>
+</body>
+
+</html>

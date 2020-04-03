@@ -1,3 +1,3 @@
 <?php
 
-$classes['votacao'] = 'Uspdev\Votacao\Controller\Votacao';
+//$classes['votacao'] = 'Uspdev\Votacao\Controller\Votacao';

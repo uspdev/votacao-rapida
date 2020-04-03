@@ -1,0 +1,25 @@
+<html>
+
+<head></head>
+
+<body>
+    <h1>{S->nome}</h1>
+    <p>Token de apoio: {S->token}</p>
+<hr />
+    <div>
+        <!-- BEGIN block_votacao -->
+        <div>
+            <h3>(votação {V->tipo}) {V->nome}</h3>
+            <div>Estado: {V->estado}
+                <!-- BEGIN block_acao -->
+                | <a href='?acao={cod}&votacao_id={V->id}'>{acao}</a>
+                <!-- END block_acao -->
+            </div>
+        </div>
+        <hr />
+        <!-- END block_votacao -->
+
+    </div>
+</body>
+
+</html>

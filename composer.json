@@ -9,7 +9,9 @@
         }
     ],
     "require": {
-        "uspdev/webservice": "dev-master"
+        "uspdev/webservice": "dev-master",
+        "gabordemooij/redbean": "^5.4",
+        "raelgc/template": "^2.2"
     },
     "repositories": [
         {
