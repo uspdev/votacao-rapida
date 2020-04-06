@@ -32,6 +32,7 @@ $acoes = [
     ['_type' => 'acao', 'cod' => 8, 'estado' => '', 'nome' => 'Responder', 'msg' => 'Resposta aceita', 'escopo' => 'votacao'],
 
 ];
+
 foreach ($estados as $e) {
     R::store(R::dispense($e));
 }

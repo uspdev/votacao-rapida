@@ -64,7 +64,6 @@ foreach ($acoes as $a) {
             $a->estado_ini .= $i['nome'] . ', ';
         }
         $a->estado_ini = substr($a->estado_ini, 0, -2);
-
     }
 
     $tpl->A = $a;
