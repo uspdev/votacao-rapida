@@ -11,14 +11,14 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 
 * Servidor apache
 * PHP 7.2
-*
+* ext-curl
 
 ## Instalação e configuração
 
 * git clone
 * composer install
-* cp env file
-* configure .env
+* cp .env.example .env
+* Ajuste o .env conforme necessário
 
 ## Mais informações
 
