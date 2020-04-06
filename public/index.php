@@ -1,6 +1,20 @@
 <?php
 require_once __DIR__ . '/../app/bootstrap.php';
 
+if (isset($_GET['acao']) && $_GET['acao'] == 'nuke') {
+    require_once __DIR__ . '/../test/mock_data.php';
+
+    echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
+    exit;
+}
+
+if (isset($_GET['acao']) && $_GET['acao'] == 'votar') {
+    require_once __DIR__ . '/../test/mock_votacao.php';
+
+    echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
+    exit;
+}
+
 use raelgc\view\Template;
 use \RedBeanPHP\R as R;
 
@@ -32,12 +46,12 @@ foreach ($sessoes as $sessao) {
                 $countf++;
                 $tpl->block('block_fechada');
                 break;
-                case 'aberta':
-                    $tpl->token_votacao = $token->token;
-                    $tpl->count = $counta;
-                    $counta++;
-                    $tpl->block('block_aberta');
-                    break;
+            case 'aberta':
+                $tpl->token_votacao = $token->token;
+                $tpl->count = $counta;
+                $counta++;
+                $tpl->block('block_aberta');
+                break;
         }
     }
     $tpl->S = $sessao;

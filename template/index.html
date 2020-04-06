@@ -3,7 +3,16 @@
 <head></head>
 
 <body>
-    <h1>Sessões de votação</h1>
+    <h1>Sistema de votação</h1>
+
+    <div>
+        Sempre que necessário limpe os dados de votação.<br>
+        O apoio controla o andamento da votação.<br>
+        A tela mostra o andamento a ser exibido em um telão.<br>
+        Recepção ainda não tem nada.<br>
+    </div>
+
+    <h2>Sessões de votação</h2>
     <div>
         <!-- BEGIN block_sessao -->
         <div>
@@ -29,6 +38,13 @@
 
     </div>
     <hr />
+    <h2>Dados de teste</h2>
+    <div>
+        <a href="?acao=nuke">Limpar os dados e começar de novo</a><br><br>
+        <a href="?acao=votar">Gera votos aleatórios na votação aberta</a><br>
+
+    </div>
+    <hr />
     <h2>Diagrama estado-ação</h2>
 
     <p>Um estado pode ter várias ações mas uma ação aponta para um único estado.</p>
@@ -47,8 +63,8 @@
         {A->nome}: {A->estado_ini} -> {A->estado}<br>
         <!-- END block_acao -->
     </div>
-<br>
-<br>
+    <br>
+    <br>
 </body>
 
 </html>
