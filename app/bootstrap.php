@@ -60,6 +60,3 @@ if (getenv('DB_TIPO') == 'sqlite') {
 R::selectDatabase('votacao');
 R::useFeatureSet('latest');
 R::freeze(false);
-
-
-require_once __DIR__ . '/config.php';
