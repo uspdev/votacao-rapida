@@ -6,82 +6,38 @@ use \RedBeanPHP\R as R;
 R::selectDatabase('votacao');
 R::useFeatureSet('latest');
 
-//R::wipe('resposta');
-
-
 $hash = 'hash001';
-$tokens = listarTokens($hash);
 
-$token = $tokens[0];
-echo 'Usando token de votação ', $token['token'], PHP_EOL;
-
-$sessao = obterSessao('hash001', $token['token']);
-
-if (empty($sessao->render_form)) {
-    echo 'sem votacao aberta', PHP_EOL;
-    exit;
+// vamos pegar o tipo de votação que estiver 'em votação'
+$em_votacao = 2;
+$tipo = R::getCell('SELECT tipo FROM votacao WHERE estado = ?', [$em_votacao]);
+if (!$tipo) {
+    echo 'Sem votação aberta.', PHP_EOL;exit;
 }
 
+// e pegar todos os tokens desse tipo
+$sessao_tmp = R::findOne('sessao', 'hash = ?', [$hash]);
+$tokens = R::find('token', "sessao_id = ? and tipo = ?", [$sessao_tmp->id, $tipo]);
+$tokens = R::exportAll($tokens);
+
+// vamos votar
 foreach ($tokens as $token) {
-    $voto = gerarVoto($sessao->render_form);
-    print_r($voto);
+    $sessao = obterSessao($hash, $token['token']);
 
-    $voto = votar($hash, $token, $voto);
-    echo 'voto',PHP_EOL;
-    print_r($voto);
-}
-// foreach ($tokens as $token) {
-//     $voto = gerarVoto($sessao->render_form);
-//     $voto = votar($hash, $token, $voto);
-//     print_r($voto);
-// }
+    $voto = gerarVotoAleatorio($sessao->render_form);
+    echo 'Voto enviado do token ', $token['token'], PHP_EOL;
+    echo json_encode($voto), PHP_EOL, PHP_EOL;
 
-function votar($hash, $token, $voto)
-{
-    $api = getenv('USPDEV_VOTACAO_API');
-
-    $auth = base64_encode("admin:admin");
-    $context = stream_context_create([
-        "http" => [
-            'method' => 'POST',
-            "header" => [
-                "Authorization: Basic $auth",
-                'Content-Type: application/json',
-                'user-agent: mock data votacao v1.0',
-            ],
-            'content' => json_encode($voto),
-        ],
-    ]);
-    //echo 'voto xx ',json_encode($voto);
-
-    $w = file_get_contents($api . '/run/'.$hash.'/' . $token['token'], false, $context);
-    return json_decode($w);
+    $voto = post($hash, $token['token'], $voto);
+    echo 'voto recebido', PHP_EOL;
+    echo json_encode($voto), PHP_EOL, PHP_EOL;
 }
 
-function gerarVoto($votacao)
+function gerarVotoAleatorio($votacao)
 {
-    $ids = listarAlternativas($votacao);
-    //array_push($ids, ''); // para voto em branco
-
+    $ids = array_column($votacao->alternativas, 'id');
     $voto['acao'] = '8';
     $voto['votacao_id'] = $votacao->id;
     $voto['alternativa_id'] = $ids[rand(0, count($ids) - 1)];
     return $voto;
-}
-
-function listarTokens($hash)
-{
-    $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
-    $tokens = R::find('token', "sessao_id = ? and tipo = 'votacao'", [$sessao->id]);
-    return R::exportAll($tokens);
-}
-
-function listarAlternativas($votacao)
-{
-    $alternativas = $votacao->alternativas;
-    $ids = [];
-    foreach ($alternativas as $alternativa) {
-        array_push($ids, $alternativa->id);
-    }
-    return $ids;
 }

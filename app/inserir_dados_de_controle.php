@@ -1,6 +1,6 @@
 <?php
-// estes dados são de controle da votação e devem existir no banco de dados
-// deve ser executado apenas uma vez.
+// estes dados são de controle da votação 
+// e devem existir no banco de dados
 
 require_once __DIR__ . '/bootstrap.php';
 use \RedBeanPHP\R as R;

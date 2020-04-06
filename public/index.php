@@ -9,10 +9,12 @@ R::useFeatureSet('latest');
 
 $sessoes = R::findAll('sessao');
 
+//print_r(R::exportAll($sessoes));
+
 $tpl = new Template(__DIR__ . '/../template/index.html');
 foreach ($sessoes as $sessao) {
     $tokens = $sessao->ownTokenList;
-    $count = 1;
+    $counta = $countf = 1;
     foreach ($tokens as $token) {
         switch ($token->tipo) {
             case 'apoio':
@@ -24,12 +26,18 @@ foreach ($sessoes as $sessao) {
             case 'recepcao':
                 $tpl->token_recepcao = $token->token;
                 break;
-            case 'votacao':
+            case 'fechada':
                 $tpl->token_votacao = $token->token;
-                $tpl->count = $count;
-                $count++;
-                $tpl->block('block_votacao');
+                $tpl->count = $countf;
+                $countf++;
+                $tpl->block('block_fechada');
                 break;
+                case 'aberta':
+                    $tpl->token_votacao = $token->token;
+                    $tpl->count = $counta;
+                    $counta++;
+                    $tpl->block('block_aberta');
+                    break;
         }
     }
     $tpl->S = $sessao;

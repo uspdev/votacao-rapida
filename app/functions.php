@@ -1,5 +1,4 @@
 <?php
-use \RedBeanPHP\R as R;
 
 function generateRandomString($length = 6)
 {
@@ -8,65 +7,72 @@ function generateRandomString($length = 6)
 
 function gerarTokens($qt, $import = false)
 {
-    // o import gera um campo _type usado pelo 
+    // o import = true gera um campo _type usado pelo
     // redbean para importar com dispense
-    $tokens = [];
-    foreach (['apoio', 'tela', 'recepcao'] as $tipo) {
-        if ($import) {
-            $token['_type'] = 'token';
-        }
-        $token['tipo'] = $tipo;
-        $token['token'] = generateRandomString(6);
-        $tokens[] = $token;
-    }
+    $tipos = [
+        ['tipo' => 'apoio', 'qt' => 1],
+        ['tipo' => 'tela', 'qt' => 1],
+        ['tipo' => 'recepcao', 'qt' => 1],
+        ['tipo' => 'fechada', 'qt' => $qt],
+        ['tipo' => 'aberta', 'qt' => $qt],
+    ];
 
-    for ($i = 0; $i < $qt; $i++) {
+    $tokens = [];
+    foreach ($tipos as $tipo) {
         if ($import) {
             $token['_type'] = 'token';
         }
-        $token['tipo'] = 'votacao';
-        $token['token'] = generateRandomString(6);
-        $tokens[] = $token;
+        $token['tipo'] = $tipo['tipo'];
+        for ($i = 0; $i < $tipo['qt']; $i++) {
+            // aqui vamos garantir tokens únicos para cada sessão
+            while ($newToken = generateRandomString(6)) {
+                if (!in_array($newToken, array_column($tokens, 'token'))) {
+                    $token['token'] = $newToken;
+                    break;
+                }
+                //echo 'gerou repetido! ', $newToken,PHP_EOL;exit;
+            }
+            $tokens[] = $token;
+        }
     }
     return $tokens;
 }
 
 function obterSessao($hash, $token)
 {
-    $api = getenv('USPDEV_VOTACAO_API');
+    $url = getenv('USPDEV_VOTACAO_API') . '/run/' . $hash . '/' . $token;
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_USERPWD, 'admin:admin');
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+    curl_setopt($ch, CURLOPT_POST, 0);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    $return = curl_exec($ch);
+    curl_close($ch);
 
-    $auth = base64_encode("admin:admin");
-    $get_context = stream_context_create([
-        "http" => [
-            "header" => "Authorization: Basic $auth",
-        ],
-    ]);
-
-    $w = file_get_contents($api . '/run/'.$hash.'/' . $token, false, $get_context);
-    if (!$w) {
-        echo 'Sem sessao para esse token', PHP_EOL;
-        exit;
-    }
-    return json_decode($w);
+    $json = json_decode($return);
+    return $json ? $json : $return;
 }
 
 function post($hash, $token, $data)
 {
-    $api = getenv('USPDEV_VOTACAO_API');
-    
-    $auth = base64_encode("admin:admin");
-    $context = stream_context_create([
-        "http" => [
-            'method' => 'POST',
-            "header" => [
-                "Authorization: Basic $auth",
-                'Content-Type: application/json',
-                'user-agent: mock data votacao v1.0',
-            ],
-            'content' => json_encode($data),
-        ],
-    ]);
+    $url = getenv('USPDEV_VOTACAO_API') . '/run/' . $hash . '/' . $token;
+    $headers = ['Content-Type: application/json', 'user-agent: mock data votacao v1.0'];
 
-    $w = file_get_contents($api . '/run/' . $hash . '/' . $token, false, $context);
-    return json_decode($w);
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_USERPWD, 'admin:admin');
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+    curl_setopt($ch, CURLOPT_POST, 1);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HEADER, false);
+    $return = curl_exec($ch);
+    curl_close($ch);
+
+    $json = json_decode($return);
+    return $json ? $json : $return;
 }

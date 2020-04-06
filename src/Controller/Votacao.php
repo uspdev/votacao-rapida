@@ -1,6 +1,5 @@
 <?php namespace Uspdev\Votacao\Controller;
 
-use Uspdev\Votacao\Model\Sessao as Sessao;
 use \RedBeanPHP\R as R;
 
 class Votacao
@@ -14,23 +13,25 @@ class Votacao
         // verifica o hash e carrega os dados da sessão
         $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
         if (empty($sessao)) {
-            return 'hash inválido';
+            return ['status' => 'erro', 'msg' => 'Hash inválido'];
         }
 
-        // verifica o token
+        // verifica se o token pertence à sessão
         $sessao->token = R::findOne('token', 'sessao_id = ? and token = ?', [$sessao->id, $token]);
         if (empty($sessao->token)) {
-            return 'token inválido';
+            return ['status' => 'erro', 'msg' => 'Token inválido para essa sessão'];
         }
 
         $method = \Flight::request()->method;
 
         // tudo verificado, podemos carregar os dados de acordo com o token
         switch ([$sessao->token->tipo, $method]) {
-            case ['votacao', 'GET']:
+            case ['aberta', 'GET']:
+            case ['fechada', 'GET']:
                 return SELF::votacaoGet($sessao);
                 break;
-            case ['votacao', 'POST']:
+            case ['aberta', 'POST']:
+            case ['fechada', 'POST']:
                 return SELF::votacaoPOST($sessao);
                 break;
             case ['apoio', 'GET']:
@@ -51,36 +52,42 @@ class Votacao
 
     protected static function votacaoGet($sessao)
     {
-        // primeiro vamos ver se tem alguma votação aberta
-        if (!$sessao->render_form = SELF::obterVotacaoAberta($sessao)) {
-            $sessao->msg = 'Sem votação aberta';
-            return SELF::limparSaida($sessao);
-        };
+        // primeiro vamos ver se tem alguma votação com estado 'Em votação'
+        //list($sessao->msg, $sessao->render_form);
+        $ret = SELF::obterVotacaoEmVotacao($sessao);
+        $sessao->msg = $ret['msg'];
+        $sessao->render_form = $ret['votacao'];
 
-        $sessao->render_form->acao = ['cod' => 8, 'nome' => 'Responder'];
+        if ($sessao->render_form != null) {
+            $sessao->render_form->acao = ['cod' => 8, 'nome' => 'Responder'];
+        };
 
         return SELF::limparSaida($sessao);
     }
 
     protected static function votacaoPost($sessao)
     {
-        // primeiro vamos ver se tem alguma votação aberta
-        if (!$sessao->em_votacao = SELF::obterVotacaoAberta($sessao)) {
-            $sessao->msg = 'Sem votação aberta';
-            return SELF::limparSaida($sessao);
+        // primeiro vamos ver se tem alguma votação com estado 'Em votação'
+        $ret = SELF::obterVotacaoEmVotacao($sessao);
+        $msg = $ret['msg'];
+        $votacao = $ret['votacao'];
+        $data = \Flight::request()->data;
+
+        if ($votacao == null) {
+            $ret = ['status' => 'erro', 'msg' => $msg . ', acao=' . $data->acao];
+            return $ret;
         };
 
-        $data = \Flight::request()->data;
         switch ($data->acao) {
             case '8':
                 //vamos ver se o voto veio para votação correta
-                if ($sessao->em_votacao->id == $data->votacao_id &&
+                if ($votacao->id == $data->votacao_id &&
                     !empty($data->alternativa_id)) {
 
                     //vamos invalidar votos anteriores se houver
                     R::exec(
                         'UPDATE resposta SET last = 0 WHERE votacao_id = ? AND token = ?',
-                        [$sessao->em_votacao->id, $sessao->token->token]
+                        [$votacao->id, $sessao->token->token]
                     );
 
                     //vamos guardar o novo voto
@@ -95,13 +102,14 @@ class Votacao
                     $resposta->last = 1;
                     R::store($resposta);
 
-                    return $resposta;
+                    return ['status' => 'ok', 'data' => $resposta];
                 }
-                return 'Voto mal formado';
+
+                return ['status' => 'erro', 'msg' => 'Voto mal formado para ação ' . $data['acao']];
                 break;
         }
-        return ['msg' => 'Ação inválida: ' . $data['acao']];
 
+        return ['status' => 'erro', 'msg' => 'Ação inválida: ' . $data['acao']];
     }
 
     protected static function apoioGet($sessao)
@@ -239,17 +247,27 @@ class Votacao
         }
         // mostrar votos computados
 
+        //print_r($sessao->export());exit;
+
         return SELF::limparSaida($sessao);
     }
 
-    protected static function obterVotacaoAberta($sessao)
+    protected static function obterVotacaoEmVotacao($sessao)
     {
+        $em_votacao = 2; // cod da tabela estado
+
         foreach ($sessao->ownVotacaoList as $votacao) {
-            if ($votacao->estado == 2) { // aberta
+            if ($votacao->estado == $em_votacao) {
+                if ($sessao->token->tipo != $votacao->tipo) {
+                    return ['msg' => 'Token inválido para esta votação', 'votacao' => null];
+                }
+
                 $votacao->alternativas = $votacao->ownAlternativaList;
-                return $votacao;
+                return ['msg' => '', 'votacao' => $votacao];
             }
         }
+        return ['msg' => 'Sem votação aberta', 'votacao' => null];
+
     }
 
     protected static function obterVotacaoNaoFechadaFinalizada($sessao)
@@ -266,30 +284,33 @@ class Votacao
     {
         foreach ($sessao->ownVotacaoList as $votacao) {
 
-            $e = $votacao->estado;
+            // vamos obter o total de votos computados
+            $votacao->computados = R::getCell(
+                'SELECT count(id) FROM resposta WHERE votacao_id = ? and last = 1',
+                [$votacao->id]
+            );
 
-            // em tela, em votacao ou em pausa, mostra as alternativas
-            if ($e == 1 or $e == 2 or $e == 3) {
-                $votacao->computados = R::getCell(
-                    'SELECT count(id) FROM resposta WHERE votacao_id = ? and last = 1',
-                    [$votacao->id]
-                );
-                $votacao->alternativas = $votacao->ownAlternativaList;
+            switch ($votacao->estado) {
+                case '1': // em tela
+                case '2': // em votacao
+                case '3': // em pausa
+                    // mostra as alternativas
+                    $votacao->alternativas = $votacao->ownAlternativaList;
 
-                $votacao->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $votacao->estado);
-                return $votacao;
+                    // vamos colocar o nome do estado
+                    $votacao->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $votacao->estado);
+                    return $votacao;
+                    break;
+                case '4': // resultado
+                    // mostra o resultado
+                    $votacao->respostas = SELF::listarRespostasPorVotacao($votacao);
+
+                    // vamos colocar o nome do estado
+                    $votacao->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $votacao->estado);
+                    return $votacao;
+                    break;
             }
 
-            // resultado, mostra o resultado
-            if ($e == 4) { //resultado
-                $votacao->computados = R::getCell(
-                    'SELECT count(id) FROM resposta WHERE votacao_id = ? and last = 1',
-                    [$votacao->id]
-                );
-                $votacao->respostas = SELF::listarRespostasPorVotacao($votacao);
-                $votacao->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $votacao->estado);
-                return $votacao;
-            }
         }
         return false;
     }
@@ -324,7 +345,8 @@ class Votacao
         unset($sessao->tipo_votacao);
         unset($sessao->link_manual);
         unset($sessao->lista);
-        unset($sessao->link_qrcode);unset($sessao->token);
+        unset($sessao->link_qrcode);
+        //unset($sessao->token);
         unset($sessao->ownVotacao);
 
         //unset($sessao->render_form->id);
@@ -347,51 +369,4 @@ class Votacao
     {
         return 'admin';
     }
-
-    public static function sessao($id = null, $token = null)
-    {
-        $method = \Flight::request()->method;
-        if ($method == 'GET') {
-            return SELF::getSessao($id, $token);
-        }
-        if ($method == 'POST') {
-            return 'acoes de post de sessao';
-        }
-
-    }
-
-    protected static function getSessao($id, $token)
-    {
-        $query = \Flight::request()->query;
-        if (empty($query->codpes)) {
-            return 'Codpes não informado';
-        }
-
-        if (!empty($token)) {
-            if ($token == 'token') {
-                return SELF::retornaTokens($id);
-            } else {
-                return 'erro de parametros';
-            }
-        }
-
-        if (empty($id)) {
-            return 'mostra lista de sessões autorizadas para codpes=' . $query->codpes;
-        }
-
-        return 'dados da sessao de votacao id=' . $id;
-    }
-
-    protected static function retornaTokens($sessao_id)
-    {
-        $tipos_de_token = ['apoio', 'tela', 'recepcao', 'votacao'];
-
-        $query = \Flight::request()->query;
-        $tipo = empty($query->tipo) ? 'votacao' : $query->tipo;
-        if (!in_array($tipo, $tipos_de_token)) {
-            return 'tipo inexistente';
-        }
-        return 'retorna lista de tokens do tipo ' . $tipo . ' para sessao_id=' . $sessao_id;
-    }
-
 }

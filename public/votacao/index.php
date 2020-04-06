@@ -22,19 +22,14 @@ use raelgc\view\Template;
 
 $sessao = obterSessao($hash, $token);
 if (!is_object($sessao)) {
-    echo 'Mensagem ao tentar obter sessão: ', $sessao;exit;
+    echo $sessao;exit;
+    //echo 'Mensagem ao tentar obter sessão: ', $sessao;exit;
 }
-
-//print_r($sessao); //exit;
-
-$sessao->token = $token;
-
 
 // post de formulario
 if (isset($_POST['acao'])) {
-
     $data = $_POST;
-    $res = post($hash, $sessao->token, $data);
+    $res = post($hash, $sessao->token->token, $data);
     print_r($res);
     header('Location:' . $_SERVER['PHP_SELF']);
     exit;

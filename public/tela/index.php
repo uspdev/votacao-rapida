@@ -28,9 +28,17 @@ if (!is_object($sessao)) {
 
 //print_r($sessao); //exit;
 
-$sessao->token = $token;
+if (isset($sessao->status) && $sessao->status == 'erro') {
+    $tpl = new Template(__DIR__ . '/../../template/erro.html');
+    $tpl->msg = $sessao->msg;
+    $tpl->block('block_msg');
+    $tpl->show();
+    exit;
+}
 
+$sessao->token = $token;
 $tpl = new Template(__DIR__ . '/../../template/tela_index.html');
+
 $tpl->S = $sessao;
 if (!empty($sessao->msg)) {
     $tpl->msg = $sessao->msg;
@@ -52,7 +60,7 @@ if (!empty($sessao->msg)) {
         }
     }
     if ($sessao->em_tela->estado == 'Em votação' or
-        $sessao->em_tela->estado == 'Em pausa' or 
+        $sessao->em_tela->estado == 'Em pausa' or
         $sessao->em_tela->estado == 'Resultado') {
         $tpl->block('block_computados');
     }

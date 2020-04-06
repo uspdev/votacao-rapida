@@ -14,11 +14,15 @@
                 <a href="recepcao/?hash={S->hash}&token={token_recepcao}" target="recepcao">Recepção
                     ({token_recepcao})</a>
             </div>
-            <div>Votação
-                <!-- BEGIN block_votacao -->
+            <div>Votação Fechada
+                <!-- BEGIN block_fechada -->
                 | <a href="votacao/?hash={S->hash}&token={token_votacao}" target="votacao">{count}</a>
-                <!-- END block_votacao -->
-
+                <!-- END block_fechada -->
+            </div>
+            <div>Votação Aberta
+                <!-- BEGIN block_aberta -->
+                | <a href="votacao/?hash={S->hash}&token={token_votacao}" target="votacao">{count}</a>
+                <!-- END block_aberta -->
             </div>
         </div>
         <!-- END block_sessao -->

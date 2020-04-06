@@ -27,10 +27,12 @@ if (!is_object($sessao)) {
 }
 $sessao->token = $token;
 
+//print_r($sessao);
+
 if (isset($_GET['acao'])) {
     $data = ['acao' => intval($_GET['acao']), 'votacao_id' => $_GET['votacao_id']];
     $res = post($hash, $sessao->token, $data);
-    print_r($res);
+    //print_r($res);
     header('Location:' . $_SERVER['PHP_SELF']);
     exit;
 }
