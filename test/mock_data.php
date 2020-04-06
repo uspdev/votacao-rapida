@@ -12,7 +12,14 @@ Auth::salvarUsuario([
 
 R::selectDatabase('votacao');
 R::useFeatureSet('latest');
-R::nuke();
+
+R::exec('SET FOREIGN_KEY_CHECKS = 0;');
+R::wipe('sessao');
+R::wipe('votacao');
+R::wipe('alternativa');
+R::wipe('token');
+R::exec('SET FOREIGN_KEY_CHECKS = 1;');
+//R::nuke();
 
 // vamos inserir dados de estado->acao
 echo 'Inserindo dados de controle: ';

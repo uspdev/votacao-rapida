@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__.'/functions.php';
+require_once __DIR__ . '/functions.php';
 
 use \RedBeanPHP\R as R;
 
@@ -11,7 +11,9 @@ putenv('USPDEV_VOTACAO_LOCAL=' . realpath(__DIR__ . '/../local'));
 // caminho da API
 putenv('USPDEV_VOTACAO_API=http://localhost/git/uspdev/votacao/public/api');
 
-R::addDatabase('votacao', 'sqlite:' . getenv('USPDEV_VOTACAO_LOCAL') . '/votacao.db3');
+//R::addDatabase('votacao', 'sqlite:' . getenv('USPDEV_VOTACAO_LOCAL') . '/votacao.db3');
+R::addDatabase('votacao', 'mysql:host=localhost;dbname=votacao', 'votacao', 'votacao');
+
 R::selectDatabase('votacao');
 R::useFeatureSet('latest');
 R::freeze(false);
