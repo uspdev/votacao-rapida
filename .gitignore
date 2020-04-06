@@ -1,3 +1,8 @@
 /vendor/
-/local/
 /sandbox/
+
+/local/*
+!/local/.gitkeep
+
+.env
+composer.lock
