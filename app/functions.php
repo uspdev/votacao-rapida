@@ -47,13 +47,6 @@ function obterSessao($hash, $token)
     return json_decode($w);
 }
 
-function obterTokenApoio($hash)
-{
-    $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
-    $token = R::findOne('token', "tipo = 'apoio' and sessao_id = ? ", [$sessao->id]);
-    return $token->token;
-}
-
 function post($hash, $token, $data)
 {
     global $base;

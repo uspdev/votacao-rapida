@@ -18,21 +18,21 @@ echo 'Usando token de votação ', $token['token'], PHP_EOL;
 
 $sessao = obterSessao('hash001', $token['token']);
 
-if (empty($sessao->em_votacao)) {
+if (empty($sessao->render_form)) {
     echo 'sem votacao aberta', PHP_EOL;
     exit;
 }
 
 foreach ($tokens as $token) {
-    $voto = gerarVoto($sessao->em_votacao);
-    //print_r($voto);
+    $voto = gerarVoto($sessao->render_form);
+    print_r($voto);
 
     $voto = votar($hash, $token, $voto);
     echo 'voto',PHP_EOL;
     print_r($voto);
 }
 // foreach ($tokens as $token) {
-//     $voto = gerarVoto($sessao->em_votacao);
+//     $voto = gerarVoto($sessao->render_form);
 //     $voto = votar($hash, $token, $voto);
 //     print_r($voto);
 // }
@@ -52,6 +52,7 @@ function votar($hash, $token, $voto)
             'content' => json_encode($voto),
         ],
     ]);
+    //echo 'voto xx ',json_encode($voto);
 
     $w = file_get_contents($base . '/'.$hash.'/' . $token['token'], false, $context);
     return json_decode($w);
@@ -60,8 +61,9 @@ function votar($hash, $token, $voto)
 function gerarVoto($votacao)
 {
     $ids = listarAlternativas($votacao);
+    //array_push($ids, ''); // para voto em branco
 
-    $voto['acao'] = 'resposta';
+    $voto['acao'] = '8';
     $voto['votacao_id'] = $votacao->id;
     $voto['alternativa_id'] = $ids[rand(0, count($ids) - 1)];
     return $voto;

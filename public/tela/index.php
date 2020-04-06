@@ -55,7 +55,9 @@ if (!empty($sessao->msg)) {
             $tpl->block('block_resposta');
         }
     }
-    if ($sessao->em_tela->estado == 'Em votação') {
+    if ($sessao->em_tela->estado == 'Em votação' or
+        $sessao->em_tela->estado == 'Em pausa' or 
+        $sessao->em_tela->estado == 'Resultado') {
         $tpl->block('block_computados');
     }
 
