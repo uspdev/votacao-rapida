@@ -8,6 +8,8 @@ function generateRandomString($length = 6)
 
 function gerarTokens($qt, $import = false)
 {
+    // o import gera um campo _type usado pelo 
+    // redbean para importar com dispense
     $tokens = [];
     foreach (['apoio', 'tela', 'recepcao'] as $tipo) {
         if ($import) {
@@ -31,7 +33,8 @@ function gerarTokens($qt, $import = false)
 
 function obterSessao($hash, $token)
 {
-    global $base;
+    $api = getenv('USPDEV_VOTACAO_API');
+
     $auth = base64_encode("admin:admin");
     $get_context = stream_context_create([
         "http" => [
@@ -39,7 +42,7 @@ function obterSessao($hash, $token)
         ],
     ]);
 
-    $w = file_get_contents($base . '/'.$hash.'/' . $token, false, $get_context);
+    $w = file_get_contents($api . '/run/'.$hash.'/' . $token, false, $get_context);
     if (!$w) {
         echo 'Sem sessao para esse token', PHP_EOL;
         exit;
@@ -49,7 +52,8 @@ function obterSessao($hash, $token)
 
 function post($hash, $token, $data)
 {
-    global $base;
+    $api = getenv('USPDEV_VOTACAO_API');
+    
     $auth = base64_encode("admin:admin");
     $context = stream_context_create([
         "http" => [
@@ -63,6 +67,6 @@ function post($hash, $token, $data)
         ],
     ]);
 
-    $w = file_get_contents($base . '/' . $hash . '/' . $token, false, $context);
+    $w = file_get_contents($api . '/run/' . $hash . '/' . $token, false, $context);
     return json_decode($w);
 }

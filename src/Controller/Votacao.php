@@ -57,19 +57,6 @@ class Votacao
             return SELF::limparSaida($sessao);
         };
 
-        // // vamos pegar o nome do estado
-        // $estado = R::findOne('estado', 'cod = 2');
-        // $votacao->estado = $estado->nome;
-
-        // // vamos obter as ações possíveis para esse estado
-        // $list = explode(',', $estado->acoes);
-
-        // $sql = 'SELECT cod, nome FROM acao WHERE cod IN (';
-        // foreach ($list as $l) {
-        //     $sql .= intval($l) . ',';
-        // }
-        // $sql = substr($sql, 0, -1) . ')';
-
         $sessao->render_form->acao = ['cod' => 8, 'nome' => 'Responder'];
 
         return SELF::limparSaida($sessao);

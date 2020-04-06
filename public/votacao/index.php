@@ -20,10 +20,6 @@ if (isset($_SESSION['votacao']['hash'])) {
 
 use raelgc\view\Template;
 
-//$base = getenv('DOMINIO') . '/../run';
-$p = parse_url(getenv('DOMINIO'));
-$base = $p['scheme'] . '://' . $p['host'] . '/git/uspdev/votacao/public/api/run';
-
 $sessao = obterSessao($hash, $token);
 if (!is_object($sessao)) {
     echo 'Mensagem ao tentar obter sessão: ', $sessao;exit;

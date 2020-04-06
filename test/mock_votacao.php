@@ -8,7 +8,6 @@ R::useFeatureSet('latest');
 
 //R::wipe('resposta');
 
-$base = 'http://localhost/git/uspdev/votacao/public/api/run';
 
 $hash = 'hash001';
 $tokens = listarTokens($hash);
@@ -39,7 +38,8 @@ foreach ($tokens as $token) {
 
 function votar($hash, $token, $voto)
 {
-    global $base;
+    $api = getenv('USPDEV_VOTACAO_API');
+
     $auth = base64_encode("admin:admin");
     $context = stream_context_create([
         "http" => [
@@ -54,7 +54,7 @@ function votar($hash, $token, $voto)
     ]);
     //echo 'voto xx ',json_encode($voto);
 
-    $w = file_get_contents($base . '/'.$hash.'/' . $token['token'], false, $context);
+    $w = file_get_contents($api . '/run/'.$hash.'/' . $token['token'], false, $context);
     return json_decode($w);
 }
 

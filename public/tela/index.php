@@ -20,10 +20,6 @@ if (isset($_SESSION['tela']['hash'])) {
 
 use raelgc\view\Template;
 
-//$base = getenv('DOMINIO') . '/../run';
-$p = parse_url(getenv('DOMINIO'));
-$base = $p['scheme'] . '://' . $p['host'] . str_replace('tela', 'api/run', $p['path']);
-
 // vamos obter a sessao pelo webservice
 $sessao = obterSessao($hash, $token);
 if (!is_object($sessao)) {

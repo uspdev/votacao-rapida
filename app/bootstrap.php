@@ -7,6 +7,10 @@ use \RedBeanPHP\R as R;
 # VOTACAO
 
 putenv('USPDEV_VOTACAO_LOCAL=' . realpath(__DIR__ . '/../local'));
+
+// caminho da API
+putenv('USPDEV_VOTACAO_API=http://localhost/git/uspdev/votacao/public/api');
+
 R::addDatabase('votacao', 'sqlite:' . getenv('USPDEV_VOTACAO_LOCAL') . '/votacao.db3');
 R::selectDatabase('votacao');
 R::useFeatureSet('latest');

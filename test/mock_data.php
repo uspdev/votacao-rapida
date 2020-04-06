@@ -31,7 +31,7 @@ $sessao = [
     'ownVotacaoList' => [
         [
             '_type' => 'votacao',
-            'estado' => 0, // fechado
+            'estado' => 0, // sempre inicia fechado
             'nome' => 'Votação para escolha do diretor da unidade.',
             'descricao' => '',
             'tipo' => 'fechada',
@@ -42,15 +42,19 @@ $sessao = [
             'ownAlternativaList' => [
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'João',
+                    'texto' => 'Armando Sales',
                 ],
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'Maria',
+                    'texto' => 'Oswaldo Cruz',
                 ],
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'José',
+                    'texto' => 'Dom Pedro',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Marie Curie',
                 ],
             ],
         ],
