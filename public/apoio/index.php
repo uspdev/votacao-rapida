@@ -29,10 +29,10 @@ $sessao->token = $token;
 
 //print_r($sessao);
 
+// acoes para a rota de apoio
 if (isset($_GET['acao'])) {
-    $data = ['acao' => intval($_GET['acao']), 'votacao_id' => $_GET['votacao_id']];
+    $data = ['acao' => $_GET['acao'], 'votacao_id' => $_GET['votacao_id']];
     $res = post($hash, $sessao->token, $data);
-    //print_r($res);
     header('Location:' . $_SERVER['PHP_SELF']);
     exit;
 }
@@ -48,8 +48,6 @@ foreach ($sessao->votacoes as $v) {
         $tpl->block('block_acao');
     }
     $tpl->block('block_votacao');
-
 }
 
 $tpl->show();
-//print_r($sessao);

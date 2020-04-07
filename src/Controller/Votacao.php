@@ -78,7 +78,7 @@ class Votacao
             return $ret;
         };
 
-        switch ($data->acao) {
+        switch (intval($data->acao)) {
             case '8':
                 //vamos ver se o voto veio para votação correta
                 if ($votacao->id == $data->votacao_id &&
