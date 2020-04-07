@@ -12,7 +12,8 @@ $hash = 'hash001';
 $em_votacao = 2;
 $tipo = R::getCell('SELECT tipo FROM votacao WHERE estado = ?', [$em_votacao]);
 if (!$tipo) {
-    echo 'Sem votação aberta.', PHP_EOL;exit;
+    echo 'Sem votação aberta.', PHP_EOL;
+    return;
 }
 
 // e pegar todos os tokens desse tipo
