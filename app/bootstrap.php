@@ -32,7 +32,8 @@ if ($amb == 'prod') {
 }
 
 # veja https://github.com/uspdev/ip-control
-putenv('USPDEV_IP_CONTROL=localhost');
+# desativado pois dá problem quando está atrás de proxy
+putenv('USPDEV_IP_CONTROL=');
 
 // vamos remover barra no final que não precisa, aparece no php -S
 $base = Flight::request()->base;
