@@ -7,6 +7,12 @@ if (!empty($_POST['token'])) {
     $token = $_POST['token'];
     $sessao = obterSessao($hash, $token);
 
+    //print_r($sessao);exit;
+    if (empty($sessao) || $sessao->status == 'erro') {
+        header('Location:'.$_SERVER['PHP_SELF']);
+        exit;
+    }
+
     switch ($sessao->token->tipo) {
         case 'apoio':
             header('Location: apoio/?hash=' . $hash . '&token=' . $token);
