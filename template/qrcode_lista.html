@@ -1,0 +1,107 @@
+<style type="text/css">
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .col1,
+    .col2 {
+        border: 1px;
+        padding: 10px;
+    }
+
+    .col1 {
+        width: 50%;
+        /* text-align: center; */
+        vertical-align: top;
+    }
+
+    .col2 {
+        width: 50%;
+        text-align: center;
+    }
+
+    .bold {
+        font-weight: bold;
+    }
+
+    .size16 {
+        font-size: 16px;
+    }
+
+    .rotate {
+        text-align: center;
+        rotate: 90;
+    }
+
+    .d {
+        padding-left: 20px;
+        height: 30px;
+        vertical-align: middle;
+    }
+
+    .space {
+        height: 25px;
+        vertical-align: middle;
+    }
+</style>
+
+<page backtop="5mm" backbottom="5mm" backleft="5mm" backright="5mm">
+
+    <page_footer>
+        <hr>
+        <div style="text-align: center;">Impresso em {datahora}</div>
+    </page_footer>
+
+    <!-- BEGIN block_votacao -->
+    <table>
+        <tr>
+            <td class="col1">
+                <table style="width:100%; border:0;">
+                    <tr>
+                        <td style="text-align:left; width:40%;"><img src="{logo1}" style="height:40px;"></td>
+                        <td style="text-align:right; width: 60%;">
+                            <!-- BEGIN bloco_logo2 -->
+                            <img src="{logo2}" style="height:40px;">
+                            <!-- END bloco_logo2 -->
+                        </td>
+                    </tr>
+                </table>
+                <br>
+                <div class="bold size16">{nome}</div>
+                <div class="bold size16 space">VOTAÇÃO {tipo}</div>
+                <br>
+                <div class="space">Use o QRCode ou acesse: <span class="bold">{link}</span></div>
+                <div>e digite o token em MAIÚSCULAS</div>
+                <div class="d bold">{token}</div>
+            </td>
+
+            <td class="col2">
+                <table style="width:100%; border:0;">
+                    <tr>
+                        <td style="width: 5%; text-align: right;">&nbsp;</td>
+                        <td style="width: 10%; text-align: right;">
+                            <div class="bold size16 rotate">VOTAÇÃO {tipo} </div>
+                        </td>
+                        <td style="width: 70%;">
+                            <qrcode value="{qrcode}" ec="M" style="width: 50mm; border:none;"></qrcode>
+                        </td>
+                        <td style="width: 10%;">
+                            <div class="bold size16 rotate">VOTAÇÃO {tipo} </div>
+                        </td>
+                        <td style="width: 5%; text-align: right;">&nbsp;</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <!-- BEGIN bloco_next -->
+    <br />
+    <br />
+    <br />
+    <!-- END bloco_next -->
+
+    <!-- END block_votacao -->
+
+
+</page>

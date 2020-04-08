@@ -1,0 +1,43 @@
+<page backtop="15mm" backbottom="15mm" backleft="15mm" backright="15mm">
+
+    <page_footer>
+        <hr>
+        <div style="text-align:center;">Impresso em {datahora}</div>
+    </page_footer>
+
+    <div style="font-size:14px;">
+        <table style="width:100%; border:0;">
+            <tr>
+                <td style="text-align:left; width:40%;"><img src="{logo1}" style="height:40px;"></td>
+                <td style="text-align:right; width: 60%;">
+
+                </td>
+            </tr>
+        </table>
+
+        <h1>{nome}</h1>
+        <hr>
+        <h2>Apoio à votação</h2>
+        <p>O apoio é responsável por controlar o andamento da votação.
+            Ele tem acesso a um menu que permitem várias ações.</p>
+        <ul>
+            <li>Mostrar na tela: mostra a votação na tela</li>
+            <li>Fechar: Em tela -> Fechada</li>
+            <li>Iniciar: Em tela -> Em votação</li>
+            <li>Pausar: Em votação -> Em pausa</li>
+            <li>Mostrar resultado: Em pausa, Finalizado -> Resultado</li>
+            <li>Continuar: Em pausa -> Em votação</li>
+            <li>Reiniciar: Em pausa -> Em votação</li>
+            <li>Finalizar: Resultado -> Finalizado</li>
+        </ul>
+
+        <p>Andamento normal: Mostrar na tela -> Iniciar -> Pausar -> Mostrar resultado ->
+            Finalizar
+        </p>
+        <p>Podem conectar vários dispositivos de apoio. As ações serão iguais para todos.</p>
+        <hr>
+        <br>
+    </div>
+
+</page>
+{qrcode_lista}
