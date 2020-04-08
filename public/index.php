@@ -3,7 +3,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 
 $hash = 'hash001';
 
-if (isset($_POST['token'])) {
+if (!empty($_POST['token'])) {
     $token = $_POST['token'];
     $sessao = obterSessao($hash, $token);
 
