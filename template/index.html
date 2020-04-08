@@ -6,65 +6,19 @@
     <h1>Sistema de votação</h1>
 
     <div>
-        Sempre que necessário limpe os dados de votação.<br>
-        O apoio controla o andamento da votação.<br>
-        A tela mostra o andamento a ser exibido em um telão.<br>
-        Recepção ainda não tem nada.<br>
+        Para acessar o painel de testes clique <a href="painel.php" target="painel">aqui</a>.
+        <br>
+        <br>
     </div>
 
-    <h2>Sessões de votação</h2>
+    <div><h2>{S->nome}</h2></div>
     <div>
-        <!-- BEGIN block_sessao -->
-        <div>
-            <h3>{S->nome} - {S->unidade}</h3>
-            <div>
-                <a href="apoio/?hash={S->hash}&token={token_apoio}" target="apoio">Apoio ({token_apoio})</a> |
-                <a href="tela/?hash={S->hash}&token={token_tela}" target="tela">Tela ({token_tela})</a> |
-                <a href="recepcao/?hash={S->hash}&token={token_recepcao}" target="recepcao">Recepção
-                    ({token_recepcao})</a>
-            </div>
-            <div>Votação Fechada
-                <!-- BEGIN block_fechada -->
-                | <a href="votacao/?hash={S->hash}&token={token_votacao}" target="votacao">{count}</a>
-                <!-- END block_fechada -->
-            </div>
-            <div>Votação Aberta
-                <!-- BEGIN block_aberta -->
-                | <a href="votacao/?hash={S->hash}&token={token_votacao}" target="votacao">{count}</a>
-                <!-- END block_aberta -->
-            </div>
-        </div>
-        <!-- END block_sessao -->
-
+        <form method="POST" target="">
+            Insira o token: <input type="text" name="token"><br>
+            <br>
+            <input type="submit" name="OK">
+        </form>
     </div>
-    <hr />
-    <h2>Dados de teste</h2>
-    <div>
-        <a href="?acao=nuke">Limpar os dados e começar de novo</a><br><br>
-        <a href="?acao=votar">Gera votos aleatórios na votação aberta</a><br>
-
-    </div>
-    <hr />
-    <h2>Diagrama estado-ação</h2>
-
-    <p>Um estado pode ter várias ações mas uma ação aponta para um único estado.</p>
-    <div>
-        Estado => Ação<br>
-        <!-- BEGIN block_estado -->
-        {E->nome} => {E->acao_nome}<br>
-        <!-- END block_estado -->
-    </div>
-
-    <h2>Diagrama ação-estado</h2>
-
-    <div>
-        Ação: Estado inicial -> estado final<br>
-        <!-- BEGIN block_acao -->
-        {A->nome}: {A->estado_ini} -> {A->estado}<br>
-        <!-- END block_acao -->
-    </div>
-    <br>
-    <br>
 </body>
 
 </html>
