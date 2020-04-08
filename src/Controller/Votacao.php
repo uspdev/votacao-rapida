@@ -1,10 +1,12 @@
-<?php namespace Uspdev\Votacao\Controller;
+<?php
+
+namespace Uspdev\Votacao\Controller;
 
 use \RedBeanPHP\R as R;
 
 class Votacao
 {
-    public static function run($hash, $token)
+    public static function run($hash, $token = '')
     {
         $query = \Flight::request()->query;
         $files = \Flight::request()->files;
@@ -14,6 +16,12 @@ class Votacao
         $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
         if (empty($sessao)) {
             return ['status' => 'erro', 'msg' => 'Hash inválido'];
+        }
+
+        // se nao foi enviado token é porque vai digitar manualmente.
+        // vamos manda as informações básicas da sessão
+        if (empty($token)) {
+            return $sessao;
         }
 
         // verifica se o token pertence à sessão
@@ -81,8 +89,10 @@ class Votacao
         switch (intval($data->acao)) {
             case '8':
                 //vamos ver se o voto veio para votação correta
-                if ($votacao->id == $data->votacao_id &&
-                    !empty($data->alternativa_id)) {
+                if (
+                    $votacao->id == $data->votacao_id &&
+                    !empty($data->alternativa_id)
+                ) {
 
                     //vamos invalidar votos anteriores se houver
                     R::exec(
@@ -267,7 +277,6 @@ class Votacao
             }
         }
         return ['msg' => 'Sem votação aberta', 'votacao' => null];
-
     }
 
     protected static function obterVotacaoNaoFechadaFinalizada($sessao)
@@ -310,7 +319,6 @@ class Votacao
                     return $votacao;
                     break;
             }
-
         }
         return false;
     }
