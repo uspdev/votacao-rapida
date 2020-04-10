@@ -11,7 +11,7 @@ function gerarTokens($qt, $import = false)
     // redbean para importar com dispense
     $tipos = [
         ['tipo' => 'apoio', 'qt' => 1],
-        ['tipo' => 'tela', 'qt' => 1],
+        ['tipo' => 'painel', 'qt' => 1],
         ['tipo' => 'recepcao', 'qt' => 1],
         ['tipo' => 'fechada', 'qt' => $qt],
         ['tipo' => 'aberta', 'qt' => $qt],
@@ -40,7 +40,8 @@ function gerarTokens($qt, $import = false)
 
 function gerarListaQrcodePdf($sessao, $logo2)
 {
-    $path = getenv('USPDEV_VOTACAO_LOCAL');
+    $base = getenv('USPDEV_VOTACAO_LOCAL');
+    $path = '/';
     $filename = $sessao->hash . '_qrcodes.pdf';
 
     $tpl = new raelgc\view\Template(__DIR__ . '/../template/qrcode_instrucoes.html');
@@ -57,7 +58,7 @@ function gerarListaQrcodePdf($sessao, $logo2)
 
         $tpl->token = $token->token;
         $tpl->qrcode = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
-        
+
         if ($token->tipo == 'aberta') {
             $tpl->tipo = '&nbsp;' . strtoupper($token->tipo);
         } else {
@@ -65,10 +66,11 @@ function gerarListaQrcodePdf($sessao, $logo2)
         }
 
         if ($logo2) {
-            $tpl->logo2 = $logo2;
-            $tpl->block('bloco_logo2');
+            $tpl->logo2a = '<img src="' . $logo2 . '" style="height: 60px">';
+            $tpl->logo2 = '<img src="' . $logo2 . '" class="logo">';
+            //$tpl->block('bloco_logo2');
         }
-        
+
         if (next($tokens)) {
             $tpl->block('bloco_next');
         }
@@ -81,14 +83,14 @@ function gerarListaQrcodePdf($sessao, $logo2)
         $html2pdf = new Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en');
         $html2pdf->pdf->SetDisplayMode('fullpage');
         $html2pdf->writeHTML($content);
-        $html2pdf->output($path . '/' . $filename, 'F');
+        $html2pdf->output($base . $path . $filename, 'F');
     } catch (Spipu\Html2Pdf\Exception\Html2PdfException $e) {
         $html2pdf->clean();
         $formatter = new Spipu\Html2Pdf\Exception\ExceptionFormatter($e);
         echo $formatter->getHtmlMessage();
     }
 
-    return $path . '/' . $filename;
+    return $path . $filename;
 }
 
 function obterSessao($hash, $token)
@@ -102,11 +104,16 @@ function obterSessao($hash, $token)
     curl_setopt($ch, CURLOPT_POST, 0);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_HEADER, false);
-    $return = curl_exec($ch);
+    $sessao = curl_exec($ch);
     curl_close($ch);
 
-    $json = json_decode($return);
-    return $json ? $json : $return;
+    $obj = json_decode($sessao);
+    if (!is_object($obj)) {
+        echo 'Mensagem ao tentar obter sessão: ', $sessao;
+        exit;
+    }
+
+    return $obj;
 }
 
 function post($hash, $token, $data)

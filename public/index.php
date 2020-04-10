@@ -1,42 +1,42 @@
 <?php
 require_once __DIR__ . '/../app/bootstrap.php';
 
-$hash = 'hash001';
-
-if (!empty($_POST['token'])) {
-    $token = $_POST['token'];
-    $sessao = obterSessao($hash, $token);
-
-    //print_r($sessao);exit;
-    if (empty($sessao) || $sessao->status == 'erro') {
-        header('Location:'.$_SERVER['PHP_SELF']);
-        exit;
-    }
-
-    switch ($sessao->token->tipo) {
-        case 'apoio':
-            header('Location: apoio/?hash=' . $hash . '&token=' . $token);
-            break;
-        case 'tela':
-            header('Location: tela/?hash=' . $hash . '&token=' . $token);
-            break;
-        case 'votacao':
-            header('Location: votacao/?hash=' . $hash . '&token=' . $token);
-            break;
-    }
-    exit;
-}
-
 use raelgc\view\Template;
 use \RedBeanPHP\R as R;
+use Uspdev\Votacao\Form;
+use Uspdev\Votacao\View;
 
-R::selectDatabase('votacao');
-R::useFeatureSet('latest');
+//$hash = 'hash001';
 
-$sessao = obterSessao($hash, '');
+session_start();
 
-//print_r($sessao);
+Flight::route('/', function () {
+    echo 'hello';
+});
 
-$tpl = new Template(__DIR__ . '/../template/index.html');
-$tpl->S = $sessao;
-$tpl->show();
+Flight::route('/apoio', function () {
+    View::apoioGet();
+});
+
+Flight::route('/painel', function () {
+    View::painelGet();
+});
+
+Flight::route('/votacao', function () {
+    View::votacaoGet();
+});
+
+Flight::route('GET /@hash', function ($hash) {
+    View::hashGet($hash);
+});
+
+Flight::route('POST /@hash', function ($hash) {
+    $data = Flight::request()->data;
+    View::hashPost($hash, $data);
+});
+
+Flight::route('/@hash/@token', function ($hash, $token) {
+    View::hashToken($hash, $token);
+});
+
+Flight::start();

@@ -1,37 +1,30 @@
-<html>
+<meta http-equiv="Refresh" content="3">
 
-<head>
-    <meta http-equiv="Refresh" content="3">
-</head>
+<h1>{S->nome}</h1>
+<hr>
 
-<body>
-    <h1>{S->nome}</h1>
-    <p>Token de tela: {S->token}</p>
+<div>
+    <!-- BEGIN block_msg -->
+    <h2>{msg}</h2>
+    <!-- END block_msg -->
+    <!-- BEGIN block_votacao -->
+
+    Estado: {V->estado}
+    <!-- BEGIN block_computados -->
+    | Computados: {V->computados}
+    <!-- END block_computados -->
     <hr />
+
     <div>
-        <!-- BEGIN block_msg -->
-        <h1>{msg}</h1>
-        <!-- END block_msg -->
-        <!-- BEGIN block_votacao -->
-        <div>
-            <h3>{V->nome} ({V->tipo})</h3>
-            <!-- BEGIN block_alternativa -->
-            &nbsp; &nbsp; &nbsp; <b>[ ] {alternativa}</b><br>
-            <!-- END block_alternativa -->
-            <!-- BEGIN block_resposta -->
-            &nbsp; &nbsp; &nbsp; <b>{R->texto}: {R->votos} votos</b><br>
-            <!-- END block_resposta -->
-            <br>
-        </div>
-        <hr>
-        Estado: {V->estado}
-        
-        <!-- BEGIN block_computados -->
-        | Computados: {V->computados}
-        <!-- END block_computados -->
-
-        <!-- END block_votacao -->
+        <h3>{V->nome} ({V->tipo})</h3>
+        <!-- BEGIN block_alternativa -->
+        &nbsp; &nbsp; &nbsp; <b>[ ] {alternativa}</b><br>
+        <!-- END block_alternativa -->
+        <!-- BEGIN block_resposta -->
+        &nbsp; &nbsp; &nbsp; <b>{R->texto}: {R->votos} votos</b><br>
+        <!-- END block_resposta -->
+        <br>
     </div>
-</body>
 
-</html>
+    <!-- END block_votacao -->
+</div>

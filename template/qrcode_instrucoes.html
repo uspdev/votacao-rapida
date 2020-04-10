@@ -1,23 +1,44 @@
-<page backtop="15mm" backbottom="15mm" backleft="15mm" backright="15mm">
+<style type="text/css">
+    .text {
+        line-height: 1.4;
+        padding: 0;
+        margin: 3px;
+        font-size: 14px;
+        text-align: justify;
+    }
+
+</style>
+
+<page class="text" backtop="15mm" backbottom="15mm" backleft="15mm" backright="15mm">
 
     <page_footer>
         <hr>
         <div style="text-align:center;">Impresso em {datahora}</div>
     </page_footer>
 
-    <div style="font-size:14px;">
+    <div>
         <table style="width:100%; border:0;">
             <tr>
-                <td style="text-align:left; width:40%;"><img src="{logo1}" style="height:40px;"></td>
+                <td style="text-align:left; width:40%;"><img src="{logo1}" style="height:60px;"></td>
                 <td style="text-align:right; width: 60%;">
-
+                    {logo2a}
                 </td>
             </tr>
         </table>
 
         <h1>{nome}</h1>
         <hr>
-        <h2>Apoio à votação</h2>
+        <h2>Instruções à equipe de apoio</h2>
+
+        <p>O sistema de votação eletrônica para pautas de reuniões permite votar assuntos
+            a partir de dispositivos portáteis ou computadores de forma simples.
+            O eleitor recebe um QRCode com identificação única. Uma vez escaneado por um smartphone,
+            ele direciona o eleitor ao site de votação com o pleito em tela. A equipe de apoio tem
+            total controle quanto ao andamento da votação por meio de uma interface própria acessível por
+            smartphone também. O andamento da votação pode ser apresentado em um painel eletrônico
+            que permite acompanhar todo o processo.</p>
+
+        <p>Papéis: apoio, painel eletrônico, recepção, votante.</p>
         <p>O apoio é responsável por controlar o andamento da votação.
             Ele tem acesso a um menu que permitem várias ações.</p>
         <ul>

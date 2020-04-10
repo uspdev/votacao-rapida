@@ -18,20 +18,28 @@
         <div>
             <h3>{S->nome} - {S->unidade}</h3>
             <div>
-                <a href="apoio/?hash={S->hash}&token={token_apoio}" target="apoio">Apoio ({token_apoio})</a> |
-                <a href="tela/?hash={S->hash}&token={token_tela}" target="tela">Tela ({token_tela})</a> |
+                <a href="{S->hash}/{token_apoio}" target="apoio">Apoio ({token_apoio})</a> |
+                <a href="{S->hash}/{token_tela}" target="painel">Painel ({token_tela})</a> |
                 <a href="recepcao/?hash={S->hash}&token={token_recepcao}" target="recepcao">Recepção
                     ({token_recepcao})</a>
+
             </div>
             <div>Votação Fechada
                 <!-- BEGIN block_fechada -->
-                | <a href="votacao/?hash={S->hash}&token={token_votacao}" target="votacao">{count}</a>
+                | <a href="{S->hash}/{token_votacao}" target="votacao">{count}</a>
                 <!-- END block_fechada -->
             </div>
             <div>Votação Aberta
                 <!-- BEGIN block_aberta -->
-                | <a href="votacao/?hash={S->hash}&token={token_votacao}" target="votacao">{count}</a>
+                | <a href="{S->hash}/{token_votacao}" target="votacao">{count}</a>
                 <!-- END block_aberta -->
+            </div>
+            <div>
+                <a href="?acao=tokens_pdf&arq={S->arq_tokens_pdf}">Abrir tokens pdf</a><br>
+
+            </div>
+            <div>
+                <a href="?acao=votar&hash={S->hash}">Gera votos aleatórios na votação aberta</a><br><br>
             </div>
         </div>
         <!-- END block_sessao -->
@@ -41,7 +49,6 @@
     <h2>Dados de teste</h2>
     <div>
         <a href="?acao=nuke">Limpar os dados e começar de novo</a><br><br>
-        <a href="?acao=votar">Gera votos aleatórios na votação aberta</a><br>
 
     </div>
     <hr />

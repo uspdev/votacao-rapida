@@ -44,6 +44,10 @@
         height: 25px;
         vertical-align: middle;
     }
+
+    .logo {
+        height: 40px;
+    }
 </style>
 
 <page backtop="5mm" backbottom="5mm" backleft="5mm" backright="5mm">
@@ -59,11 +63,9 @@
             <td class="col1">
                 <table style="width:100%; border:0;">
                     <tr>
-                        <td style="text-align:left; width:40%;"><img src="{logo1}" style="height:40px;"></td>
+                        <td style="text-align:left; width:40%;"><img src="{logo1}" class="logo"></td>
                         <td style="text-align:right; width: 60%;">
-                            <!-- BEGIN bloco_logo2 -->
-                            <img src="{logo2}" style="height:40px;">
-                            <!-- END bloco_logo2 -->
+                            {logo2}
                         </td>
                     </tr>
                 </table>

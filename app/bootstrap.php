@@ -9,6 +9,8 @@ $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
 $dotenv->load();
 
 # Arquivos locais serão guardados nessa pasta
+putenv('DIR=' . realpath(__DIR__ . '/..'));
+
 putenv('USPDEV_VOTACAO_LOCAL=' . realpath(__DIR__ . '/../local'));
 
 // caminho da API

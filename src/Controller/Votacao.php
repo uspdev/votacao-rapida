@@ -48,8 +48,8 @@ class Votacao
             case ['apoio', 'POST']:
                 return SELF::apoioPost($sessao);
                 break;
-            case ['tela', 'GET']:
-                return SELF::tela($sessao);
+            case ['painel', 'GET']:
+                return SELF::painel($sessao);
                 break;
             case ['recepcao', '']:
                 return SELF::recepcao($sessao);
@@ -249,7 +249,7 @@ class Votacao
         return $sessao;
     }
 
-    protected static function tela($sessao)
+    protected static function painel($sessao)
     {
         if (!$sessao->em_tela = SELF::obterVotacaoEmTela($sessao)) {
             $sessao->msg = 'Sem votação aberta';

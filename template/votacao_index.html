@@ -1,37 +1,13 @@
-<html>
+<h1>{S->nome}</h1>
+<p>Token de votação {S->token->tipo}: {S->token->token}</p>
+<hr />
+<div>
+    <!-- BEGIN block_msg -->
+    <h1>{msg}</h1>
+    <!-- END block_msg -->
 
-<head>
-    <!-- <meta http-equiv="Refresh" content="3"> -->
-</head>
-
-<body>
-    <h1>{S->nome}</h1>
-    <p>Token de votação {S->token->tipo}: {S->token->token}</p>
-    <hr />
-    <div>
-        <!-- BEGIN block_msg -->
-        <h1>{msg}</h1>
-        <!-- END block_msg -->
-
-        <!-- BEGIN block_form -->
-        <div>
-            <form method="POST">
-            <h3>{V->nome} ({V->tipo})</h3>
-            <ul style="list-style-type:none;">
-            <!-- BEGIN block_alternativa -->
-                <li><input type="radio" name="alternativa_id" value="{A->id}"> {A->texto}</li>
-            <!-- END block_alternativa -->
-            </ul>
-
-            <br>
-            <input type="hidden" name="acao" value="{V->acao->cod}">
-            <input type="hidden" name="votacao_id" value="{V->id}">
-            <input type="submit" name="Enviar">
-        </form>
-        </div>
-        <hr>
-        <!-- END block_form -->
-    </div>
-</body>
-
-</html>
+    <!-- BEGIN block_form -->
+    {form}
+    <hr>
+    <!-- END block_form -->
+</div>
