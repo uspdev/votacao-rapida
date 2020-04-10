@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../app/bootstrap.php';
 
 if (isset($_GET['acao']) && $_GET['acao'] == 'nuke') {
-    require_once __DIR__ . '/../test/mock_data.php';
-    require_once __DIR__ . '/../test/gerar_lista_pdf.php';
+    require_once __DIR__ . '/../test/dados_teste.php';
+    //require_once __DIR__ . '/../test/gerar_lista_pdf.php';
 
     echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
     exit;

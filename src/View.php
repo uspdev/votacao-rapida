@@ -50,17 +50,7 @@ class View
     public static function votacaoGet()
     {
         list($hash, $token) = SELF::verificaSessao('votacao');
-
         $sessao = SELF::obterSessao($hash, $token);
-
-        // post de formulario
-        if (isset($_POST['acao'])) {
-            $data = $_POST;
-            $res = post($hash, $sessao->token->token, $data);
-            print_r($res);
-            header('Location:' .  getenv('WWWROOT') . '/votacao');
-            exit;
-        }
 
         //print_r($sessao);exit;
         $tpl = SELF::template();
@@ -78,6 +68,24 @@ class View
 
         $tpl->show();
     }
+
+    public static function votacaoPost($data)
+    {
+        list($hash, $token) = SELF::verificaSessao('votacao');
+        $sessao = SELF::obterSessao($hash, $token);
+
+        // post de formulario
+        if (isset($data->acao)) {
+            $data = $_POST;
+            //print_r($data);
+            //echo json_encode((Array) $data);exit;
+            $res = Curl::post($hash, $sessao->token->token, $data);
+            echo json_encode($res);//exit;
+            header('Location:' .  getenv('WWWROOT') . '/votacao');
+            exit;
+        }
+    }
+
 
     public static function apoioGet()
     {
@@ -152,10 +160,10 @@ class View
 
     public static function obterSessao($hash, $token)
     {
-        $sessao = Curl::get($hash,$token);
+        $sessao = Curl::get($hash, $token);
         if (!empty($sessao->status) && $sessao->status == 'erro') {
             echo '<pre>';
-            echo 'Erro ao obter sessão: ',PHP_EOL;
+            echo 'Erro ao obter sessão: ', PHP_EOL;
             echo json_encode($sessao);
             exit;
         }
@@ -169,7 +177,6 @@ class View
             $tpl->show();
             exit;
         }
-
     }
 
     protected static function template()

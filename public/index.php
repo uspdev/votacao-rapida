@@ -14,7 +14,7 @@ Flight::route('/', function () {
     echo 'hello';
 });
 
-Flight::route('/apoio', function () {
+Flight::route('GET /apoio', function () {
     View::apoioGet();
 });
 
@@ -22,8 +22,13 @@ Flight::route('/painel', function () {
     View::painelGet();
 });
 
-Flight::route('/votacao', function () {
+Flight::route('GET /votacao', function () {
     View::votacaoGet();
+});
+
+Flight::route('POST /votacao', function () {
+    $data = Flight::request()->data;
+    View::votacaoPOST($data);
 });
 
 Flight::route('GET /@hash', function ($hash) {

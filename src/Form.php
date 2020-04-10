@@ -52,6 +52,7 @@ class Form
         $acao = $this->data->acao;
         $out = '<input type="hidden" name="acao" value="' . $acao->cod . '">' . PHP_EOL;
         $out .= '<input type="hidden" name="votacao_id" value="' . $this->data->id . '">' . PHP_EOL;
+        $out .= '<br>';
         $out .= '<input type="submit" name="Enviar">' . PHP_EOL;
         $this->out .= $out;
     }
