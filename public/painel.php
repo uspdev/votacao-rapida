@@ -11,7 +11,7 @@ if (isset($_GET['acao']) && $_GET['acao'] == 'nuke') {
 
 if (isset($_GET['acao']) && $_GET['acao'] == 'votar') {
     $hash = $_GET['hash'];
-    require_once __DIR__ . '/../test/mock_votacao.php';
+    require_once ROOTDIR. '/cli/funcoes_cli.php';
     gerarVotosAleatorios($hash);
 
     echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
@@ -19,12 +19,11 @@ if (isset($_GET['acao']) && $_GET['acao'] == 'votar') {
 }
 
 if (isset($_GET['acao']) && $_GET['acao'] == 'tokens_pdf') {
-    $dir = getenv('USPDEV_VOTACAO_LOCAL');
     $arq = $_GET['arq'];
     header("Content-type:application/pdf");
     header("Content-Disposition:attachment;filename=tokens_qrcode.pdf");
     header('Cache-Control: public, must-revalidate, max-age=0');
-    readfile($dir . $arq);
+    readfile(ARQ . '/' . $arq);
 
     exit;
 }
@@ -37,7 +36,7 @@ R::useFeatureSet('latest');
 
 $sessoes = R::findAll('sessao');
 
-print_r(R::exportAll($sessoes));
+//print_r(R::exportAll($sessoes));
 
 $tpl = new Template(__DIR__ . '/../template/painel.html');
 foreach ($sessoes as $sessao) {

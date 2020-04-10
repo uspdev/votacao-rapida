@@ -40,15 +40,13 @@ function gerarTokens($qt, $import = false)
 
 function gerarListaQrcodePdf($sessao, $logo2)
 {
-    $base = getenv('USPDEV_VOTACAO_LOCAL');
-    $path = '/';
     $filename = $sessao->hash . '_qrcodes.pdf';
 
-    $tpl = new raelgc\view\Template(__DIR__ . '/../template/qrcode_instrucoes.html');
-    $tpl->addFile('qrcode_lista', __DIR__ . '/../template/qrcode_lista.html');
+    $tpl = new raelgc\view\Template(ROOTDIR . '/template/qrcode/instrucoes.html');
+    $tpl->addFile('qrcode_lista', ROOTDIR . '/template/qrcode/lista.html');
 
     $tpl->nome = $sessao->nome;
-    $tpl->logo1 = __DIR__ . '/../template/logo_usp.png';
+    $tpl->logo1 = ROOTDIR . '/template/qrcode/logo_usp.png';
 
     $tpl->link = $sessao->link_manual;
     $tpl->datahora = date('d/m/Y H:i:s');
@@ -59,15 +57,17 @@ function gerarListaQrcodePdf($sessao, $logo2)
         $tpl->token = $token->token;
         $tpl->qrcode = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
 
+        // vamos colocar um espaço para centralizar o texto
         if ($token->tipo == 'aberta') {
             $tpl->tipo = '&nbsp;' . strtoupper($token->tipo);
         } else {
             $tpl->tipo = strtoupper($token->tipo);
         }
 
+        // se foi passado logo2 vamos inserir
         if ($logo2) {
-            $tpl->logo2a = '<img src="' . $logo2 . '" style="height: 60px">';
-            $tpl->logo2 = '<img src="' . $logo2 . '" class="logo">';
+            $tpl->logo2a = '<img src="' . $logo2 . '" style="height: 60px">'; //nas instruçoes
+            $tpl->logo2 = '<img src="' . $logo2 . '" class="logo">'; //na lista
             //$tpl->block('bloco_logo2');
         }
 
@@ -83,19 +83,19 @@ function gerarListaQrcodePdf($sessao, $logo2)
         $html2pdf = new Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en');
         $html2pdf->pdf->SetDisplayMode('fullpage');
         $html2pdf->writeHTML($content);
-        $html2pdf->output($base . $path . $filename, 'F');
+        $html2pdf->output(ARQ . '/' . $filename, 'F');
     } catch (Spipu\Html2Pdf\Exception\Html2PdfException $e) {
         $html2pdf->clean();
         $formatter = new Spipu\Html2Pdf\Exception\ExceptionFormatter($e);
         echo $formatter->getHtmlMessage();
     }
 
-    return $path . $filename;
+    return $filename;
 }
 
 function obterSessao($hash, $token)
 {
-    $url = getenv('USPDEV_VOTACAO_API') . '/run/' . $hash . '/' . $token;
+    $url = API . '/run/' . $hash . '/' . $token;
     $ch = curl_init($url);
     curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
     curl_setopt($ch, CURLOPT_HEADER, 1);
@@ -118,7 +118,7 @@ function obterSessao($hash, $token)
 
 function post($hash, $token, $data)
 {
-    $url = getenv('USPDEV_VOTACAO_API') . '/run/' . $hash . '/' . $token;
+    $url = API . '/run/' . $hash . '/' . $token;
     $headers = ['Content-Type: application/json', 'user-agent: mock data votacao v1.0'];
 
     $ch = curl_init($url);

@@ -1,44 +1,30 @@
 <?php
-require_once __DIR__ . '/../app/bootstrap.php';
-use Uspdev\Webservice\Auth;
-use \RedBeanPHP\R as R;
+$hash = generateRandomString(20); //o tamanho 20 é fixo
 
-Auth::salvarUsuario([
-    'username' => 'admin',
-    'pwd' => 'admin',
-    'admin' => '1',
-    'allow' => '']
-);
+// ja temos um hash gerado e o link encurtado correspondente
+$hash = 'NAKYQOHCWDILQTRAYTZY';
+$e = 'e.usp.br/fiw';
 
-R::selectDatabase('votacao');
-R::useFeatureSet('latest');
+// se não quiser logo deixar em branco mas não sumir com a variável
+$logo2 = __DIR__ . '/logo_eesc_horizontal.png';
 
-R::exec('SET FOREIGN_KEY_CHECKS = 0;');
-R::wipe('sessao');
-R::wipe('votacao');
-R::wipe('alternativa');
-R::wipe('token');
-R::exec('SET FOREIGN_KEY_CHECKS = 1;');
-//R::nuke();
-
-// vamos inserir dados de estado->acao
-echo 'Inserindo dados de controle: ';
-require_once __DIR__.'/../app/inserir_dados_de_controle.php';
+$lista = 'João, Adriana, Maria, Carlos, Antônio, Marcela, Edson';
+$tokens = gerarTokens(15, true);
 
 $sessao = [
-    '_type' => 'sessao',
+    '_type' => 'sessao', // fixo
     'unidade' => 'EESC',
     'ano' => 2020,
     'nome' => '339 Sessão do CTA',
-    'hash' => generateRandomString(20),
+    'hash' => $hash,
     'estado' => 'aberto', // 0 em elaboracao, 1 aberto, 2 finalizado
-    'link_manual' => 'http://e.usp.br/fik',
+    'link_manual' => $e,
     'arq_tokens_pdf' => '',
-    'lista' => 'João, Adriana, Maria, Carlos, Antônio, Marcela, Edson',
-    'ownTokenList' => gerarTokens(10, true),
+    'lista' => $lista,
+    'ownTokenList' => $tokens,
     'ownVotacaoList' => [
         [
-            '_type' => 'votacao',
+            '_type' => 'votacao', // fixo
             'estado' => 0, // sempre inicia fechado
             'nome' => 'Homologação de relatório - SHS',
             'descricao' => 'Processo seletivo do SHS',
@@ -90,20 +76,3 @@ $sessao = [
 
     ],
 ];
-R::store(R::dispense($sessao));
-
-$sessao = [
-    '_type' => 'sessao',
-    'unidade' => 'EESC',
-    'ano' => 2020,
-    'nome' => 'Segunda sesão de votação eletrônica',
-    'hash' => 'hash002',
-    'estado' => 'fechado',
-    'link_qrcode' => '',
-    'link_manual' => '',
-    'lista' => '',
-    'ownTokenList' => gerarTokens(10, true),
-];
-R::store(R::dispense($sessao));
-
-echo 'Dados de exemplo adicionados com sucesso', PHP_EOL;

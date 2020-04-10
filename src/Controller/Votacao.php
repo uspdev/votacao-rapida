@@ -238,7 +238,7 @@ class Votacao
 
         $save['tokens'] = R::exportAll($sessao->ownTokenList);
         file_put_contents(
-            getenv('USPDEV_VOTACAO_LOCAL') . '/resultado.json',
+            LOCAL . '/resultado.json',
             json_encode($save, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
         );
     }

@@ -6,7 +6,7 @@ class Curl
 {
     public static function get($hash, $token)
     {
-        $url = getenv('USPDEV_VOTACAO_API') . '/run/' . $hash . '/' . $token;
+        $url = API . '/run/' . $hash . '/' . $token;
         
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
@@ -30,7 +30,7 @@ class Curl
 
     public static function post($hash, $token, $data)
     {
-        $url = getenv('USPDEV_VOTACAO_API') . '/run/' . $hash . '/' . $token;
+        $url = API . '/run/' . $hash . '/' . $token;
         $headers = ['Content-Type: application/json', 'user-agent: mock data votacao v1.0'];
 
         $ch = curl_init($url);

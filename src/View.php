@@ -13,7 +13,7 @@ class View
         $sessao = SELF::obterSessao($hash, '');
 
         $tpl = SELF::template();
-        $tpl->addFile('corpo', getenv('DIR') . '/template/token.html');
+        $tpl->addFile('corpo', ROOT_DIR . '/template/token.html');
         $tpl->S = $sessao;
 
         $tpl->show();
@@ -54,7 +54,7 @@ class View
 
         //print_r($sessao);exit;
         $tpl = SELF::template();
-        $tpl->addFile('corpo', getenv('DIR') . '/template/votacao_index.html');
+        $tpl->addFile('corpo', ROOTDIR . '/template/votacao_index.html');
 
         $tpl->S = $sessao;
         if (!empty($sessao->msg)) {
@@ -102,7 +102,7 @@ class View
         }
 
         $tpl = SELF::template();
-        $tpl->addFile('corpo', getenv('DIR') . '/template/apoio_index.html');
+        $tpl->addFile('corpo', ROOTDIR . '/template/apoio_index.html');
 
         $tpl->S = $sessao;
         foreach ($sessao->votacoes as $v) {
@@ -124,7 +124,7 @@ class View
         $sessao = SELF::obterSessao($hash, $token);
 
         $tpl = SELF::template();
-        $tpl->addFile('corpo', getenv('DIR') . '/template/tela_index.html');
+        $tpl->addFile('corpo', ROOTDIR . '/template/tela_index.html');
 
         $tpl->S = $sessao;
         if (!empty($sessao->msg)) {
@@ -171,7 +171,7 @@ class View
 
         // tratamento de erro a implementar
         if (isset($sessao->status) && $sessao->status == 'erro') {
-            $tpl = new Template(__DIR__ . '/../../template/erro.html');
+            $tpl = new Template(ROOTDIR . '/template/erro.html');
             $tpl->msg = $sessao->msg;
             $tpl->block('block_msg');
             $tpl->show();
@@ -181,7 +181,7 @@ class View
 
     protected static function template()
     {
-        return new Template(getenv('DIR') . '/template/main_template.html');
+        return new Template(ROOTDIR . '/template/main_template.html');
     }
 
     protected static function verificaSessao($tipo)

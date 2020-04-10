@@ -4,17 +4,17 @@ require_once __DIR__ . '/functions.php';
 
 use \RedBeanPHP\R as R;
 
+# Arquivos locais serão guardados nessa pasta
+define('ROOTDIR', realpath(__DIR__ . '/..'));
+define('LOCAL', ROOTDIR . '/local');
+define('ARQ', LOCAL . '/arquivos');
+
 // carregando as variáveis de .env para o ambiente
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/../');
+$dotenv = Dotenv\Dotenv::createImmutable(ROOTDIR . '/');
 $dotenv->load();
 
-# Arquivos locais serão guardados nessa pasta
-putenv('DIR=' . realpath(__DIR__ . '/..'));
-
-putenv('USPDEV_VOTACAO_LOCAL=' . realpath(__DIR__ . '/../local'));
-
 // caminho da API
-putenv('USPDEV_VOTACAO_API=' . getenv('WWWROOT') . '/api');
+define('API', getenv('WWWROOT') . '/api');
 
 $amb = getenv('AMBIENTE');
 if ($amb == 'dev') {
@@ -48,14 +48,14 @@ putenv('USPDEV_IP_CONTROL=');
 // }
 
 # Local onde o webservice colocará arquivos sqlite, logs, etc.
-putenv('USPDEV_WEBSERVICE_LOCAL=' . getenv('USPDEV_VOTACAO_LOCAL'));
+putenv('USPDEV_WEBSERVICE_LOCAL=' . LOCAL);
 
 # Rota para gerenciamento do webservice. default='ws'
 putenv('USPDEV_WEBSERVICE_ADMIN_ROUTE=ws');
 
 // Conexão com DB
 if (getenv('DB_TIPO') == 'sqlite') {
-    R::addDatabase('votacao', 'sqlite:' . getenv('USPDEV_VOTACAO_LOCAL') . '/votacao.db3');
+    R::addDatabase('votacao', 'sqlite:' . LOCAL . '/votacao.db3');
 } else {
     R::addDatabase('votacao', getenv('DB_DSN'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
 }
