@@ -18,13 +18,21 @@ if (isset($_GET['acao']) && $_GET['acao'] == 'votar') {
     exit;
 }
 
+if (isset($_GET['acao']) && $_GET['acao'] == 'excluir') {
+    $hash = $_GET['hash'];
+    require_once ROOTDIR. '/cli/funcoes_cli.php';
+    echo excluirSessao($hash);
+
+    echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
+    exit;
+}
+
 if (isset($_GET['acao']) && $_GET['acao'] == 'tokens_pdf') {
     $arq = $_GET['arq'];
     header("Content-type:application/pdf");
     header("Content-Disposition:attachment;filename=tokens_qrcode.pdf");
     header('Cache-Control: public, must-revalidate, max-age=0');
     readfile(ARQ . '/' . $arq);
-
     exit;
 }
 

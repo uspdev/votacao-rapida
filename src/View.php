@@ -2,23 +2,23 @@
 
 namespace Uspdev\Votacao;
 
-//use Uspdev\Votacao\Curl;
 use raelgc\view\Template;
 
 class View
 {
 
+    // tela inicial para quem entra com o link encurtado
     public static function hashGet($hash)
     {
         $sessao = SELF::obterSessao($hash, '');
 
-        $tpl = SELF::template();
-        $tpl->addFile('corpo', ROOT_DIR . '/template/token.html');
+        $tpl = SELF::template('token.html');
         $tpl->S = $sessao;
 
         $tpl->show();
     }
 
+    // post do token
     public static function hashPost($hash, $data)
     {
         // vamos verificar o token enviado e obter os dados ou retornar
@@ -32,6 +32,7 @@ class View
         }
     }
 
+    // tela inicial de quem entra com qrcode
     public static function hashToken($hash, $token)
     {
         $sessao = SELF::obterSessao($hash, $token);
@@ -53,8 +54,7 @@ class View
         $sessao = SELF::obterSessao($hash, $token);
 
         //print_r($sessao);exit;
-        $tpl = SELF::template();
-        $tpl->addFile('corpo', ROOTDIR . '/template/votacao_index.html');
+        $tpl = SELF::template('votacao_index.html');
 
         $tpl->S = $sessao;
         if (!empty($sessao->msg)) {
@@ -80,7 +80,7 @@ class View
             //print_r($data);
             //echo json_encode((Array) $data);exit;
             $res = Curl::post($hash, $sessao->token->token, $data);
-            echo json_encode($res);//exit;
+            echo json_encode($res); //exit;
             header('Location:' .  getenv('WWWROOT') . '/votacao');
             exit;
         }
@@ -97,12 +97,13 @@ class View
         if (isset($_GET['acao'])) {
             $data = ['acao' => $_GET['acao'], 'votacao_id' => $_GET['votacao_id']];
             $res = post($hash, $token, $data);
+            // temos de devolver res de alguma forma se houver erro
+
             header('Location: ' . getenv('WWWROOT') . '/apoio');
             exit;
         }
 
-        $tpl = SELF::template();
-        $tpl->addFile('corpo', ROOTDIR . '/template/apoio_index.html');
+        $tpl = SELF::template('apoio_index.html');
 
         $tpl->S = $sessao;
         foreach ($sessao->votacoes as $v) {
@@ -123,8 +124,7 @@ class View
 
         $sessao = SELF::obterSessao($hash, $token);
 
-        $tpl = SELF::template();
-        $tpl->addFile('corpo', ROOTDIR . '/template/tela_index.html');
+        $tpl = SELF::template('tela_index.html');
 
         $tpl->S = $sessao;
         if (!empty($sessao->msg)) {
@@ -144,11 +144,8 @@ class View
                     $tpl->block('block_resposta');
                 }
             }
-            if (
-                $sessao->em_tela->estado == 'Em votação' or
-                $sessao->em_tela->estado == 'Em pausa' or
-                $sessao->em_tela->estado == 'Resultado'
-            ) {
+            $e = $sessao->em_tela->estado;
+            if ($e == 'Em votação' or $e == 'Em pausa' or $e == 'Resultado') {
                 $tpl->block('block_computados');
             }
 
@@ -179,9 +176,11 @@ class View
         }
     }
 
-    protected static function template()
+    protected static function template($addFile)
     {
-        return new Template(ROOTDIR . '/template/main_template.html');
+        $tpl = new Template(ROOTDIR . '/template/main_template.html');
+        $tpl->addFile('corpo', TPL . '/' . $addFile);
+        return $tpl;
     }
 
     protected static function verificaSessao($tipo)
@@ -192,7 +191,8 @@ class View
             return [$hash, $token];
         } else {
             // vamos voltar ao inicio
-            header('Location:' . getenv('WWWROOT'));
+            $tpl = SELF::template('erro_sem_sessao.html');
+            $tpl->show();
             exit;
         }
     }

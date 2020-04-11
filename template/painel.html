@@ -19,6 +19,7 @@
             <h3>{S->nome} - {S->unidade}</h3>
             <div>
                 <a href="?acao=tokens_pdf&arq={S->arq_tokens_pdf}">Tokens PDF</a> |
+                <a href="{S->hash}" target="manual">Link de acesso</a> |
                 <a href="{S->hash}/{token_apoio}" target="apoio">Apoio ({token_apoio})</a> |
                 <a href="{S->hash}/{token_tela}" target="painel">Painel ({token_tela})</a> |
                 <a href="recepcao/?hash={S->hash}&token={token_recepcao}" target="recepcao">Recepção
@@ -35,9 +36,9 @@
                 | <a href="{S->hash}/{token_votacao}" target="votacao">{count}</a>
                 <!-- END block_aberta -->
             </div>
-            <div>
+            <div><br>
                 <a href="?acao=votar&hash={S->hash}">Gera votos aleatórios</a> | 
-                <a href="">Excluir esta Sessão</a>
+                <a href="?acao=excluir&hash={S->hash}">Excluir esta Sessão</a>
             </div>
         </div>
         <!-- END block_sessao -->

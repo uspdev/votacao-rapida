@@ -8,6 +8,7 @@ use \RedBeanPHP\R as R;
 define('ROOTDIR', realpath(__DIR__ . '/..'));
 define('LOCAL', ROOTDIR . '/local');
 define('ARQ', LOCAL . '/arquivos');
+define('TPL', LOCAL . '/template');
 
 // carregando as variáveis de .env para o ambiente
 $dotenv = Dotenv\Dotenv::createImmutable(ROOTDIR . '/');

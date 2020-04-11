@@ -1,14 +1,11 @@
 <?php
 require_once __DIR__ . '/../app/bootstrap.php';
 
-use raelgc\view\Template;
-use \RedBeanPHP\R as R;
-use Uspdev\Votacao\Form;
 use Uspdev\Votacao\View;
 
-//$hash = 'hash001';
-
 session_start();
+
+// Rotas
 
 Flight::route('/', function () {
     echo 'hello';
@@ -18,7 +15,7 @@ Flight::route('GET /apoio', function () {
     View::apoioGet();
 });
 
-Flight::route('/painel', function () {
+Flight::route('GET /painel', function () {
     View::painelGet();
 });
 
@@ -40,7 +37,7 @@ Flight::route('POST /@hash', function ($hash) {
     View::hashPost($hash, $data);
 });
 
-Flight::route('/@hash/@token', function ($hash, $token) {
+Flight::route('GET /@hash/@token', function ($hash, $token) {
     View::hashToken($hash, $token);
 });
 
