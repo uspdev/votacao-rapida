@@ -4,18 +4,21 @@ require_once __DIR__ . '/functions.php';
 
 use \RedBeanPHP\R as R;
 
-# Arquivos locais serão guardados nessa pasta
+# Constantes do Sistema
 define('ROOTDIR', realpath(__DIR__ . '/..'));
-define('LOCAL', ROOTDIR . '/local');
-define('ARQ', LOCAL . '/arquivos');
-define('TPL', LOCAL . '/template');
+define('LOCAL', ROOTDIR . '/local'); // Arquivos gerados pelo sistema
+define('ARQ', LOCAL . '/arquivos'); // Arquivos das votações
+define('TPL', ROOTDIR . '/template');
 
 // carregando as variáveis de .env para o ambiente
 $dotenv = Dotenv\Dotenv::createImmutable(ROOTDIR . '/');
 $dotenv->load();
 
-// caminho da API
-define('API', getenv('WWWROOT') . '/api');
+# Se o servidor estiver atrás de um proxy,
+# o servidor da API deve ser colocada no /etc/hosts 
+# para que não passe pelo proxy
+# ex.: 12.7.0.0.1 servidor-do-wwwroot.usp.br
+define('API', getenv('WWWROOT') . '/api'); // caminho da API
 
 $amb = getenv('AMBIENTE');
 if ($amb == 'dev') {

@@ -8,7 +8,7 @@ session_start();
 // Rotas
 
 Flight::route('/', function () {
-    echo 'hello';
+    View::index();
 });
 
 Flight::route('GET /apoio', function () {

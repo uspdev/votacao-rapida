@@ -6,6 +6,12 @@ use raelgc\view\Template;
 
 class View
 {
+    // index
+    public static function index() {
+        $tpl = SELF::template('index.html');
+        $tpl->show();
+        exit;
+    }
 
     // tela inicial para quem entra com o link encurtado
     public static function hashGet($hash)
@@ -155,7 +161,7 @@ class View
         $tpl->show();
     }
 
-    public static function obterSessao($hash, $token)
+    protected static function obterSessao($hash, $token)
     {
         $sessao = Curl::get($hash, $token);
         if (!empty($sessao->status) && $sessao->status == 'erro') {
