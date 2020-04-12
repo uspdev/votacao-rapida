@@ -11,6 +11,10 @@ Flight::route('/', function () {
     View::index();
 });
 
+Flight::route('GET /demo', function () {
+    View::demo();
+});
+
 Flight::route('GET /apoio', function () {
     View::apoioGet();
 });

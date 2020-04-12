@@ -16,7 +16,7 @@ $logo2 = '';
 
 $sessao = [
     '_type' => 'sessao', // fixo
-    'unidade' => 'EESC',
+    'unidade' => 'USP',
     'ano' => 2020,
     'nome' => '1a. Sessão de votação de teste',
     'hash' => $hash,
