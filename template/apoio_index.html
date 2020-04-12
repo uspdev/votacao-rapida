@@ -1,4 +1,4 @@
-<h1>{S->nome}</h1>
+<h2>{S->nome}</h2>
 <p>Votações para essa sessão</p>
 <hr />
 <div>
@@ -7,7 +7,7 @@
         <h3>({V->tipo}) {V->nome}</h3>
         <div>Estado: {V->estado}
             <!-- BEGIN block_acao -->
-            | <a href='?acao={cod}&votacao_id={V->id}'>{acao}</a>
+            | <a href='apoio?acao={cod}&votacao_id={V->id}'>{acao}</a>
             <!-- END block_acao -->
         </div>
     </div>

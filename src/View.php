@@ -185,6 +185,7 @@ class View
     protected static function template($addFile)
     {
         $tpl = new Template(ROOTDIR . '/template/main_template.html');
+        $tpl->wwwroot = getenv('WWWROOT');
         $tpl->addFile('corpo', TPL . '/' . $addFile);
         return $tpl;
     }

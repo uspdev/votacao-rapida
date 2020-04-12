@@ -15,7 +15,27 @@
         "gabordemooij/redbean": "^5.4",
         "raelgc/template": "^2.2",
         "vlucas/phpdotenv": "^4.1",
-        "spipu/html2pdf": "^5.2"
+        "spipu/html2pdf": "^5.2",
+        "oomphinc/composer-installers-extender": "^1.1",
+        "bower-asset/bootstrap4": "^4.4"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "extra": {
+        "installer-types": [
+            "bower-asset",
+            "npm-asset"
+        ],
+        "installer-paths": {
+            "public/assets/{$name}/": [
+                "type:bower-asset",
+                "type:npm-asset"
+            ]
+        }
     },
     "autoload" : {
 		"psr-4" : {
