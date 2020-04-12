@@ -17,7 +17,8 @@
         "vlucas/phpdotenv": "^4.1",
         "spipu/html2pdf": "^5.2",
         "oomphinc/composer-installers-extender": "^1.1",
-        "bower-asset/bootstrap4": "^4.4"
+        "bower-asset/bootstrap4": "^4.4",
+        "bower-asset/jquery": "^3.5"
     },
     "repositories": [
         {

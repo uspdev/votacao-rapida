@@ -9,6 +9,7 @@ class View
     // index
     public static function index() {
         $tpl = SELF::template('index.html');
+        $tpl->block('block_topo_img');
         $tpl->show();
         exit;
     }
@@ -20,6 +21,14 @@ class View
 
         $tpl = SELF::template('token.html');
         $tpl->S = $sessao;
+
+        if (!empty($_SESSION['msg'])) {
+            //print_r(json_decode($_SESSION['msg']));exit;
+            $tpl->M = json_decode($_SESSION['msg']);
+            $tpl->block('block_M');
+            unset($_SESSION['msg']);
+        }
+
 
         $tpl->show();
     }
@@ -165,9 +174,11 @@ class View
     {
         $sessao = Curl::get($hash, $token);
         if (!empty($sessao->status) && $sessao->status == 'erro') {
-            echo '<pre>';
-            echo 'Erro ao obter sessão: ', PHP_EOL;
-            echo json_encode($sessao);
+            // echo '<pre>';
+            // echo 'Erro ao obter sessão: ', PHP_EOL;
+            // echo json_encode($sessao);
+            $_SESSION['msg'] = json_encode($sessao);
+            header('Location: ' . getenv('WWWROOT') . '/' . $hash);
             exit;
         }
         return $sessao;

@@ -1,15 +1,15 @@
 <meta http-equiv="Refresh" content="3">
 
-<h1>{S->nome}</h1>
+<h2>{S->nome}</h2>
 <hr>
 
 <div>
     <!-- BEGIN block_msg -->
-    <h2>{msg}</h2>
+    <h3>{msg}</h3>
     <!-- END block_msg -->
     <!-- BEGIN block_votacao -->
 
-    Estado: <b>{V->estado}</b>
+    Estado: <span id="estado">{V->estado}</span>
     <!-- BEGIN block_computados -->
     | Computados: <b>{V->computados}</b>
     <!-- END block_computados -->
@@ -17,7 +17,7 @@
 
     <div>
         <h3>{V->nome} ({V->tipo})</h3>
-        {V->descricao}<br><br>
+        <span class="text-secondary">{V->descricao}</span><br><br>
         <!-- BEGIN block_alternativa -->
         &nbsp; &nbsp; &nbsp; <b>[ ] {alternativa}</b><br>
         <!-- END block_alternativa -->
@@ -29,3 +29,20 @@
 
     <!-- END block_votacao -->
 </div>
+<script type="text/javascript">
+    $(function () {
+        var estado = $('#estado').html();
+        console.log(estado);
+        $('#estado').removeClass();
+        if (estado == 'Em votação') {
+            $('#estado').addClass('text-success');
+        }
+        if (estado == 'Em pausa') {
+            $('#estado').addClass('text-warning');
+        }
+        if (estado == 'Resultado') {
+            $('#estado').addClass('text-primary');
+        }
+    });
+
+</script>

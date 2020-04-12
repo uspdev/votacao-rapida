@@ -1,12 +1,28 @@
-<h1>Sistema de votação Rápida</h1>
-
+<h2>Sistema de votação Rápida</h2>
+<hr>
 <div>
-    <h2>{S->nome}</h2>
+    <h3>{S->nome}</h3>
 </div>
 <div>
+    <br>
+    <!-- BEGIN block_M -->
+    <div class="alert alert-warning">{M->msg}</div>
+    <!-- END block_M-->
+
     <form method="POST" target="">
-        Insira o token: <input type="text" name="token"><br>
-        <br>
-        <input type="submit" name="OK">
+        <div class="form-group">
+            <label for="token">Insira o token em MAIÚSCULAS ou escaneie o QRCode</label>
+            <div class="form-group col-sm-3">
+                <input class="form-control" type="text" name="token" id="token" autofocus>
+            </div>
+        </div>
+        <input type="submit" name="OK" class="btn btn-primary">
     </form>
 </div>
+<script type="text/javascript">
+    $(function () {
+        setTimeout(function() {
+            $('.alert').slideUp(500);
+        }, 4000)
+    });
+</script>
