@@ -10,15 +10,16 @@
 
     <!-- BEGIN block_votacao -->
     <div class="text-secondary">
-        Estado: <span id="estado">{V->estado}</span>
+        <span class="btn btn-info">{V->tipo}</span> 
+        <span id="estado">{V->estado}</span>
         <!-- BEGIN block_computados -->
-        | Computados: <b>{V->computados}</b>
+        <span class="btn btn-secondary" >Total: {V->computados} votos</span>
         <!-- END block_computados -->
     </div>
-    <hr />
+    <br />
 
     <div>
-        <h3>{V->nome} ({V->tipo})</h3>
+        <h3>{V->nome}</h3>
         <span class="text-secondary">{V->descricao}</span><br><br>
         <!-- BEGIN block_alternativa -->
         &nbsp; &nbsp; &nbsp; <b>[ ] {alternativa}</b><br>
@@ -36,14 +37,17 @@
         var estado = $('#estado').html();
         console.log(estado);
         $('#estado').removeClass();
+        if (estado == 'Em exibição') {
+            $('#estado').addClass('btn btn-outline-dark');
+        }
         if (estado == 'Em votação') {
-            $('#estado').addClass('text-success');
+            $('#estado').addClass('btn btn-success');
         }
         if (estado == 'Em pausa') {
-            $('#estado').addClass('text-warning');
+            $('#estado').addClass('btn btn-warning');
         }
         if (estado == 'Resultado') {
-            $('#estado').addClass('text-primary');
+            $('#estado').addClass('btn btn-primary');
         }
     });
 

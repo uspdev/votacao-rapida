@@ -25,7 +25,7 @@ class View
             case 'nuke':
                 require_once __DIR__ . '/../test/dados_teste.php';
 
-                echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
+                echo '<A href="demo/">Clique aqui para retornar</a>';
                 exit;
                 break;
 
@@ -34,7 +34,7 @@ class View
                 require_once ROOTDIR . '/cli/funcoes_cli.php';
                 gerarVotosAleatorios($hash);
 
-                echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
+                echo '<a href="demo/">Clique aqui para retornar</a>';
                 exit;
                 break;
 
@@ -43,7 +43,7 @@ class View
                 require_once ROOTDIR . '/cli/funcoes_cli.php';
                 echo excluirSessao($hash);
 
-                echo '<A href="' . $_SERVER['PHP_SELF'] . '">Clique aqui para retornar</a>';
+                echo '<A href="demo/">Clique aqui para retornar</a>';
                 exit;
                 break;
 
@@ -69,6 +69,7 @@ class View
 
         foreach ($sessoes as $sessao) {
             $tokens = $sessao->ownTokenList;
+            $tpl->S = $sessao;
             $counta = $countf = 1;
             foreach ($tokens as $token) {
                 switch ($token->tipo) {
@@ -95,7 +96,6 @@ class View
                         break;
                 }
             }
-            $tpl->S = $sessao;
             $tpl->block('block_sessao');
         }
 
@@ -248,7 +248,9 @@ class View
 
         $tpl->S = $sessao;
         foreach ($sessao->votacoes as $v) {
+            $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
             $tpl->V = $v;
+
             foreach ($v->acoes as $acao) {
                 $tpl->cod = $acao->cod;
                 $tpl->acao = $acao->nome;
@@ -265,7 +267,7 @@ class View
 
         $sessao = SELF::obterSessao($hash, $token);
 
-        $tpl = SELF::template('tela_index.html');
+        $tpl = SELF::template('painel_index.html');
         $tpl->block('block_topo_img');
 
         $tpl->S = $sessao;
@@ -273,7 +275,10 @@ class View
             $tpl->msg = $sessao->msg;
             $tpl->block('block_msg');
         } else {
-            $tpl->V = $sessao->em_tela;
+            $v = $sessao->em_tela;
+            $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+            $tpl->V = $v;
+
             if (!empty($sessao->em_tela->alternativas)) {
                 foreach ($sessao->em_tela->alternativas as $a) {
                     $tpl->alternativa = $a->texto;

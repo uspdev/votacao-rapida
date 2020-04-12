@@ -20,11 +20,11 @@
             <hr />
             <h3>{S->nome} - {S->unidade}</h3>
             <div>
-                <a href="?acao=tokens_pdf&arq={S->arq_tokens_pdf}">Tokens PDF</a> |
+                <a href="demo?acao=tokens_pdf&arq={S->arq_tokens_pdf}">Tokens PDF</a> |
                 <a href="{S->hash}" target="manual">Link de acesso</a> |
                 <a href="{S->hash}/{token_apoio}" target="apoio">Apoio ({token_apoio})</a> |
                 <a href="{S->hash}/{token_tela}" target="painel">Painel ({token_tela})</a> |
-                <a href="recepcao/?hash={S->hash}&token={token_recepcao}" target="recepcao">Recepção
+                <a href="{S->hash}/{token_recepcao}" target="recepcao">Recepção
                     ({token_recepcao})</a>
 
             </div>
@@ -39,8 +39,8 @@
                 <!-- END block_aberta -->
             </div>
             <div><br>
-                <a href="?acao=votar&hash={S->hash}">Gera votos aleatórios</a> | 
-                <a href="?acao=excluir&hash={S->hash}">Excluir esta Sessão</a>
+                <a href="demo?acao=votar&hash={S->hash}">Gera votos aleatórios</a> | 
+                <a href="demo?acao=excluir&hash={S->hash}">Excluir esta Sessão</a>
             </div>
         </div>
         <!-- END block_sessao -->
