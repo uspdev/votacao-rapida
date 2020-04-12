@@ -41,9 +41,32 @@ function gerarTokens($qt, $import = false)
 function gerarListaQrcodePdf($sessao, $logo2)
 {
     $filename = $sessao->hash . '_qrcodes.pdf';
+    $tokens = $sessao->ownTokenList;
 
     $tpl = new raelgc\view\Template(ROOTDIR . '/template/qrcode/instrucoes.html');
     $tpl->addFile('qrcode_lista', ROOTDIR . '/template/qrcode/lista.html');
+    $tpl->wwwroot = getenv('WWWROOT');
+    $tpl->S = $sessao;
+
+    foreach($tokens as $token) {
+        switch ($token->tipo) {
+            case 'apoio':
+                $tpl->token_apoio = $token->token;
+            break;
+            case 'painel':
+                $tpl->token_painel = $token->token;
+            break;
+            case 'recepcao':
+                $tpl->token_recepcao = $token->token;
+            break;   
+            case 'aberta':
+                $tpl->token_aberta = $token->token;
+            break;   
+            case 'fechada':
+                $tpl->token_fechada = $token->token;
+            break;  
+        }
+    }
 
     $tpl->nome = $sessao->nome;
     $tpl->logo1 = ROOTDIR . '/template/qrcode/logo_usp.png';
@@ -51,7 +74,6 @@ function gerarListaQrcodePdf($sessao, $logo2)
     $tpl->link = $sessao->link_manual;
     $tpl->datahora = date('d/m/Y H:i:s');
 
-    $tokens = $sessao->ownTokenList;
     foreach ($tokens as $token) {
 
         $tpl->token = $token->token;
