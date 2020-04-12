@@ -140,6 +140,7 @@ class View
         $sessao = SELF::obterSessao($hash, $token);
 
         $tpl = SELF::template('tela_index.html');
+        $tpl->block('block_topo_img');
 
         $tpl->S = $sessao;
         if (!empty($sessao->msg)) {
