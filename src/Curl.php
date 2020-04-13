@@ -31,7 +31,7 @@ class Curl
     public static function post($hash, $token, $data)
     {
         $url = API . '/run/' . $hash . '/' . $token;
-        $headers = ['Content-Type: application/json', 'user-agent: mock data votacao v1.0'];
+        $headers = ['Content-Type: application/json', 'user-agent:'.$_SERVER['HTTP_USER_AGENT']];
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
