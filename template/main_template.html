@@ -32,17 +32,17 @@
             margin-top: 0px;
         }
 
-        .top-bar {
+        .top-bar-user {
             width: 100%;
-            height: 22px;
+            height: 36px;
             background-image: url('media/bg-headtop.gif');
             margin-bottom: 5px;
             text-align: right;
             color: white;
             padding-top: 12px;
             padding-right: 3px;
-            font-family: Verdana;
-            font-size: 10px;
+            /* font-family: Verdana; */
+            /* font-size: 10px; */
         }
 
         .topo img {
@@ -54,15 +54,28 @@
 </head>
 
 <body>
-    <div class="topo">
-        <!-- BEGIN block_topo_img -->
-        <img src="media/logo_usp.png">
-        <img src="media/usp-logo-texto.png">
-        <!-- END block_topo_img -->
-        <div class="top-bar"></div>
-    </div>
-
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <!-- BEGIN block_topo_img -->
+                <div class="topo">
+                    <img src="media/logo_usp.png">
+                    <img src="media/usp-logo-texto.png">
+                </div>
+                <!-- END block_topo_img -->
+
+                <div class="top-bar-user pr-2">
+                    <!-- BEGIN block_nouser -->
+                    <a class="text-reset" href="login/">Entrar</a>
+                    <!-- END block_nouser -->
+
+                    <!-- BEGIN block_user -->
+                    {user->nomeUsuario} |
+                    <a class="text-reset" href="logout/">Sair</a>
+                    <!-- END block_user -->
+                </div>
+            </div>
+        </div>
         <div class="row">
             <div class="col-md-12">
                 {corpo}

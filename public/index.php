@@ -11,6 +11,14 @@ Flight::route('/', function () {
     View::index();
 });
 
+Flight::route('GET /login', function () {
+    View::login();
+});
+
+Flight::route('GET /logout', function () {
+    View::logout();
+});
+
 Flight::route('GET /demo', function () {
     View::demo();
 });
@@ -32,7 +40,7 @@ Flight::route('POST /votacao', function () {
     View::votacaoPOST($data);
 });
 
-Flight::route('GET /@hash', function ($hash) {
+Flight::route('GET /@hash:[A-Z]{20}', function ($hash) {
     View::hashGet($hash);
 });
 

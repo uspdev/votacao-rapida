@@ -17,6 +17,42 @@ class View
         exit;
     }
 
+    public static function login()
+    {
+        $auth = new \Uspdev\Senhaunica\Senhaunica([
+            'consumer_key' => getenv('CONSUMER_KEY'),
+            'consumer_secret' => getenv('CONSUMER_SECRET'),
+            'callback_id' => getenv('SENHA_UNICA_CALLBACK_ID'), // callback_id é o sequencial no servidor
+            'amb' => getenv('SENHA_UNICA_AMB'), // 'dev' = teste, 'prod' = producao
+        ]);
+
+        $res = $auth->login();
+        $_SESSION['user'] = $res;
+        header('Location:' . getenv('WWWROOT'));
+        exit;
+    }
+
+    public static function logout()
+    {
+        unset($_SESSION);
+        if (ini_get("session.use_cookies")) {
+            $params = session_get_cookie_params();
+            setcookie(
+                session_name(),
+                '',
+                time() - 42000,
+                $params["path"],
+                $params["domain"],
+                $params["secure"],
+                $params["httponly"]
+            );
+        }
+
+        session_destroy();
+        header('Location: ' . getenv('WWWROOT'));
+        exit;
+    }
+
     public static function demo()
     {
         $acao = isset($_GET['acao']) ? $_GET['acao'] : '';
@@ -399,6 +435,14 @@ class View
     {
         $tpl = new Template(ROOTDIR . '/template/main_template.html');
         $tpl->wwwroot = getenv('WWWROOT');
+
+        if (isset($_SESSION['user'])) {
+            $tpl->user = json_decode(json_encode($_SESSION['user']));
+            $tpl->block('block_user');
+        } else {
+            $tpl->block('block_nouser');
+
+        }
         $tpl->addFile('corpo', TPL . '/' . $addFile);
         return $tpl;
     }
