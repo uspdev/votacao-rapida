@@ -23,6 +23,7 @@ function gerarTokens($qt, $import = false)
             $token['_type'] = 'token';
         }
         $token['tipo'] = $tipo['tipo'];
+        $token['nome'] = '';
         for ($i = 0; $i < $tipo['qt']; $i++) {
             // aqui vamos garantir tokens únicos para cada sessão
             while ($newToken = generateRandomString(6)) {
