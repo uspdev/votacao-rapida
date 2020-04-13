@@ -9,11 +9,12 @@
     <!-- END block_msg -->
 
     <!-- BEGIN block_votacao -->
-    <div class="text-secondary">
-        <span class="btn btn-info">{V->tipo}</span>
-        <span id="estado">{V->estado}</span>
+    <div class="text-secondary h4">
+        <span class="badge badge-info">{V->tipo}</span>
+        <span id="estado" class="badge {V->estadoclass}">{V->estado}</span>
+
         <!-- BEGIN block_computados -->
-        <span class="btn btn-secondary">Total: {V->computados} votos</span>
+        <span class="badge badge-secondary">Total: {V->computados} votos</span>
         <!-- END block_computados -->
     </div>
     <br />
@@ -34,23 +35,3 @@
 
     <!-- END block_votacao -->
 </div>
-<script type="text/javascript">
-    $(function () {
-        var estado = $('#estado').html();
-        console.log(estado);
-        $('#estado').removeClass();
-        if (estado == 'Em exibição') {
-            $('#estado').addClass('btn btn-outline-dark');
-        }
-        if (estado == 'Em votação') {
-            $('#estado').addClass('btn btn-success');
-        }
-        if (estado == 'Em pausa') {
-            $('#estado').addClass('btn btn-warning');
-        }
-        if (estado == 'Resultado') {
-            $('#estado').addClass('btn btn-primary');
-        }
-    });
-
-</script>

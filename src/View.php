@@ -198,6 +198,8 @@ class View
         $tpl = SELF::template('votacao_index.html');
 
         $tpl->S = $sessao;
+
+        // se veio msg é porque houve algum problema
         if (!empty($sessao->msg)) {
             $tpl->msg = $sessao->msg;
             $tpl->block('block_msg');
@@ -205,21 +207,30 @@ class View
             $v = $sessao->render_form;
 
             if (!empty($_SESSION['msg'])) {
+                // aqui trata o retorno do post
                 $msg = json_decode($_SESSION['msg']);
                 unset($_SESSION['msg']);
 
                 if ($msg->status == 'ok') {
-                    $v->msg = 'Voto computado com sucesso';
+                    $msg->msg = 'Voto computado com sucesso';
+                    $msg->datajson = json_encode($msg->data);
+                    $block = 'block_msg_sucesso';
+                } else {
+                    $msg->datajson = '';
+                    $block = 'block_msg_erro';
                 }
-                $tpl->block('block_msg2');
-
+                $tpl->M = $msg;
+                $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+                $tpl->V = $v;
+                $tpl->block($block);
+            } else {
+                // aqui mostra o form de votacao
+                $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+                $tpl->V = $v;
+                $form = new Form($v);
+                $tpl->form = $form->render();
+                $tpl->block('block_form');
             }
-
-            $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto': 'Voto fechado';
-            $tpl->V = $v;
-            $form = new Form($v);
-            $tpl->form = $form->render();
-            $tpl->block('block_form');
         }
 
         $tpl->show();
@@ -259,11 +270,23 @@ class View
             exit;
         }
 
+        //print_r($sessao);exit;
         $tpl = SELF::template('apoio_index.html');
 
         $tpl->S = $sessao;
         foreach ($sessao->votacoes as $v) {
             $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+            $v->estadoclass = SELF::getEstadoClass($v->estado);
+            $v->accordion = new \stdClass();
+            if ($v->estado == 'Fechada' or $v->estado == 'Finalizado') {
+                $v->accordion->mostrar = '';
+                $v->accordion->disabled = 'disabled';
+                $v->accordion->border = '';
+            } else {
+                $v->accordion->mostrar = 'show';
+                $v->accordion->disabled = '';
+                $v->accordion->border = 'border-primary mb-3';
+            }
             $tpl->V = $v;
 
             foreach ($v->acoes as $acao) {
@@ -292,6 +315,10 @@ class View
         } else {
             $v = $sessao->em_tela;
             $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+
+            // vamos formatar a apresentação do estado
+            $v->estadoclass = SElF::getEstadoClass($v->estado);
+
             $tpl->V = $v;
 
             if (!empty($v->descricao)) {
@@ -319,6 +346,30 @@ class View
         }
 
         $tpl->show();
+    }
+
+    protected static function getEstadoClass($estado)
+    {
+        switch ($estado) {
+            case 'Em exibição':
+                return 'badge-secondary';
+                break;
+            case 'Em votação':
+                return 'badge-success';
+                break;
+            case 'Em pausa':
+                return 'badge-warning';
+                break;
+            case 'Resultado':
+                return 'badge-primary';
+                break;
+            case 'Finalizado':
+                return 'badge-danger';
+                break;
+            case 'Fechada':
+                return 'badge-success';
+                break;
+        }
     }
 
     protected static function obterSessao($hash, $token)

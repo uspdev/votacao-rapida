@@ -7,23 +7,42 @@
 <h2>{S->nome}</h2>
 <hr />
 <p class="text-secondary">
-    <span class="btn btn-info btn-sm">{V->tipo}</span>
-    <span class="btn btn-light btn-sm">token: {S->token->token}</span>
+    <span class="badge badge-info">{V->tipo}</span>
+    <span class="badge badge-secondary">token: {S->token->token}</span>
 </p>
 <div>
     <!-- BEGIN block_msg -->
     <h3>{msg}</h3>
     <!-- END block_msg -->
 
-    <!-- BEGIN block_msg2 -->
-    <div>{V->msg}</div>
-    <!-- END block_msg2 -->
+    <!-- BEGIN block_msg_sucesso -->
+    <div class="alert alert-success">{M->msg}</div>
+
+    <div class="d-none" id="data">
+        {M->dataJson}
+    </div>
+    <input type="button" id="mostrar_data" class="btn" name="Mostrar voto" value="Mostrar voto">
+
+    <script type="text/javascript">
+        $(function () {
+            $('#mostrar_data').click(function () {
+                $('#data').removeClass('d-none').addClass('d-inline');
+                $(this).addClass('d-none');
+            });
+        });
+    </script>
+    <!-- END block_msg_sucesso -->
+
+    <!-- BEGIN block_msg_erro -->
+    <div class="alert alert-success">{M->msg}</div>
+    <!-- END block_msg_erro -->
 
     <!-- BEGIN block_form -->
     {form}
+    <!-- {V->input_count } -->
     <script type="text/javascript">
         $(function () {
-            var max = 1;
+            var max = 3;
 
             $('input[type="checkbox"]').click(function () {
                 var countcheck = $('input[type="checkbox"]:checked').length;

@@ -1,16 +1,40 @@
 <h2>{S->nome}</h2>
 <p>Votações para essa sessão</p>
 <hr />
-<div>
+
+<div id="accordion">
     <!-- BEGIN block_votacao -->
-    <div>
-        <h3>{V->nome}</h3>
-        <div>{V->tipo} | Estado: {V->estado}
-            <!-- BEGIN block_acao -->
-            | <a href='apoio?acao={cod}&votacao_id={V->id}'>{acao}</a>
-            <!-- END block_acao -->
+    <div class="card {V->accordion->border}">
+
+        <div class="card-header" id="heading_{V->id}">
+            <h5 class="mb-0">
+                <button class="btn btn-light btn-block {V->accordion->disabled}" data-toggle="collapse" data-target="#collapse_{V->id}"
+                    aria-expanded="true" aria-controls="collapse_{V->id}">
+                    <h5>{V->nome}</h5>
+                    <div>
+                        <span class="badge badge-info">{V->tipo}</span>
+                        <span class="badge {V->estadoclass}">{V->estado}</span></div>
+                    <div>
+                </button>
+            </h5>
         </div>
+
+        <div id="collapse_{V->id}" class="collapse {V->accordion->mostrar} " aria-labelledby="heading_{V->id}"
+            data-parent="#accordion">
+            <div class="card-body">
+                <h6 class="card-subtitle mb-2 text-muted">{V->descricao}</h6>
+
+                <div class="card-body">
+                    <!-- BEGIN block_acao -->
+                    <a class="btn btn-primary btn-block" href='apoio?acao={cod}&votacao_id={V->id}'>{acao}</a>
+                    <!-- END block_acao -->
+                </div>
+            </div>
+        </div>
+
     </div>
-    <hr />
+    <br>
+
     <!-- END block_votacao -->
+
 </div>
