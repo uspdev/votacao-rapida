@@ -25,6 +25,7 @@ function limparBD()
     R::wipe('sessao');
     R::wipe('votacao');
     R::wipe('alternativa');
+    R::wipe('resposta');
     R::wipe('token');
     R::exec('SET FOREIGN_KEY_CHECKS = 1;');
     //R::nuke();
