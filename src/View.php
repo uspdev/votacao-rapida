@@ -194,7 +194,7 @@ class View
         list($hash, $token) = SELF::verificaSessao('votacao');
         $sessao = SELF::obterSessao($hash, $token);
 
-        //print_r($sessao);exit;
+        //print_r($sessao);//exit;
         $tpl = SELF::template('votacao_index.html');
 
         $tpl->S = $sessao;
@@ -202,7 +202,22 @@ class View
             $tpl->msg = $sessao->msg;
             $tpl->block('block_msg');
         } else {
-            $form = new Form($sessao->render_form);
+            $v = $sessao->render_form;
+
+            if (!empty($_SESSION['msg'])) {
+                $msg = json_decode($_SESSION['msg']);
+                unset($_SESSION['msg']);
+
+                if ($msg->status == 'ok') {
+                    $v->msg = 'Voto computado com sucesso';
+                }
+                $tpl->block('block_msg2');
+
+            }
+
+            $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto': 'Voto fechado';
+            $tpl->V = $v;
+            $form = new Form($v);
             $tpl->form = $form->render();
             $tpl->block('block_form');
         }
@@ -221,7 +236,7 @@ class View
             //print_r($data);
             //echo json_encode((Array) $data);exit;
             $res = Curl::post($hash, $sessao->token->token, $data);
-            echo json_encode($res); //exit;
+            $_SESSION['msg'] = json_encode($res); //exit;
             header('Location:' .  getenv('WWWROOT') . '/votacao');
             exit;
         }
@@ -278,6 +293,10 @@ class View
             $v = $sessao->em_tela;
             $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
             $tpl->V = $v;
+
+            if (!empty($v->descricao)) {
+                $tpl->block('block_descricao');
+            }
 
             if (!empty($sessao->em_tela->alternativas)) {
                 foreach ($sessao->em_tela->alternativas as $a) {

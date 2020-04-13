@@ -36,6 +36,8 @@ if ($amb == 'dev') {
 if ($amb == 'prod') {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
+    putenv('USPDEV_CACHE_DISABLE=1');
+
 }
 
 # veja https://github.com/uspdev/ip-control

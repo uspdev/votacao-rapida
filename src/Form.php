@@ -5,7 +5,7 @@ namespace Uspdev\Votacao;
 class Form
 {
     protected $out = '';
-    
+
     function __construct($data)
     {
         $this->data = $data;
@@ -22,7 +22,7 @@ class Form
 
     function titulo()
     {
-        $out = '<h3>' . $this->data->nome . ' (' . $this->data->tipo . ')</h3>' . PHP_EOL;
+        $out = '<h3>' . $this->data->nome . '</h3>' . PHP_EOL;
         $this->out .= $out;
     }
 
@@ -39,9 +39,18 @@ class Form
     function checkbox()
     {
         $alts = $this->data->alternativas;
-        $out = '<div>' . PHP_EOL;
+        //print_r($this->data);exit;
+        if ($this->data->input_count == 1) {
+            $type="radio";
+        } else {
+            $type="checkbox";
+        }
+        $out = '<div class="alternativas">' . PHP_EOL;
         foreach ($alts as $a) {
-            $out .= '<input type="checkbox" name="alternativa_id" value="' . $a->id . '"> ' . $a->texto . '<br>' . PHP_EOL;
+            $out .= '<div class="form-check space">'.PHP_EOL;
+            $out .= '<input type="'.$type.'" class="form-check-input" name="alternativa_id" value="' . $a->id . '" id="check_' . $a->id . '"> '  . PHP_EOL;
+            $out .= '<label class="form-check-label" for="check_' . $a->id . '">' . $a->texto . '</label>' . PHP_EOL;
+            $out .= '</div>' . PHP_EOL;
         }
         $out .= '</div>' . PHP_EOL;
         $this->out .= $out;
@@ -53,7 +62,7 @@ class Form
         $out = '<input type="hidden" name="acao" value="' . $acao->cod . '">' . PHP_EOL;
         $out .= '<input type="hidden" name="votacao_id" value="' . $this->data->id . '">' . PHP_EOL;
         $out .= '<br>';
-        $out .= '<input type="submit" name="Enviar">' . PHP_EOL;
+        $out .= '<input type="submit" class="btn btn-primary" name="Enviar" value="Enviar">' . PHP_EOL;
         $this->out .= $out;
     }
 }

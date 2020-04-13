@@ -10,17 +10,19 @@
 
     <!-- BEGIN block_votacao -->
     <div class="text-secondary">
-        <span class="btn btn-info">{V->tipo}</span> 
+        <span class="btn btn-info">{V->tipo}</span>
         <span id="estado">{V->estado}</span>
         <!-- BEGIN block_computados -->
-        <span class="btn btn-secondary" >Total: {V->computados} votos</span>
+        <span class="btn btn-secondary">Total: {V->computados} votos</span>
         <!-- END block_computados -->
     </div>
     <br />
 
     <div>
         <h3>{V->nome}</h3>
+        <!-- BEGIN block_descricao -->
         <span class="text-secondary">{V->descricao}</span><br><br>
+        <!-- END block_descricao -->
         <!-- BEGIN block_alternativa -->
         &nbsp; &nbsp; &nbsp; <b>[ ] {alternativa}</b><br>
         <!-- END block_alternativa -->

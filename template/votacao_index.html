@@ -1,13 +1,40 @@
+<style>
+    .space {
+        margin: 10px;
+    }
+</style>
+
 <h2>{S->nome}</h2>
 <hr />
-<p class="text-secondary">Token de votação {S->token->tipo}: {S->token->token}</p>
-<hr />
+<p class="text-secondary">
+    <span class="btn btn-info btn-sm">{V->tipo}</span>
+    <span class="btn btn-light btn-sm">token: {S->token->token}</span>
+</p>
 <div>
     <!-- BEGIN block_msg -->
     <h3>{msg}</h3>
     <!-- END block_msg -->
 
+    <!-- BEGIN block_msg2 -->
+    <div>{V->msg}</div>
+    <!-- END block_msg2 -->
+
     <!-- BEGIN block_form -->
     {form}
+    <script type="text/javascript">
+        $(function () {
+            var max = 1;
+
+            $('input[type="checkbox"]').click(function () {
+                var countcheck = $('input[type="checkbox"]:checked').length;
+                console.log(countcheck);
+                if (countcheck >= max) {
+                    $("input:checkbox:not(:checked)").attr("disabled", true);
+                } else {
+                    $("input:checkbox").attr("disabled", false);
+                }
+            });
+        });
+    </script>
     <!-- END block_form -->
 </div>
