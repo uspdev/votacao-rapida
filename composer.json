@@ -13,7 +13,7 @@
         "ext-curl": "*",
         "uspdev/webservice": "^1",
         "gabordemooij/redbean": "^5.4",
-        "raelgc/template": "dev-master",
+        "raelgc/template": "^2.2",
         "vlucas/phpdotenv": "^4.1",
         "spipu/html2pdf": "^5.2",
         "oomphinc/composer-installers-extender": "^1.1",
