@@ -70,7 +70,7 @@ function gerarListaQrcodePdf($sessao, $logo2)
     }
 
     $tpl->nome = $sessao->nome;
-    $tpl->logo1 = ROOTDIR . '/template/qrcode/logo_usp.png';
+    $tpl->logo1 = ROOTDIR . '/public/media/usp-logo.png';
 
     $tpl->link = $sessao->link_manual;
     $tpl->datahora = date('d/m/Y H:i:s');
