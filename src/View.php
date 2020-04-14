@@ -2,7 +2,6 @@
 
 namespace Uspdev\Votacao;
 
-use raelgc\view\Template;
 use \RedBeanPHP\R as R;
 
 class View
@@ -10,8 +9,16 @@ class View
     // index
     public static function index()
     {
-        $tpl = SELF::template('index.html');
+        $tpl = new Template('index.html');
         $tpl->block('block_topo_img');
+
+        if (isset($_SESSION['user'])) {
+            $tpl->user = json_decode(json_encode($_SESSION['user']));
+            $tpl->block('block_user');
+        } else {
+            $tpl->block('block_nouser');
+
+        }
         //$tpl->addFile('instrucoes',TPL.'/qrcode/instrucoes.html');
         $tpl->show();
         exit;
@@ -100,7 +107,7 @@ class View
 
         //print_r(R::exportAll($sessoes));
 
-        $tpl = SELF::template('demo.html');
+        $tpl = new Template('demo.html');
         $tpl->block('block_topo_img');
 
         foreach ($sessoes as $sessao) {
@@ -181,7 +188,7 @@ class View
     {
         $sessao = SELF::obterSessao($hash, '');
 
-        $tpl = SELF::template('token.html');
+        $tpl = new Template('token.html');
         $tpl->S = $sessao;
 
         if (!empty($_SESSION['msg'])) {
@@ -231,7 +238,7 @@ class View
         $sessao = SELF::obterSessao($hash, $token);
 
         //print_r($sessao);//exit;
-        $tpl = SELF::template('votacao_index.html');
+        $tpl = new Template('votacao_index.html');
 
         $tpl->S = $sessao;
 
@@ -307,7 +314,7 @@ class View
         }
 
         //print_r($sessao);exit;
-        $tpl = SELF::template('apoio_index.html');
+        $tpl = new Template('apoio_index.html');
 
         $tpl->S = $sessao;
         foreach ($sessao->votacoes as $v) {
@@ -341,7 +348,7 @@ class View
 
         $sessao = SELF::obterSessao($hash, $token);
 
-        $tpl = SELF::template('painel_index.html');
+        $tpl = new Template('painel_index.html');
         $tpl->block('block_topo_img');
 
         $tpl->S = $sessao;
@@ -436,13 +443,6 @@ class View
         $tpl = new Template(ROOTDIR . '/template/main_template.html');
         $tpl->wwwroot = getenv('WWWROOT');
 
-        if (isset($_SESSION['user'])) {
-            $tpl->user = json_decode(json_encode($_SESSION['user']));
-            $tpl->block('block_user');
-        } else {
-            $tpl->block('block_nouser');
-
-        }
         $tpl->addFile('corpo', TPL . '/' . $addFile);
         return $tpl;
     }
@@ -455,7 +455,7 @@ class View
             return [$hash, $token];
         } else {
             // vamos voltar ao inicio
-            $tpl = SELF::template('erro_sem_sessao.html');
+            $tpl = new Template('erro_sem_sessao.html');
             $tpl->show();
             exit;
         }
