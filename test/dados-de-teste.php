@@ -12,7 +12,7 @@ $lista = 'João, Adriana, Maria, Carlos, Antônio, Marcela, Edson';
 $tokens = gerarTokens(20, true);
 
 // se não quiser logo secundário, deixar em branco
-$logo2 = '';
+$logo2 = __DIR__ . '/uspdev-logo.png';;
 
 $sessao = [
     '_type' => 'sessao', // fixo
