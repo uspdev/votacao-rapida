@@ -12,15 +12,16 @@ class View
         $tpl = new Template('index.html');
         $tpl->block('block_topo_img');
 
+        $topbar = new \stdClass();
         if (isset($_SESSION['user'])) {
             $tpl->user = json_decode(json_encode($_SESSION['user']));
-            $tpl->block('block_user');
+            $topbar->class='top-bar-user';
+            $topbar->block='block_user_in';
         } else {
-            $tpl->block('block_nouser');
-
+            $topbar->class='top-bar-user';
+            $topbar->block='block_user_out';
         }
-        //$tpl->addFile('instrucoes',TPL.'/qrcode/instrucoes.html');
-        $tpl->show();
+        $tpl->show($topbar);
         exit;
     }
 

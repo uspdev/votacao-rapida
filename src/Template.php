@@ -12,12 +12,17 @@ class Template extends \raelgc\view\Template
         $this->addFile('corpo', TPL . '/' . $addFile);
     }
 
-    public function show($block = '')
+    public function show($topbar='')
     {
-        if ($block) {
-            $this->block($block);
+        if ($topbar) {
+            $this->topbar_class = $topbar->class;
+            $this->block($topbar->block);
         } else {
-            parent::show();
+            $this->topbar_class='top-bar-no-user';
+            $this->block('block_no_user');
+
         }
+        parent::show();
+
     }
 }
