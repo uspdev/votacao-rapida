@@ -8,7 +8,7 @@ $e = 'e.usp.br/fiv';
 // lista de nomes a associar aos tokens abertos
 $lista = 'João, Adriana, Maria, Carlos, Antônio, Marcela, Edson';
 
-//gerando 10 tokens
+//gerando 20 tokens
 $tokens = gerarTokens(20, true);
 
 // se não quiser logo secundário, deixar em branco

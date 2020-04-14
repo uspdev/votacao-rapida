@@ -15,11 +15,11 @@ class View
         $topbar = new \stdClass();
         if (isset($_SESSION['user'])) {
             $tpl->user = json_decode(json_encode($_SESSION['user']));
-            $topbar->class='top-bar-user';
-            $topbar->block='block_user_in';
+            $topbar->class = 'top-bar-user';
+            $topbar->block = 'block_user_in';
         } else {
-            $topbar->class='top-bar-user';
-            $topbar->block='block_user_out';
+            $topbar->class = 'top-bar-user';
+            $topbar->block = 'block_user_out';
         }
         $tpl->show($topbar);
         exit;
@@ -66,27 +66,18 @@ class View
         $acao = isset($_GET['acao']) ? $_GET['acao'] : '';
 
         switch ($acao) {
-            case 'nuke':
-                require_once __DIR__ . '/../test/dados_teste.php';
-
-                echo '<A href="demo/">Clique aqui para retornar</a>';
-                exit;
-                break;
 
             case 'votar':
                 $hash = $_GET['hash'];
                 require_once ROOTDIR . '/cli/funcoes_cli.php';
                 gerarVotosAleatorios($hash);
-
                 echo '<a href="demo/">Clique aqui para retornar</a>';
                 exit;
                 break;
 
-            case 'excluir':
-                $hash = $_GET['hash'];
+            case 'reset':
                 require_once ROOTDIR . '/cli/funcoes_cli.php';
-                echo excluirSessao($hash);
-
+                echo importareSubstituirDadosDeSessao(ROOTDIR . '/test/sessao-votacao-demo.php');
                 echo '<A href="demo/">Clique aqui para retornar</a>';
                 exit;
                 break;
@@ -104,44 +95,42 @@ class View
         R::selectDatabase('votacao');
         R::useFeatureSet('latest');
 
-        $sessoes = R::findAll('sessao');
+        $sessao = R::findOne('sessao', 'hash = ?', ['UUZEWSRWKBXOGJVWIYJV']);
 
         //print_r(R::exportAll($sessoes));
 
         $tpl = new Template('demo.html');
         $tpl->block('block_topo_img');
 
-        foreach ($sessoes as $sessao) {
-            $tokens = $sessao->ownTokenList;
-            $tpl->S = $sessao;
-            $counta = $countf = 1;
-            foreach ($tokens as $token) {
-                switch ($token->tipo) {
-                    case 'apoio':
-                        $tpl->token_apoio = $token->token;
-                        break;
-                    case 'painel':
-                        $tpl->token_tela = $token->token;
-                        break;
-                    case 'recepcao':
-                        $tpl->token_recepcao = $token->token;
-                        break;
-                    case 'fechada':
-                        $tpl->token_votacao = $token->token;
-                        $tpl->count = $countf;
-                        $countf++;
-                        $tpl->block('block_fechada');
-                        break;
-                    case 'aberta':
-                        $tpl->token_votacao = $token->token;
-                        $tpl->count = $counta;
-                        $counta++;
-                        $tpl->block('block_aberta');
-                        break;
-                }
+        $tokens = $sessao->ownTokenList;
+        $tpl->S = $sessao;
+        $counta = $countf = 1;
+        foreach ($tokens as $token) {
+            switch ($token->tipo) {
+                case 'apoio':
+                    $tpl->token_apoio = $token->token;
+                    break;
+                case 'painel':
+                    $tpl->token_tela = $token->token;
+                    break;
+                case 'recepcao':
+                    $tpl->token_recepcao = $token->token;
+                    break;
+                case 'fechada':
+                    $tpl->token_votacao = $token->token;
+                    $tpl->count = $countf;
+                    $countf++;
+                    $tpl->block('block_fechada');
+                    break;
+                case 'aberta':
+                    $tpl->token_votacao = $token->token;
+                    $tpl->count = $counta;
+                    $counta++;
+                    $tpl->block('block_aberta');
+                    break;
             }
-            $tpl->block('block_sessao');
         }
+        $tpl->block('block_sessao');
 
         // vamos mostrar as relações entre estados e ações
         $estados = R::findAll('estado');
@@ -179,7 +168,6 @@ class View
 
 
 
-        //$tpl->addFile('instrucoes',TPL.'/qrcode/instrucoes.html');
         $tpl->show();
         exit;
     }
