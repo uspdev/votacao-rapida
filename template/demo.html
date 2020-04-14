@@ -6,11 +6,18 @@
     <h1>Votação rápida: Painel de demonstração</h1>
 
     <div>
+        Esta é uma votação de demonstração do sistema.<br>
+        O link <b>Tokens PDF</b> permite baixar os tokens gerados para essa votação.<br>
+        O <b>apoio</b> controla o andamento da votação que deve ser apresentado pelo <b>painel</b>.<br>
+        A <b>recepção</b> distribui os <b>QRCodes</b> aos eleitores previamente.<br>
+        <br>
+        O <b>eleitor</b> recebe um token e um QRCode que dá acesso à interface de votação.
+        Se usar o QRCode, o eleitor entra direto na votação. Se usar o token, ele tem de entrar
+        no link de acesso e digitar o <b>token</b>.<br>
+        <br>
+        Durante uma votação, é possivel gerar votos aleatórios para fins de demonstração.<br>
         Sempre que necessário limpe os dados de votação.<br>
-        O apoio controla o andamento da votação.<br>
-        A tela mostra o andamento a ser exibido em um telão.<br>
-        Recepção ainda não tem nada.<br>
-        <hr />
+        <br>
     </div>
 
     <h2>Sessões de votação</h2>
@@ -39,7 +46,7 @@
                 <!-- END block_aberta -->
             </div>
             <div><br>
-                <a href="demo?acao=votar&hash={S->hash}">Gera votos aleatórios</a> | 
+                <a href="demo?acao=votar&hash={S->hash}">Gera votos aleatórios</a> |
                 <a href="demo?acao=reset">Limpar os dados e começar de novo</a>
             </div>
         </div>
@@ -47,24 +54,7 @@
 
     </div>
     <hr />
-    <h2>Diagrama estado-ação</h2>
 
-    <p>Um estado pode ter várias ações mas uma ação aponta para um único estado.</p>
-    <div>
-        Estado => Ação<br>
-        <!-- BEGIN block_estado -->
-        {E->nome} => {E->acao_nome}<br>
-        <!-- END block_estado -->
-    </div>
-
-    <h2>Diagrama ação-estado</h2>
-
-    <div>
-        Ação: Estado inicial -> estado final<br>
-        <!-- BEGIN block_acao -->
-        {A->nome}: {A->estado_ini} -> {A->estado}<br>
-        <!-- END block_acao -->
-    </div>
     <br>
     <br>
 </body>

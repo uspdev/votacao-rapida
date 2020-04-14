@@ -133,6 +133,7 @@ class View
         $tpl->block('block_sessao');
 
         // vamos mostrar as relações entre estados e ações
+        // Estado => Ação
         $estados = R::findAll('estado');
         foreach ($estados as $e) {
             $acao_nome = '';
@@ -144,10 +145,11 @@ class View
                 $acao_nome .= $acao->nome . ' (-> ' . $e_nome . ') | ';
             }
             $e->acao_nome = substr($acao_nome, 0, -2);
-            $tpl->E = $e;
-            $tpl->block('block_estado');
+            //$tpl->E = $e;
+            //$tpl->block('block_estado');
         }
 
+        //Ação: Estado inicial -> estado final
         $acoes = R::find('acao', "escopo = 'apoio'");
         foreach ($acoes as $a) {
             $a->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $a->estado);
@@ -162,8 +164,8 @@ class View
                 $a->estado_ini = substr($a->estado_ini, 0, -2);
             }
 
-            $tpl->A = $a;
-            $tpl->block('block_acao');
+            //$tpl->A = $a;
+            //$tpl->block('block_acao');
         }
 
 
