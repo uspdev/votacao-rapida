@@ -15,7 +15,7 @@ $sessao = [
     '_type' => 'sessao', // fixo
     'unidade' => 'EESC',
     'ano' => 2020,
-    'nome' => '339 Sessão do CTA',
+    'nome' => '339a. Sessão do CTA',
     'hash' => $hash,
     'estado' => 'aberto', // 0 em elaboracao, 1 aberto, 2 finalizado
     'link_manual' => $e,
@@ -26,38 +26,34 @@ $sessao = [
         [
             '_type' => 'votacao', // fixo
             'estado' => 0, // sempre inicia fechado
-            'nome' => 'Homologação de relatório - SHS',
-            'descricao' => 'Processo seletivo do SHS',
+            'nome' => 'APROVAÇÃO DA ATA',
+            'descricao' => ' DA 338ª REUNIÃO DO CTA, DE 21/02/2020',
             'tipo' => 'aberta',
             'input_type' => 'checkbox',
-            'input_count' => '3',
+            'input_count' => '1',
             'data_ini' => '',
             'data_fim' => '',
             'ownAlternativaList' => [
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'Armando Sales',
+                    'texto' => 'Favorável',
                 ],
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'Oswaldo Cruz',
+                    'texto' => 'Contrário',
                 ],
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'Dom Pedro',
-                ],
-                [
-                    '_type' => 'alternativa',
-                    'texto' => 'Marie Curie',
+                    'texto' => 'Abstenção',
                 ],
             ],
         ],
         [
             '_type' => 'votacao',
             'estado' => 0, // fechado
-            'nome' => 'Você é a favor de usar votação eletrônica?',
-            'descricao' => '',
-            'tipo' => 'fechada',
+            'nome' => '20.1.341.18.7 - PROCESSO SELETIVO',
+            'descricao' => ' DO DEPARTAMENTO DE ENGENHARIA ELÉTRICA E DE COMPUTAÇÃO. ABERTURA DE INSCRIÇÕES',
+            'tipo' => 'aberta',
             'input_type' => 'radio',
             'input_count' => '1',
             'data_ini' => '',
@@ -65,11 +61,74 @@ $sessao = [
             'ownAlternativaList' => [
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'Sim',
+                    'texto' => 'Favorável',
                 ],
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'Não',
+                    'texto' => 'Contrário',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Abstenção',
+                ],
+            ],
+        ],
+        [
+            '_type' => 'votacao',
+            'estado' => 0, // fechado
+            'nome' => 'CREDENCIAMENTO DE DOCENTE NA CERT',
+            'descricao' => '10.1.787.18.5 - ANDRÉ TEÓFILO BECK',
+            'tipo' => 'aberta',
+            'input_type' => 'radio',
+            'input_count' => '1',
+            'data_ini' => '',
+            'data_fim' => '',
+            'ownAlternativaList' => [
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Favorável',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Contrário',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Abstenção',
+                ],
+            ],
+        ],
+        [
+            '_type' => 'votacao',
+            'estado' => 0, // fechado
+            'nome' => 'CREDENCIAMENTO DE DOCENTE NA CERT - EM BLOCO',
+            'descricao' => '10.1.787.18.5 - ANDRÉ TEÓFILO BECK<br>
+            12.1.3451.18.0 - VLADIMIR GUILHERME HAACH<br>
+            14.1.1207.18.6 - JOSÉ ELIAS LAIER<br>
+            98.1.1169.18.0 - MARIA DO CARMO CALIJURI<br>
+            98.1.1191.18.6 - LUIZ ANTONIO DANIEL<br>
+            01.1.1165.18.9 - EDSON CEZAR WENDLAND<br>
+            11.1.1509.18.0 - LYDA PATRÍCIA SABOGAL PAZ<br>
+            10.1.2744.18.1 - GHERHARDT RIBATSKI<br>
+            08.1.3226.18.1 - CARLOS DIAS MACIEL
+            ',
+            'tipo' => 'aberta',
+            'input_type' => 'radio',
+            'input_count' => '1',
+            'data_ini' => '',
+            'data_fim' => '',
+            'ownAlternativaList' => [
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Favorável',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Contrário',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Abstenção',
                 ],
             ],
         ],
