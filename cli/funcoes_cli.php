@@ -45,7 +45,7 @@ function dadosDeControle()
     R::wipe('acao');
 
     $estados = [
-        ['_type' => 'estado', 'cod' => 0, 'nome' => 'Fechada', 'acoes' => '0', 'tabela' => 'votacao'],
+        ['_type' => 'estado', 'cod' => 0, 'nome' => 'Fechada', 'acoes' => '0, 10', 'tabela' => 'votacao'],
         ['_type' => 'estado', 'cod' => 1, 'nome' => 'Em exibição', 'acoes' => '1,2', 'tabela' => 'votacao'],
         ['_type' => 'estado', 'cod' => 2, 'nome' => 'Em votação', 'acoes' => '3', 'tabela' => 'votacao'],
         ['_type' => 'estado', 'cod' => 3, 'nome' => 'Em pausa', 'acoes' => '4,5,6', 'tabela' => 'votacao'],
@@ -63,6 +63,8 @@ function dadosDeControle()
         ['_type' => 'acao', 'cod' => 6, 'estado' => '1', 'nome' => 'Reiniciar', 'msg' => 'Votação reiniciada', 'escopo' => 'apoio'],
         ['_type' => 'acao', 'cod' => 7, 'estado' => '5', 'nome' => 'Finalizar', 'msg' => 'Votação finalizada', 'escopo' => 'apoio'],
         ['_type' => 'acao', 'cod' => 8, 'estado' => '', 'nome' => 'Responder', 'msg' => 'Resposta aceita', 'escopo' => 'votacao'],
+        ['_type' => 'acao', 'cod' => 9, 'estado' => '', 'nome' => 'Instantâneo', 'msg' => 'Novo instantâneo', 'escopo' => 'apoio'],
+        ['_type' => 'acao', 'cod' => 10, 'estado' => '', 'nome' => 'Excluir', 'msg' => 'Excluido com sucesso', 'escopo' => 'apoio'],
 
     ];
 

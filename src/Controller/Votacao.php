@@ -158,7 +158,7 @@ class Votacao
         // vmos carregar a votação
         $votacao = R::load('votacao', $data->votacao_id);
 
-        switch ($data['acao']) {
+        switch (intval($data['acao'])) {
             case '0': // mostrar na tela
                 $votacao->estado = $acao->estado;
                 R::store($votacao);
@@ -219,7 +219,55 @@ class Votacao
 
                 return ['msg' => $acao->msg];
                 break;
+
+            case '9':
+                // aqui não precisa de $votacao, pois vai criar uma nova
+                $votacao = SELF::novoInstantaneo($data['texto']);
+                $votacao->sessao_id = $sessao->id;
+                //$sessao->ownVotacaoList[] = $votacao;
+                R::store($votacao);
+                //echo '<pre>';
+                //print_r($votacao);
+                //exit;
+
+                //return $data;
+                return ['status' => 'ok', 'msg' => 'Votação adicionada com sucesso'];
+                break;
+
+            case '10':
+                R::trash($votacao);
+                return ['status' => 'ok', 'msg' => 'Votação excluída com sucesso'];
+                break;
         }
+    }
+
+    protected static function novoInstantaneo($texto)
+    {
+        $data = [
+            '_type' => 'votacao',
+            'estado' => 0, // sempre inicia fechado
+            'nome' => $texto,
+            'descricao' => '',
+            'tipo' => 'aberta',
+            'input_type' => 'checkbox',
+            'input_count' => '1',
+            'data_ini' => '',
+            'data_fim' => '',
+            'ownAlternativaList' => [
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'A favor',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Contrário',
+                ],
+            ]
+        ];
+
+        $votacao = R::dispense($data);
+        $id = R::store($votacao);
+        return R::load('votacao', $id);
     }
 
     protected static function exportarVotacao($sessao, $votacao)

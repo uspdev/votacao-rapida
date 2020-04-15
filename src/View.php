@@ -132,41 +132,41 @@ class View
         }
         $tpl->block('block_sessao');
 
-        // vamos mostrar as relações entre estados e ações
-        // Estado => Ação
-        $estados = R::findAll('estado');
-        foreach ($estados as $e) {
-            $acao_nome = '';
+        // // vamos mostrar as relações entre estados e ações
+        // // Estado => Ação
+        // $estados = R::findAll('estado');
+        // foreach ($estados as $e) {
+        //     $acao_nome = '';
 
-            // vamos expandir as acoes de cada estado
-            foreach (explode(',', $e->acoes) as $acao_cod) {
-                $acao = R::findOne('acao', 'cod = ?', [intval($acao_cod)]);
-                $e_nome = R::getCell('SELECT nome FROM estado WHERE cod = ' . $acao->estado);
-                $acao_nome .= $acao->nome . ' (-> ' . $e_nome . ') | ';
-            }
-            $e->acao_nome = substr($acao_nome, 0, -2);
-            //$tpl->E = $e;
-            //$tpl->block('block_estado');
-        }
+        //     // vamos expandir as acoes de cada estado
+        //     foreach (explode(',', $e->acoes) as $acao_cod) {
+        //         $acao = R::findOne('acao', 'cod = ?', [intval($acao_cod)]);
+        //         $e_nome = R::getCell('SELECT nome FROM estado WHERE cod = ' . $acao->estado);
+        //         $acao_nome .= $acao->nome . ' (-> ' . $e_nome . ') | ';
+        //     }
+        //     $e->acao_nome = substr($acao_nome, 0, -2);
+        //     //$tpl->E = $e;
+        //     //$tpl->block('block_estado');
+        // }
 
-        //Ação: Estado inicial -> estado final
-        $acoes = R::find('acao', "escopo = 'apoio'");
-        foreach ($acoes as $a) {
-            $a->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $a->estado);
-            $ini = R::getAll('SELECT nome FROM estado WHERE acoes LIKE ?', ["%$a->cod%"]);
-            if (count($ini) == 1) {
-                $a->estado_ini = $ini[0]['nome'];
-            } else {
-                $a->estado_ini = '';
-                foreach ($ini as $i) {
-                    $a->estado_ini .= $i['nome'] . ', ';
-                }
-                $a->estado_ini = substr($a->estado_ini, 0, -2);
-            }
+        // //Ação: Estado inicial -> estado final
+        // $acoes = R::find('acao', "escopo = 'apoio'");
+        // foreach ($acoes as $a) {
+        //     $a->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $a->estado);
+        //     $ini = R::getAll('SELECT nome FROM estado WHERE acoes LIKE ?', ["%$a->cod%"]);
+        //     if (count($ini) == 1) {
+        //         $a->estado_ini = $ini[0]['nome'];
+        //     } else {
+        //         $a->estado_ini = '';
+        //         foreach ($ini as $i) {
+        //             $a->estado_ini .= $i['nome'] . ', ';
+        //         }
+        //         $a->estado_ini = substr($a->estado_ini, 0, -2);
+        //     }
 
-            //$tpl->A = $a;
-            //$tpl->block('block_acao');
-        }
+        //     //$tpl->A = $a;
+        //     //$tpl->block('block_acao');
+        // }
 
 
 
@@ -299,7 +299,7 @@ class View
             $data = ['acao' => $_GET['acao'], 'votacao_id' => $_GET['votacao_id']];
             $res = post($hash, $token, $data);
             // temos de devolver res de alguma forma se houver erro
-
+            //print_r($res);exit;
             header('Location: ' . getenv('WWWROOT') . '/apoio');
             exit;
         }
@@ -331,6 +331,25 @@ class View
             $tpl->block('block_votacao');
         }
         $tpl->show();
+    }
+    public static function apoioPost($dataObj)
+    {
+        list($hash, $token) = SELF::verificaSessao('apoio');
+        //$sessao = SELF::obterSessao($hash, $token);
+        switch ($dataObj->acao) {
+            case 'instantaneo':
+                $data['acao'] = '9';
+                $data['texto'] = $dataObj->texto;
+                //print_r($data);
+
+                $res = post($hash, $token, $data);
+                //var_dump($res);exit;
+                break;
+        }
+
+        header('Location: ' . getenv('WWWROOT') . '/apoio');
+        exit;
+
     }
 
     public static function painelGet()

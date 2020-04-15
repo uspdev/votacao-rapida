@@ -27,6 +27,11 @@ Flight::route('GET /apoio', function () {
     View::apoioGet();
 });
 
+Flight::route('POST /apoio', function () {
+    $data = Flight::request()->data;
+    View::apoioPOST($data);
+});
+
 Flight::route('GET /painel', function () {
     View::painelGet();
 });
