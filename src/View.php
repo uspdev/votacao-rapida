@@ -17,7 +17,11 @@ class View
             $user = $_SESSION['user'];
             //echo '<pre>';print_r($_SESSION['user']);exit;
             // buscar as sessões desse usuário
-            if ($user['loginUsuario'] != '1575309') {
+            if (!($user['loginUsuario'] == '1575309' ||
+            $user['loginUsuario'] == '3567082' || //poliana
+            $user['loginUsuario'] == '4807059' || //adriana
+            $user['loginUsuario'] == '2508632'    //nivaldo
+            )) {
                 SelF::ajuda('Você não tem acesso à esse sistema.');
             }
         }
