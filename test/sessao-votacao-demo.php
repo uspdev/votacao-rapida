@@ -3,7 +3,7 @@ $hash = generateRandomString(20); //o tamanho 20 é fixo
 
 // ja temos um hash gerado e o link encurtado correspondente
 $hash = 'UUZEWSRWKBXOGJVWIYJV';
-$e = 'e.usp.br/fiv';
+$e = 'e.usp.br/fjh';
 
 // lista de nomes a associar aos tokens abertos
 $lista = 'João, Adriana, Maria, Carlos, Antônio, Marcela, Edson';

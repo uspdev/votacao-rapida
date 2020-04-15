@@ -3,7 +3,7 @@ $hash = generateRandomString(20); //o tamanho 20 é fixo
 
 // ja temos um hash gerado e o link encurtado correspondente
 $hash = 'NAKYQOHCWDILQTRAYTZY';
-$e = 'e.usp.br/fiw';
+$e = 'e.usp.br/fjg';
 
 // se não quiser logo deixar em branco mas não sumir com a variável
 $logo2 = __DIR__ . '/logo_eesc_horizontal.png';
