@@ -256,11 +256,15 @@ class Votacao
             'ownAlternativaList' => [
                 [
                     '_type' => 'alternativa',
-                    'texto' => 'A favor',
+                    'texto' => 'Favorável',
                 ],
                 [
                     '_type' => 'alternativa',
                     'texto' => 'Contrário',
+                ],
+                [
+                    '_type' => 'alternativa',
+                    'texto' => 'Abstenção',
                 ],
             ]
         ];
