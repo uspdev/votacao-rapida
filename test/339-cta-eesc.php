@@ -51,7 +51,7 @@ $sessao = [
         [
             '_type' => 'votacao',
             'estado' => 0, // fechado
-            'nome' => '20.1.341.18.7 - PROCESSO SELETIVO',
+            'nome' => '1 - 20.1.341.18.7 - PROCESSO SELETIVO',
             'descricao' => ' DO DEPARTAMENTO DE ENGENHARIA ELÉTRICA E DE COMPUTAÇÃO. ABERTURA DE INSCRIÇÕES',
             'tipo' => 'aberta',
             'input_type' => 'radio',
@@ -76,7 +76,7 @@ $sessao = [
         [
             '_type' => 'votacao',
             'estado' => 0, // fechado
-            'nome' => 'CREDENCIAMENTO DE DOCENTE NA CERT',
+            'nome' => '2.1 - CREDENCIAMENTO DE DOCENTE NA CERT',
             'descricao' => '10.1.787.18.5 - ANDRÉ TEÓFILO BECK',
             'tipo' => 'aberta',
             'input_type' => 'radio',
@@ -101,7 +101,7 @@ $sessao = [
         [
             '_type' => 'votacao',
             'estado' => 0, // fechado
-            'nome' => 'CREDENCIAMENTO DE DOCENTE NA CERT - EM BLOCO',
+            'nome' => '2 - CREDENCIAMENTO DE DOCENTE NA CERT - EM BLOCO',
             'descricao' => '10.1.787.18.5 - ANDRÉ TEÓFILO BECK<br>
             12.1.3451.18.0 - VLADIMIR GUILHERME HAACH<br>
             14.1.1207.18.6 - JOSÉ ELIAS LAIER<br>
