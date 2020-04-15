@@ -9,18 +9,40 @@ class View
     // index
     public static function index()
     {
+        if (!isset($_SESSION['user'])) {
+            SelF::ajuda('');
+        }
+
+        if (isset($_SESSION['user'])) {
+            $user = $_SESSION['user'];
+            //echo '<pre>';print_r($_SESSION['user']);exit;
+            // buscar as sessões desse usuário
+            if ($user['loginUsuario'] != '1575309') {
+                SelF::ajuda('Você não tem acesso à esse sistema.');
+            }
+        }
+
+        // usuário está ok, vamos procurar dados dele
         $tpl = new Template('index.html');
+        $topbar = new \stdClass();
+        $user = $_SESSION['user'];
+        //echo '<pre>';print_r($_SESSION['user']);exit;
+        // buscar as sessões desse usuário
+
+        $sessoes = R::findAll('sessao');
+        //print_r(r::exportAll($sessoes));exit;
+        foreach($sessoes as $sessao) {
+            $tpl->S = $sessao;
+            $tpl->block('block_sessao');
+        }
+
+        $tpl->user = json_decode(json_encode($user)); // transformando array em obj
+        $topbar->class = 'top-bar-user';
+        $topbar->block = 'block_user_in';
+        $tpl->block('block_user');
+
         $tpl->block('block_topo_img');
 
-        $topbar = new \stdClass();
-        if (isset($_SESSION['user'])) {
-            $tpl->user = json_decode(json_encode($_SESSION['user']));
-            $topbar->class = 'top-bar-user';
-            $topbar->block = 'block_user_in';
-        } else {
-            $topbar->class = 'top-bar-user';
-            $topbar->block = 'block_user_out';
-        }
         $tpl->show($topbar);
         exit;
     }
@@ -58,6 +80,33 @@ class View
 
         session_destroy();
         header('Location: ' . getenv('WWWROOT'));
+        exit;
+    }
+
+    public static function ajuda($msg)
+    {
+        $tpl = new Template('ajuda.html');
+        $tpl->msg = $msg;
+
+        $topbar = new \stdClass();
+        if (isset($_SESSION['user'])) {
+            $user = $_SESSION['user'];
+            //echo '<pre>';print_r($_SESSION['user']);exit;
+            // buscar as sessões desse usuário
+            if ($user['loginUsuario'] != '1575309') {
+            }
+
+            $tpl->user = json_decode(json_encode($_SESSION['user'])); // transformando array em obj
+            $topbar->class = 'top-bar-user';
+            $topbar->block = 'block_user_in';
+        } else {
+            $topbar->class = 'top-bar-user';
+            $topbar->block = 'block_user_out';
+        }
+
+        $tpl->block('block_topo_img');
+
+        $tpl->show($topbar);
         exit;
     }
 
@@ -349,7 +398,6 @@ class View
 
         header('Location: ' . getenv('WWWROOT') . '/apoio');
         exit;
-
     }
 
     public static function painelGet()
