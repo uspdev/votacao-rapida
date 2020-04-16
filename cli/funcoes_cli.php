@@ -94,6 +94,8 @@ function importareSubstituirDadosDeSessao($arq)
 {
     require_once $arq;
 
+    echo 'Hash: ' . $hash, PHP_EOL;
+
     // vamos excluir dados existentes
     excluirSessao($hash);
 
@@ -126,9 +128,10 @@ function excluirSessao($hash)
         R::trashAll($votacoes);
 
         // arquivos
-        if (is_file(ARQ . '/' . $sessao->tokens_pdf)) {
-            unlink(ARQ . '/' . $sessao->tokens_pdf);
-        }
+        exec('rm ' . ARQ . '/' . $hash . '*.pdf', $out, $ret);
+        // if (is_file(ARQ . '/' . $sessao->tokens_pdf)) {
+        //     unlink(ARQ . '/' . $sessao->tokens_pdf);
+        // }
 
         // e finalmente a sessao
         R::trash($sessao);
