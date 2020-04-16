@@ -78,6 +78,18 @@ function dadosDeControle()
     return 'Dados de controle inseridos/atualizados com sucesso';
 }
 
+function limparRespostas($hash)
+{
+    $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
+    foreach ($sessao->ownVotacaoList as $v) {
+        //R::exec('DELETE FROM resposta WHERE votacao_id = ?', [$v->id]);
+        $v->estado = 0;
+        $v->ownRespostaList = [];
+        R::store($v);
+    }
+    return 'Respostas apagadas';
+}
+
 function importareSubstituirDadosDeSessao($arq)
 {
     require_once $arq;
@@ -87,7 +99,7 @@ function importareSubstituirDadosDeSessao($arq)
 
     // cadastrar os dados do $arq
     $id = R::store(R::dispense($sessao));
-    
+
     $sessao = R::load('sessao', $id);
     associarTokensAbertos($sessao);
 
