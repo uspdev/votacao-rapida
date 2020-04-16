@@ -1,3 +1,13 @@
+<style>
+    div.zebra>div:nth-of-type(odd) {
+        background: #f0f0f0;
+    }
+
+    .strong {
+        font-weight: bold;
+    }
+</style>
+
 <meta http-equiv="Refresh" content="3">
 
 <h2>{S->nome}</h2>
@@ -8,30 +18,70 @@
     <h3>{msg}</h3>
     <!-- END block_msg -->
 
-    <!-- BEGIN block_votacao -->
-    <div class="text-secondary h4">
-        <span class="badge badge-info">{V->tipo}</span>
-        <span id="estado" class="badge {V->estadoclass}">{V->estado}</span>
 
+
+    <!-- BEGIN block_exibicao -->
+    <div class="text-secondary h4 mb-4">
+        <span class="badge badge-info">{V->tipo}</span>
+        <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
         <!-- BEGIN block_computados -->
         <span class="badge badge-secondary">Total: {V->computados} votos</span>
+        <img src="media/progress_bar.gif" height="35px">
         <!-- END block_computados -->
     </div>
-    <br />
 
     <div>
         <h3>{V->nome}</h3>
-        <!-- BEGIN block_descricao -->
-        <span class="text-secondary">{V->descricao}</span><br><br>
-        <!-- END block_descricao -->
-        <!-- BEGIN block_alternativa -->
-        &nbsp; &nbsp; &nbsp; <b>[ ] {alternativa}</b><br>
-        <!-- END block_alternativa -->
-        <!-- BEGIN block_resposta -->
-        &nbsp; &nbsp; &nbsp; <b>{R->texto}: {R->votos} votos</b><br>
-        <!-- END block_resposta -->
-        <br>
+        <!-- BEGIN exibicao_descricao -->
+        <div class="pl-3 text-secondary mb-4">{V->descricao}</div>
+        <!-- END exibicao_descricao -->
+
+        <div class="pb-2 strong">OPÇÕES</div>
+        <div class="zebra">
+            <!-- BEGIN exibicao_alternativa -->
+            <div class="pl-1 ml-3 py-1">[ ] {alternativa}</div>
+            <!-- END exibicao_alternativa -->
+        </div>
+    </div>
+    <!-- END block_exibicao -->
+
+
+
+
+
+
+
+    <!-- BEGIN block_resultado -->
+    <div class="text-secondary h4 mb-4">
+        <span class="badge badge-info">{V->tipo}</span>
+        <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
+
+        <!-- BEGIN resultado_computados -->
+        <span class="badge badge-secondary">Total: {V->computados} votos</span>
+        <!-- END resultado_computados -->
     </div>
 
-    <!-- END block_votacao -->
+    <div>
+        <h3>{V->nome}</h3>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="pb-2 strong">TOTAIS PARCIAIS</div>
+                <div class="zebra">
+                    <!-- BEGIN resultado_resposta -->
+                    <div class="pl-1 ml-2 py-1">{R->texto}: {R->votos} votos</div>
+                    <!-- END resultado_resposta -->
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="pb-2 strong">VOTOS</div>
+                <div class="zebra">
+                    <!-- BEGIN resultado_voto -->
+                    <div class="pl-1 ml-2 py-1">{voto->nome}: {voto->alternativa}</div>
+                    <!-- END resultado_voto -->
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+    <!-- END block_resultado -->
 </div>

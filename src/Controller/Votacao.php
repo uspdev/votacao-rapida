@@ -303,14 +303,60 @@ class Votacao
 
     protected static function painel($sessao)
     {
-        if (!$sessao->em_tela = SELF::obterVotacaoEmTela($sessao)) {
+        // vamos ver se tem alguma votação para ser exibida na tela
+        $painel = '';
+        foreach ($sessao->ownVotacaoList as $votacao) {
+
+            switch ($votacao->estado) {
+                case '1': // em tela
+                case '2': // em votacao
+                case '3': // em pausa
+                    // pegar as alternativas
+                    $votacao->alternativas = $votacao->ownAlternativaList;
+                    $painel = $votacao;
+                    break;
+                case '4': // resultado
+                    // mostra o resultado
+                    $votacao->respostas = SELF::listarRespostasPorVotacao($votacao);
+
+                    //vamos obter os votos
+                    //$votos = R::findAll('resposta', 'votacao_id = ? and last = 1', [$votacao->id]);
+                    $votos = R::getAll(
+                        'SELECT r.*, a.texto as alternativa
+                         FROM resposta as r, alternativa as a
+                         WHERE r.alternativa_id = a.id AND r.votacao_id = ? AND r.last = 1
+                         ORDER BY r.nome ASC',
+                        [$votacao->id]
+                    );
+                    $votacao->votos = $votos;
+
+                    $painel = $votacao;
+                    break;
+            }
+            if ($painel) break;
+        }
+
+        if (!$painel) {
             $sessao->msg = 'Sem votação aberta';
             SELF::limparSaida($sessao);
+            return SELF::limparSaida($sessao);
         }
-        // mostrar votos computados
+
+        // vamos obter o total de votos computados
+        // precisa para 2,3 e 4
+        $painel->computados = R::getCell(
+            'SELECT count(id) FROM resposta WHERE votacao_id = ? and last = 1',
+            [$painel->id]
+        );
+
+
+        // vamos colocar o nome do estado
+        $painel->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $painel->estado);
+
 
         //print_r($sessao->export());exit;
 
+        $sessao->em_tela = $painel;
         return SELF::limparSaida($sessao);
     }
 
@@ -400,7 +446,7 @@ class Votacao
     protected static function limparSaida($sessao)
     {
         unset($sessao->id);
-        unset($sessao->hash);
+        //unset($sessao->hash);
         unset($sessao->estado);
         unset($sessao->tipo_votacao);
         unset($sessao->link);

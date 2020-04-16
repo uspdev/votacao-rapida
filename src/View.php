@@ -18,9 +18,9 @@ class View
             //echo '<pre>';print_r($_SESSION['user']);exit;
             // buscar as sessões desse usuário
             if (!($user['loginUsuario'] == '1575309' ||
-            $user['loginUsuario'] == '3567082' || //poliana
-            $user['loginUsuario'] == '4807059' || //adriana
-            $user['loginUsuario'] == '2508632'    //nivaldo
+                $user['loginUsuario'] == '3567082' || //poliana
+                $user['loginUsuario'] == '4807059' || //adriana
+                $user['loginUsuario'] == '2508632'    //nivaldo
             )) {
                 SelF::ajuda('Você não tem acesso à esse sistema.');
             }
@@ -35,7 +35,7 @@ class View
 
         $sessoes = R::findAll('sessao');
         //print_r(r::exportAll($sessoes));exit;
-        foreach($sessoes as $sessao) {
+        foreach ($sessoes as $sessao) {
             $tpl->S = $sessao;
             $tpl->block('block_sessao');
         }
@@ -116,12 +116,14 @@ class View
 
     public static function demo()
     {
+        // o hash do demo é fixo
+        $hash = 'UUZEWSRWKBXOGJVWIYJV';
         $acao = isset($_GET['acao']) ? $_GET['acao'] : '';
 
         switch ($acao) {
 
             case 'votar':
-                $hash = $_GET['hash'];
+                //$hash = $_GET['hash'];
                 require_once ROOTDIR . '/cli/funcoes_cli.php';
                 gerarVotosAleatorios($hash);
                 echo '<a href="demo/">Clique aqui para retornar</a>';
@@ -130,7 +132,7 @@ class View
 
             case 'reset':
                 require_once ROOTDIR . '/cli/funcoes_cli.php';
-                echo importareSubstituirDadosDeSessao(ROOTDIR . '/test/sessao-votacao-demo.php');
+                echo limparRespostas($hash), '<br>';
                 echo '<A href="demo/">Clique aqui para retornar</a>';
                 exit;
                 break;
@@ -230,6 +232,7 @@ class View
     // tela inicial para quem entra com o link encurtado
     public static function hashGet($hash)
     {
+        $_SESSION = [];
         $sessao = SELF::obterSessao($hash, '');
 
         $tpl = new Template('token.html');
@@ -413,41 +416,59 @@ class View
         $tpl = new Template('painel_index.html');
         $tpl->block('block_topo_img');
 
+        // se não houver votação
         $tpl->S = $sessao;
         if (!empty($sessao->msg)) {
             $tpl->msg = $sessao->msg;
             $tpl->block('block_msg');
-        } else {
-            $v = $sessao->em_tela;
-            $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+            $tpl->show();
+            exit;
+        }
 
-            // vamos formatar a apresentação do estado
-            $v->estadoclass = SElF::getEstadoClass($v->estado);
+        $v = $sessao->em_tela;
+        $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
 
-            $tpl->V = $v;
+        // vamos formatar a apresentação do estado
+        $v->estado_class = SElF::getEstadoClass($v->estado);
 
-            if (!empty($v->descricao)) {
-                $tpl->block('block_descricao');
-            }
+        $tpl->V = $v;
 
-            if (!empty($sessao->em_tela->alternativas)) {
-                foreach ($sessao->em_tela->alternativas as $a) {
-                    $tpl->alternativa = $a->texto;
-                    $tpl->block('block_alternativa');
-                }
-            }
-            if (!empty($sessao->em_tela->respostas)) {
-                foreach ($sessao->em_tela->respostas as $r) {
+        if ($v->estado == 'Resultado') {
+
+            if (!empty($v->respostas)) {
+                foreach ($v->respostas as $r) {
                     $tpl->R = $r;
-                    $tpl->block('block_resposta');
+                    $tpl->block('resultado_resposta');
                 }
             }
-            $e = $sessao->em_tela->estado;
-            if ($e == 'Em votação' or $e == 'Em pausa' or $e == 'Resultado') {
+            if (!empty($v->votos) && $v->tipo == 'Voto aberto') {
+                foreach ($v->votos as $voto) {
+                    $tpl->voto = $voto;
+                    $tpl->block('resultado_voto');
+                }
+            }
+            $tpl->block('resultado_computados');
+            $tpl->block('block_resultado');
+        } 
+        
+
+        elseif ($v->estado == 'Em exibição' || $v->estado == 'Em votação' || $v->estado == 'Em pausa') {
+            
+            if ($v->estado == 'Em votação') {
                 $tpl->block('block_computados');
             }
 
-            $tpl->block('block_votacao');
+            if (!empty($v->descricao)) {
+                $tpl->block('exibicao_descricao');
+            }
+
+            if (!empty($v->alternativas)) {
+                foreach ($v->alternativas as $a) {
+                    $tpl->alternativa = $a->texto;
+                    $tpl->block('exibicao_alternativa');
+                }
+            }
+            $tpl->block('block_exibicao');
         }
 
         $tpl->show();
