@@ -1,0 +1,44 @@
+<table>
+    <tr>
+        <td class="col1">
+            <table style="width:100%; border:0;">
+                <tr>
+                    <td style="text-align:left; width:40%;"><img src="{logo_usp}" class="logo"></td>
+                    <td style="text-align:right; width: 60%;">
+            <!-- BEGIN block_logo -->
+            <img src="{S->logo}" class="logo">
+            <!-- END block_logo -->
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <div class="bold size16">{S->nome}</div>
+            <div class="space">VOTAÇÂO <span class="size16 bold">{T->tipo|strtoupper}</span></div>
+
+            <div class="">Use o QRCode ou acesse: <span class="bold size16">{S->link}</span></div>
+            <div class="tab space">token: <span class="bold size16">{T->token}</span></div>
+
+            <!-- BEGIN block_nome -->
+            <div class="tab">nominal para: <span class="bold size16">{T->nome}</span></div>
+            <!-- END block_nome -->
+        </td>
+
+        <td class="col2">
+            <table style="width:100%; border:0;">
+                <tr>
+                    <td style="width: 5%; text-align: right;">&nbsp;</td>
+                    <td style="width: 10%; text-align: right;">
+                        <div class="bold size16 rotate">VOTAÇÃO {T->tipo|strtoupper} </div>
+                    </td>
+                    <td style="width: 70%;">
+                        <qrcode value="{qrcode}" ec="M" style="width: 50mm; border:none;"></qrcode>
+                    </td>
+                    <td style="width: 10%;">
+                        <div class="bold size16 rotate">VOTAÇÃO {T->tipo|strtoupper} </div>
+                    </td>
+                    <td style="width: 5%; text-align: right;">&nbsp;</td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>

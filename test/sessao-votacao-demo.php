@@ -6,13 +6,13 @@ $hash = 'UUZEWSRWKBXOGJVWIYJV';
 $e = 'e.usp.br/fjh';
 
 // lista de nomes a associar aos tokens abertos
-$lista = 'João, Adriana, Maria, Carlos, Antônio, Marcela, Edson';
+$nomes = ['João', 'Adriana', 'Maria', 'Carlos', 'Antônio', 'Marcela', 'Edson'];
 
 //gerando 20 tokens
 $tokens = gerarTokens(20, true);
 
 // se não quiser logo secundário, deixar em branco
-$logo2 = __DIR__ . '/uspdev-logo.png';;
+$logo = __DIR__ . '/uspdev-logo.png';;
 
 $sessao = [
     '_type' => 'sessao', // fixo
@@ -21,9 +21,10 @@ $sessao = [
     'nome' => '1a. Sessão de votação de teste',
     'hash' => $hash,
     'estado' => 'aberto', // 0 em elaboracao, 1 aberto, 2 finalizado
-    'link_manual' => $e,
-    'arq_tokens_pdf' => '',
-    'lista' => $lista,
+    'link' => $e,
+    'tokens_pdf' => '',
+    'nomes_json' => json_encode($nomes),
+    'logo' => $logo,
     'ownTokenList' => $tokens,
     'ownVotacaoList' => [
         [

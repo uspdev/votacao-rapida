@@ -23,6 +23,9 @@ class Template extends \raelgc\view\Template
 
         }
         parent::show();
+    }
+
+    public static function setTopBar($tpl) {
 
     }
 }

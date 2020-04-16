@@ -1,5 +1,8 @@
 <?php
 
+use \RedBeanPHP\R as R;
+
+
 function generateRandomString($length = 6)
 {
     return substr(str_shuffle(str_repeat($x = 'ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
@@ -39,71 +42,79 @@ function gerarTokens($qt, $import = false)
     return $tokens;
 }
 
-function gerarListaQrcodePdf($sessao, $logo2)
+function gerarListaQrcodePdf($sessao)
 {
     $filename = $sessao->hash . '_qrcodes.pdf';
+    $sessao->tokens_pdf = $filename;
+    R::store($sessao);
+
     $tokens = $sessao->ownTokenList;
 
-    $tpl = new raelgc\view\Template(ROOTDIR . '/template/qrcode/instrucoes.html');
-    $tpl->addFile('qrcode_lista', ROOTDIR . '/template/qrcode/lista.html');
+    $tpl = new raelgc\view\Template(TPL . '/qrcode/instrucoes.html');
+    $tpl->addFile('qrcode_lista', TPL . '/qrcode/lista.html');
+    $tpl->style = file_get_contents(TPL . '/qrcode/style.html');
+
     $tpl->wwwroot = getenv('WWWROOT');
     $tpl->S = $sessao;
 
-    foreach($tokens as $token) {
+    // para as instruções somente
+    foreach ($tokens as $token) {
         switch ($token->tipo) {
             case 'apoio':
                 $tpl->token_apoio = $token->token;
-            break;
+                break;
             case 'painel':
                 $tpl->token_painel = $token->token;
-            break;
+                break;
             case 'recepcao':
                 $tpl->token_recepcao = $token->token;
-            break;   
-            case 'aberta':
-                $tpl->token_aberta = $token->token;
-            break;   
-            case 'fechada':
-                $tpl->token_fechada = $token->token;
-            break;  
+                break;
         }
     }
 
-    $tpl->nome = $sessao->nome;
-    $tpl->logo1 = ROOTDIR . '/public/media/usp-logo.png';
+    $tpl->logo_usp = ROOTDIR . '/public/media/usp-logo.png';
+    $tpl->S = $sessao;
 
-    $tpl->link = $sessao->link_manual;
+
+    // para cedulas de tokens
     $tpl->datahora = date('d/m/Y H:i:s');
 
     foreach ($tokens as $token) {
-
-        $tpl->token = $token->token;
-        $tpl->qrcode = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
-
-        // vamos colocar um espaço para centralizar o texto
-        if ($token->tipo == 'aberta') {
-            $tpl->tipo = '&nbsp;' . strtoupper($token->tipo);
-        } else {
-            $tpl->tipo = strtoupper($token->tipo);
-        }
-
-        // se foi passado logo2 vamos inserir
-        if ($logo2) {
-            $tpl->logo2a = '<img src="' . $logo2 . '" style="height: 60px">'; //nas instruçoes
-            $tpl->logo2 = '<img src="' . $logo2 . '" class="logo">'; //na lista
-            //$tpl->block('bloco_logo2');
-        }
-
-        if (next($tokens)) {
-            $tpl->block('bloco_next');
-        }
-
+        $qrcode = renderCedula($sessao, $token);
+        $tpl->qrcode = $qrcode;
+        next($tokens) ? $tpl->block('bloco_next') : '';
         $tpl->block('block_votacao');
-    }
-    $content = $tpl->parse();
 
+        $tpl2 = new raelgc\view\Template(TPL . '/qrcode/individual.html');
+        $tpl2->style = file_get_contents(TPL . '/qrcode/style.html');
+        $tpl2->qrcode = $qrcode;
+        $content = $tpl2->parse();
+
+        if (!empty($token->nome)) {
+            $filename2 = $sessao->hash . '-' . $token->tipo . '-' . $token->nome . '.pdf';
+        } else {
+            $filename2 = $sessao->hash . '-' . $token->tipo . '-' . $token->token . '.pdf';
+        }
+        if ($token->tipo == 'aberta') {
+            geraPdf($content, $filename2, 'individual');
+        }
+    }
+
+    $content = $tpl->parse();
+    geraPdf($content, $filename, 'lista');
+
+    // para cedulas individuais
+}
+
+function geraPdf($content, $filename, $tipo = 'lista')
+{
+    // agora que temos o content vamos gerar o PDF
     try {
-        $html2pdf = new Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en');
+        if ($tipo == 'lista') {
+            $html2pdf = new Spipu\Html2Pdf\Html2Pdf('P', 'A4', 'en', true, 'UTF-8', array(0, 0, 0, 0));
+        } else {
+            $html2pdf = new Spipu\Html2Pdf\Html2Pdf('L', [210, 70], 'en', true, 'UTF-8', array(0, 0, 0, 0));
+        }
         $html2pdf->pdf->SetDisplayMode('fullpage');
         $html2pdf->writeHTML($content);
         $html2pdf->output(ARQ . '/' . $filename, 'F');
@@ -112,8 +123,21 @@ function gerarListaQrcodePdf($sessao, $logo2)
         $formatter = new Spipu\Html2Pdf\Exception\ExceptionFormatter($e);
         echo $formatter->getHtmlMessage();
     }
+}
 
-    return $filename;
+function renderCedula($sessao, $token)
+{
+    $tpl = new raelgc\view\Template(TPL . '/qrcode/cedula_qrcode.html');
+
+    $tpl->S = $sessao;
+    $tpl->T = $token;
+    $tpl->logo_usp = ROOTDIR . '/public/media/usp-logo.png';
+    $tpl->qrcode = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
+
+    ($sessao->logo) ? $tpl->block('block_logo') : '';
+    ($token->tipo == 'aberta') ? $tpl->block('block_nome') : '';
+
+    return $tpl->parse();
 }
 
 function obterSessao($hash, $token)

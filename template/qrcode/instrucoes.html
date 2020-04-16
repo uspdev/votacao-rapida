@@ -1,13 +1,4 @@
-<style type="text/css">
-    .text {
-        line-height: 1.4;
-        padding: 0;
-        margin: 3px;
-        font-size: 14px;
-        text-align: justify;
-    }
-
-</style>
+{style}
 
 <page class="text" backtop="15mm" backbottom="15mm" backleft="15mm" backright="15mm">
 
@@ -19,14 +10,14 @@
     <div>
         <table style="width:100%; border:0;">
             <tr>
-                <td style="text-align:left; width:40%;"><img src="{logo1}" style="height:60px;"></td>
+                <td style="text-align:left; width:40%;"><img src="{logo_usp}" style="height:60px;"></td>
                 <td style="text-align:right; width: 60%;">
                     {logo2a}
                 </td>
             </tr>
         </table>
 
-        <h1>{nome}</h1>
+        <h1>{S->nome}</h1>
         <hr>
         <h2>Instruções à equipe de apoio</h2>
 
@@ -59,14 +50,12 @@
         <hr>
         <br>
         <div>
-            Links:<br>
-            Apoio: <a href="{wwwroot}/{S->hash}/{token_apoio}">{wwwroot}/{S->hash}/{token_apoio}</a><br>
-            Painel: <a href="{wwwroot}/{S->hash}/{token_painel}">{wwwroot}/{S->hash}/{token_painel}</a><br>
-            Recepção: <a href="{wwwroot}/{S->hash}/{token_recepcao}">{wwwroot}/{S->hash}/{token_recepcao}</a><br>
-            Encurtado: <a href="http://{S->link_manual}">http://{S->link_manual}</a><br>
-            Entrada: <a href="{wwwroot}/{S->hash}">{wwwroot}/{S->hash}</a><br>
-            Aberto: <a href="{wwwroot}/{S->hash}/{token_aberta}">{wwwroot}/{S->hash}/{token_aberta}</a><br>
-            Fechado: <a href="{wwwroot}/{S->hash}/{token_fechada}">{wwwroot}/{S->hash}/{token_fechada}</a><br>
+            Links de acesso direto:<br>
+            <a href="{wwwroot}/{S->hash}/{token_apoio}">APOIO</a><br>
+            <a href="{wwwroot}/{S->hash}/{token_painel}">PAINEL</a><br>
+            <a href="{wwwroot}/{S->hash}/{token_recepcao}">RECEPÇÃO</a><br>
+            <a href="http://{S->link}">ENCURTADO</a><br>
+            <a href="{wwwroot}/{S->hash}">ACESSO POR TOKEN</a><br>
         </div>
     </div>
 

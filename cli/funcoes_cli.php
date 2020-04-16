@@ -82,17 +82,17 @@ function importareSubstituirDadosDeSessao($arq)
 {
     require_once $arq;
 
-    $s = R::findOne('sessao', 'hash = ?', [$hash]);
-    if ($s) {
-        excluirSessao($hash);
-    }
-    $sessao = R::dispense($sessao);
-    $id = R::store($sessao);
-    $sessao = R::load('sessao', $id);
+    // vamos excluir dados existentes
+    excluirSessao($hash);
 
-    $arq = gerarListaQrcodePdf($sessao, $logo2);
-    $sessao->arq_tokens_pdf = $arq;
-    R::store($sessao);
+    // cadastrar os dados do $arq
+    $id = R::store(R::dispense($sessao));
+    
+    $sessao = R::load('sessao', $id);
+    associarTokensAbertos($sessao);
+
+    // vamos gerar a lista já com os nomes associados
+    gerarListaQrcodePdf($sessao);
 
     return 'Dados importados com sucesso';
 }
@@ -114,8 +114,8 @@ function excluirSessao($hash)
         R::trashAll($votacoes);
 
         // arquivos
-        if (is_file(ARQ . '/' . $sessao->arq_tokens_pdf)) {
-            unlink(ARQ . '/' . $sessao->arq_tokens_pdf);
+        if (is_file(ARQ . '/' . $sessao->tokens_pdf)) {
+            unlink(ARQ . '/' . $sessao->tokens_pdf);
         }
 
         // e finalmente a sessao
@@ -165,7 +165,6 @@ function gerarVotosAleatorios($hash)
     }
 }
 
-
 function gerarVotoAleatorio($votacao)
 {
     $ids = array_column($votacao->alternativas, 'id');
@@ -173,4 +172,18 @@ function gerarVotoAleatorio($votacao)
     $voto['votacao_id'] = $votacao->id;
     $voto['alternativa_id'] = $ids[rand(0, count($ids) - 1)];
     return $voto;
+}
+
+function associarTokensAbertos($sessao)
+{
+    // vamos pegar somente os tokens do tipo 'aberta'
+    $tokens = array_filter($sessao->ownTokenList, function ($v) {
+        return $v['tipo'] == 'aberta';
+    });
+
+    foreach (json_decode($sessao->nomes_json) as $nome) {
+        $token = array_pop($tokens);
+        $token->nome = $nome;
+        R::store($token);
+    }
 }

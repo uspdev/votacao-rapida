@@ -297,7 +297,7 @@ class Votacao
 
     protected static function recepcao($sessao)
     {
-        unset($sessao->link_manual);
+        unset($sessao->link);
         return $sessao;
     }
 
@@ -403,8 +403,8 @@ class Votacao
         unset($sessao->hash);
         unset($sessao->estado);
         unset($sessao->tipo_votacao);
-        unset($sessao->link_manual);
-        unset($sessao->lista);
+        unset($sessao->link);
+        unset($sessao->nomes_json);
         unset($sessao->link_qrcode);
         //unset($sessao->token);
         unset($sessao->ownVotacao);
