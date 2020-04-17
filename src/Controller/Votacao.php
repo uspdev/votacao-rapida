@@ -213,6 +213,7 @@ class Votacao
 
             case '7': // finalizar
                 $votacao->estado = $acao->estado;
+                $votacao->data_fim = date("Y-m-d H:i:s");
                 R::store($votacao);
 
                 SELF::exportarVotacao($sessao, $votacao);
@@ -220,7 +221,7 @@ class Votacao
                 return ['msg' => $acao->msg];
                 break;
 
-            case '9':
+            case '9': // criar instantaneo
                 // aqui não precisa de $votacao, pois vai criar uma nova
                 $votacao = SELF::novoInstantaneo($data['texto']);
                 $votacao->sessao_id = $sessao->id;
@@ -276,6 +277,7 @@ class Votacao
 
     protected static function exportarVotacao($sessao, $votacao)
     {
+        $arq = ARQ . '/' . $sessao->hash . '-' . 'votacao_' . $votacao->id . '-resultado.json';
         $save = $sessao->export();
         $v = $votacao->export();
         $v['alternativas'] = [];
@@ -289,10 +291,7 @@ class Votacao
         $save['votacao'] = $v;
 
         $save['tokens'] = R::exportAll($sessao->ownTokenList);
-        file_put_contents(
-            LOCAL . '/resultado.json',
-            json_encode($save, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
-        );
+        file_put_contents($arq, json_encode($save, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     protected static function recepcao($sessao)
