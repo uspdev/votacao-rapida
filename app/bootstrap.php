@@ -16,7 +16,7 @@ $dotenv->load();
 
 # Se o servidor estiver atrás de um proxy,
 # o servidor da API deve ser colocada no /etc/hosts 
-# para que não passe pelo proxy
+# para que não passe pelo proxy e mantenha o virtualhost do apache
 # ex.: 12.7.0.0.1 servidor-do-wwwroot.usp.br
 define('API', getenv('WWWROOT') . '/api'); // caminho da API
 
