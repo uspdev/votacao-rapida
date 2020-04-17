@@ -4,7 +4,7 @@
     <h3>Minhas votações</h3>
     {MSG22}
     <!-- BEGIN block_sessao -->
-    {S->nome} |
+    <a href="sessao/{S->id}">{S->nome}</a> |
     <a href="demo?acao=tokens_pdf&arq={S->tokens_pdf}">Tokens PDF</a> <br>
     <!-- END block_sessao -->
 </div>

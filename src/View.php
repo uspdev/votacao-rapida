@@ -16,6 +16,7 @@ class View
         if (isset($_SESSION['user'])) {
             $user = $_SESSION['user'];
             //echo '<pre>';print_r($_SESSION['user']);exit;
+            //echo getenv('GOD_USER');exit;
             // buscar as sessões desse usuário
             if (!($user['loginUsuario'] == '1575309' ||
                 $user['loginUsuario'] == '3567082' || //poliana
@@ -336,7 +337,7 @@ class View
             $data = $_POST;
             //print_r($data);
             //echo json_encode((Array) $data);exit;
-            $res = Curl::post($hash, $sessao->token->token, $data);
+            $res = Api::post($hash, $sessao->token->token, $data);
             $_SESSION['msg'] = json_encode($res); //exit;
             header('Location:' .  getenv('WWWROOT') . '/votacao');
             exit;
@@ -353,7 +354,7 @@ class View
         // acoes para a rota de apoio
         if (isset($_GET['acao'])) {
             $data = ['acao' => $_GET['acao'], 'votacao_id' => $_GET['votacao_id']];
-            $res = post($hash, $token, $data);
+            $res = Api::post($hash, $token, $data);
             // temos de devolver res de alguma forma se houver erro
             //print_r($res);exit;
             header('Location: ' . getenv('WWWROOT') . '/apoio');
@@ -398,7 +399,7 @@ class View
                 $data['texto'] = $dataObj->texto;
                 //print_r($data);
 
-                $res = post($hash, $token, $data);
+                $res = Api::post($hash, $token, $data);
                 //var_dump($res);exit;
                 break;
         }
@@ -449,11 +450,8 @@ class View
             }
             $tpl->block('resultado_computados');
             $tpl->block('block_resultado');
-        } 
-        
+        } elseif ($v->estado == 'Em exibição' || $v->estado == 'Em votação' || $v->estado == 'Em pausa') {
 
-        elseif ($v->estado == 'Em exibição' || $v->estado == 'Em votação' || $v->estado == 'Em pausa') {
-            
             if ($v->estado == 'Em votação') {
                 $tpl->block('block_computados');
             }
@@ -500,11 +498,8 @@ class View
 
     protected static function obterSessao($hash, $token)
     {
-        $sessao = Curl::get($hash, $token);
+        $sessao = Api::obterSessao($hash, $token);
         if (!empty($sessao->status) && $sessao->status == 'erro') {
-            // echo '<pre>';
-            // echo 'Erro ao obter sessão: ', PHP_EOL;
-            // echo json_encode($sessao);
             $_SESSION['msg'] = json_encode($sessao);
             header('Location: ' . getenv('WWWROOT') . '/' . $hash);
             exit;

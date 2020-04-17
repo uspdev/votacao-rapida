@@ -2,6 +2,8 @@
 
 use Uspdev\Webservice\Auth;
 use \RedBeanPHP\R as R;
+use \Uspdev\Votacao\Api;
+
 
 function salvarUsuarioApi()
 {
@@ -191,13 +193,13 @@ function gerarVotosAleatorios($hash)
 
     // vamos votar
     foreach ($tokens as $token) {
-        $sessao = obterSessao($hash, $token['token']);
+        $sessao = Api::obterSessao($hash, $token['token']);
 
         $voto = gerarVotoAleatorio($sessao->render_form);
         echo 'Voto enviado do token ', $token['token'], PHP_EOL;
         echo json_encode($voto), PHP_EOL, PHP_EOL;
 
-        $voto = post($hash, $token['token'], $voto);
+        $voto = Api::post($hash, $token['token'], $voto);
         echo 'voto recebido', PHP_EOL;
         echo json_encode($voto), PHP_EOL, PHP_EOL;
     }
