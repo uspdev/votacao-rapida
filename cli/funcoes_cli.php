@@ -82,9 +82,9 @@ function limparRespostas($hash)
 {
     $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
     foreach ($sessao->ownVotacaoList as $v) {
-        //R::exec('DELETE FROM resposta WHERE votacao_id = ?', [$v->id]);
+        R::exec('DELETE FROM resposta WHERE votacao_id = ?', [$v->id]);
         $v->estado = 0;
-        $v->ownRespostaList = [];
+        //$v->ownRespostaList = [];
         R::store($v);
     }
     return 'Respostas apagadas';
@@ -109,6 +109,29 @@ function importareSubstituirDadosDeSessao($arq)
     gerarListaQrcodePdf($sessao);
 
     return 'Dados importados com sucesso';
+}
+
+function importarVotacao($hash, $arq)
+{
+    $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
+    // primeiro apagar respostas
+    $res = limparRespostas($hash);
+    foreach ($sessao->ownVotacaoList as $v) {
+        // apagando alternativas
+        R::exec('DELETE FROM alternativa WHERE votacao_id = ?', [$v->id]);
+    }
+    // apagando votacao
+    R::exec('DELETE FROM votacao WHERE sessao_id = ?', [$sessao->id]);
+
+    // agora vamos inserir os novos
+    require_once $arq;
+    foreach ($votacoes as $v) {
+        $id = R::store(R::dispense($v));
+        $v = R::load('votacao', $id);
+        $sessao->ownVotacaoList[] = $v;
+    }
+    R::store($sessao);
+    return 'Votação substituida com sucesso';
 }
 
 function excluirSessao($hash)
