@@ -16,10 +16,11 @@ Ipcontrol::proteger();
 WS::admin();
 
 # Aqui chamamos como http://servidor/controlador/metodo/parametro
-$classes['votacao'] = 'Uspdev\Votacao\Controller\Votacao';
+$classes['gerente'] = 'Uspdev\Votacao\Controller\Gerente';
 WS::classes($classes);
 
 $metodos['run'] = 'Uspdev\Votacao\Controller\Votacao::run';
+//$metodos['sessao'] = 'Uspdev\Votacao\Controller\Gerente::sessao';
 WS::metodos($metodos);
 
 # Para listar os controladores disponíveis
