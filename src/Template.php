@@ -2,6 +2,8 @@
 
 namespace Uspdev\Votacao {
 
+    use Uspdev\Votacao\SessaoPhp as SS;
+
     class Template extends \raelgc\view\Template
     {
         function __construct($addFile)
@@ -12,20 +14,25 @@ namespace Uspdev\Votacao {
             $this->addFile('corpo', TPL . '/' . $addFile);
         }
 
-        public function show($topbar = '')
+        public function show($bloco = '')
         {
-            if ($topbar) {
-                $this->topbar_class = $topbar->class;
-                $this->block($topbar->block);
+            // vamos renderizar o userbar: logado, deslogado e barra fina
+            if ($bloco == 'userbar') {
+                $this->topbar_class = 'top-bar-user';
+                if ($user = SS::get('user')) {
+                    $this->user = json_decode(json_encode($user)); // transformando array em obj
+                    $this->block('block_user_in');
+                } else {
+                    $this->block('block_user_out');
+                }
+                $this->block('block_topo_img');
+
             } else {
                 $this->topbar_class = 'top-bar-no-user';
                 $this->block('block_no_user');
             }
-            parent::show();
-        }
 
-        public static function setTopBar($tpl)
-        {
+            parent::show();
         }
     }
 }

@@ -431,14 +431,6 @@ class Votacao
             $alt['votos'] = R::getCell($q, [$alternativa->id, $votacao->id]);
             $r[] = $alt;
         }
-
-        // $alt['texto'] = 'Brancos';
-        // $q = 'SELECT count(id) as total
-        //     FROM resposta
-        //     WHERE alternativa_id IS NULL AND votacao_id = ? AND last = 1';
-        // $alt['votos'] = R::getCell($q, [$votacao->id]);
-        // $r[] = $alt;
-
         return $r;
     }
 
@@ -464,14 +456,5 @@ class Votacao
         unset($sessao->em_tela->sessao_id);
         unset($sessao->em_tela->ownAlternativa);
         return $sessao;
-    }
-
-    public static function login($codpes)
-    {
-        return 'registar o login de ' . $codpes;
-    }
-    public static function admin()
-    {
-        return 'admin';
     }
 }

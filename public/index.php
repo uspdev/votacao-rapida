@@ -2,32 +2,46 @@
 
 namespace Uspdev\Votacao\View;
 
+use Uspdev\Votacao\SessaoPhp as SS;
+
 require_once __DIR__ . '/../app/bootstrap.php';
 
 use \Flight;
 
-session_start();
+SS::start();
 
 // Rotas
 
 Flight::route('/', function () {
-    Run::index();
+    Gerente::index();
+});
+
+Flight::route('/session', function () {
+    echo '<pre>';
+    print_r($_SESSION);
 });
 
 Flight::route('GET /login', function () {
-    Run::login();
+    Gerente::login();
 });
 
 Flight::route('GET /logout', function () {
-    Run::logout();
+    Gerente::logout();
 });
 
 Flight::route('GET /demo', function () {
     Demo::demo();
 });
 
-Flight::route('/sessao/@id', function ($id) {
+Flight::route('GET /gerente/@id', function ($id) {
     Gerente::sessao($id);
+});
+
+Flight::route('POST /gerente/@id', function ($id) {
+    $gerente = new Gerente();
+    $gerente->data = Flight::request()->data;
+    $gerente->request = Flight::request();
+    $gerente->sessaoPost($id);
 });
 
 Flight::route('GET /apoio', function () {
@@ -56,12 +70,12 @@ Flight::route('GET /@hash:[A-Z]{20}', function ($hash) {
     Run::hashGet($hash);
 });
 
-Flight::route('POST /@hash', function ($hash) {
+Flight::route('POST /@hash:[A-Z]{20}', function ($hash) {
     $data = Flight::request()->data;
     Run::hashPost($hash, $data);
 });
 
-Flight::route('GET /@hash/@token', function ($hash, $token) {
+Flight::route('GET /@hash:[A-Z]{20}/@token:[A-Z]{6}', function ($hash, $token) {
     Run::hashToken($hash, $token);
 });
 

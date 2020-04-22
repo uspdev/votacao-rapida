@@ -19,17 +19,31 @@
         }
 
         h1 {
-            font-size: 30px;
-        }
-
-        h2 {
             font-size: 26px;
             color: #F26A1B;
         }
 
+        h2 {
+            font-size: 22px;
+            color: #0F94AB;
+        }
+
         h3 {
             font-size: 20px;
-            color: #0F94AB;
+            color: rgb(15, 122, 171);
+        }
+
+        h4 {
+            font-size: 18px;
+            color: rgb(15, 96, 171);
+        }
+
+        .hide {
+            display: none;
+        }
+
+        .bold {
+            font-weight: bold;
         }
 
         hr {
@@ -83,16 +97,17 @@
 
                 <!-- BEGIN block_user_principal -->
                 <div class="{topbar_class} pr-2">
+                    <div class="float-left pl-2"><a class="text-reset" href="{wwwroot}">Início</a></div>
+                    <div class="float-right">
+                        <!-- BEGIN block_user_in -->
+                        {user->nome} ({user->unidade}) |
+                        <a class="text-reset" href="logout/">Sair</a>
+                        <!-- END block_user_in -->
 
-                    <!-- BEGIN block_user_in -->
-                    {user->nomeUsuario} |
-                    <a class="text-reset" href="logout/">Sair</a>
-                    <!-- END block_user_in -->
-
-                    <!-- BEGIN block_user_out -->
-                    <a class="text-reset" href="login/">Entrar</a>
-                    <!-- END block_user_out -->
-                    
+                        <!-- BEGIN block_user_out -->
+                        <a class="text-reset" href="login/">Entrar</a>
+                        <!-- END block_user_out -->
+                    </div>
                 </div>
                 <!-- END block_user_principal -->
 

@@ -2,125 +2,17 @@
 
 namespace Uspdev\Votacao\View;
 
-use \RedBeanPHP\R as R;
 use \Uspdev\Votacao\Template;
 use \Uspdev\Votacao\Api;
+use \Uspdev\Votacao\Form;
+use \Uspdev\Votacao\SessaoPhp as SS;
 
 class Run
 {
-    // index
-    public static function index()
-    {
-        if (!isset($_SESSION['user'])) {
-            SelF::ajuda('');
-        }
-
-        if (isset($_SESSION['user'])) {
-            $user = $_SESSION['user'];
-            //echo '<pre>';print_r($_SESSION['user']);exit;
-            //echo getenv('GOD_USER');exit;
-            // buscar as sessões desse usuário
-            if (!($user['loginUsuario'] == '1575309' ||
-                $user['loginUsuario'] == '3567082' || //poliana
-                $user['loginUsuario'] == '4807059' || //adriana
-                $user['loginUsuario'] == '2508632'    //nivaldo
-            )) {
-                SelF::ajuda('Você não tem acesso à esse sistema.');
-            }
-        }
-
-        // usuário está ok, vamos procurar dados dele
-        $tpl = new Template('index.html');
-        $topbar = new \stdClass();
-        $user = $_SESSION['user'];
-        //echo '<pre>';print_r($_SESSION['user']);exit;
-        // buscar as sessões desse usuário
-
-        $sessoes = R::findAll('sessao');
-        //print_r(r::exportAll($sessoes));exit;
-        foreach ($sessoes as $sessao) {
-            $tpl->S = $sessao;
-            $tpl->block('block_sessao');
-        }
-
-        $tpl->user = json_decode(json_encode($user)); // transformando array em obj
-        $topbar->class = 'top-bar-user';
-        $topbar->block = 'block_user_in';
-        $tpl->block('block_user');
-
-        $tpl->block('block_topo_img');
-
-        $tpl->show($topbar);
-        exit;
-    }
-
-    public static function login()
-    {
-        $auth = new \Uspdev\Senhaunica\Senhaunica([
-            'consumer_key' => getenv('CONSUMER_KEY'),
-            'consumer_secret' => getenv('CONSUMER_SECRET'),
-            'callback_id' => getenv('SENHA_UNICA_CALLBACK_ID'), // callback_id é o sequencial no servidor
-            'amb' => getenv('SENHA_UNICA_AMB'), // 'dev' = teste, 'prod' = producao
-        ]);
-
-        $res = $auth->login();
-        $_SESSION['user'] = $res;
-        header('Location:' . getenv('WWWROOT'));
-        exit;
-    }
-
-    public static function logout()
-    {
-        unset($_SESSION);
-        if (ini_get("session.use_cookies")) {
-            $params = session_get_cookie_params();
-            setcookie(
-                session_name(),
-                '',
-                time() - 42000,
-                $params["path"],
-                $params["domain"],
-                $params["secure"],
-                $params["httponly"]
-            );
-        }
-
-        session_destroy();
-        header('Location: ' . getenv('WWWROOT'));
-        exit;
-    }
-
-    public static function ajuda($msg)
-    {
-        $tpl = new Template('ajuda.html');
-        $tpl->msg = $msg;
-
-        $topbar = new \stdClass();
-        if (isset($_SESSION['user'])) {
-            $user = $_SESSION['user'];
-            //echo '<pre>';print_r($_SESSION['user']);exit;
-            // buscar as sessões desse usuário
-            if ($user['loginUsuario'] != '1575309') {
-            }
-
-            $tpl->user = json_decode(json_encode($_SESSION['user'])); // transformando array em obj
-            $topbar->class = 'top-bar-user';
-            $topbar->block = 'block_user_in';
-        } else {
-            $topbar->class = 'top-bar-user';
-            $topbar->block = 'block_user_out';
-        }
-
-        $tpl->block('block_topo_img');
-
-        $tpl->show($topbar);
-        exit;
-    }
-
     // tela inicial para quem entra com o link encurtado
     public static function hashGet($hash)
     {
-        $_SESSION = [];
+        $_SESSION['votacao'] = [];
         $sessao = SELF::obterSessao($hash, '');
 
         $tpl = new Template('token.html');
@@ -132,7 +24,6 @@ class Run
             $tpl->block('block_M');
             unset($_SESSION['msg']);
         }
-
 
         $tpl->show();
     }
@@ -155,24 +46,33 @@ class Run
     public static function hashToken($hash, $token)
     {
         $sessao = SELF::obterSessao($hash, $token);
-        $tipo = $sessao->token->tipo;
+        $perfil = $sessao->token->tipo;
 
-        if ($tipo == 'fechada' || $tipo == 'aberta') {
-            $tipo = 'votacao';
+        if ($perfil == 'fechada' || $perfil == 'aberta') {
+            $perfil = 'votacao';
         }
 
-        $_SESSION[$tipo]['hash'] = $hash;
-        $_SESSION[$tipo]['token'] = $token;
-        header('Location: ' . getenv('WWWROOT') . '/' . $tipo);
+        $token = [];
+        $token[$sessao->token->tipo]['token'] = $sessao->token->token;
+
+        SS::atribuir('hash', $hash);
+        SS::atribuir($perfil, $token);
+        // print_r($_SESSION);
+        // exit;
+        header('Location: ' . getenv('WWWROOT') . '/' . $perfil);
         exit;
     }
 
     public static function votacaoGet()
     {
-        list($hash, $token) = SELF::verificaSessao('votacao');
-        $sessao = SELF::obterSessao($hash, $token);
+        list($hash, $token) = SS::verificaSessao('votacao');
+        foreach ($token as $t) {
+            $sessao = SELF::obterSessao($hash, $t);
+            //print_r($sessao);exit;
+            if (empty($sessao->msg) && isset($sessao->render_form)) break;
+        }
 
-        //print_r($sessao);//exit;
+        //print_r($sessao);exit;
         $tpl = new Template('votacao_index.html');
 
         $tpl->S = $sessao;
@@ -198,17 +98,22 @@ class Run
                     $block = 'block_msg_erro';
                 }
                 $tpl->M = $msg;
-                $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+
                 $tpl->V = $v;
                 $tpl->block($block);
             } else {
                 // aqui mostra o form de votacao
-                $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+                
                 $tpl->V = $v;
                 $form = new Form($v);
                 $tpl->form = $form->render();
                 $tpl->block('block_form');
             }
+
+            $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+            $v->estado = 'Em votação';
+            $v->estado_class = SELF::getEstadoClass($v->estado);
+
         }
 
         $tpl->show();
@@ -216,8 +121,12 @@ class Run
 
     public static function votacaoPost($data)
     {
-        list($hash, $token) = SELF::verificaSessao('votacao');
-        $sessao = SELF::obterSessao($hash, $token);
+        list($hash, $token) = SS::verificaSessao('votacao');
+        foreach ($token as $t) {
+            $sessao = SELF::obterSessao($hash, $t);
+            if (empty($sessao->msg) && isset($sessao->render_form)) break;
+        }
+        //$sessao = SELF::obterSessao($hash, $token);
 
         // post de formulario
         if (isset($data->acao)) {
@@ -234,7 +143,7 @@ class Run
 
     public static function apoioGet()
     {
-        list($hash, $token) = SELF::verificaSessao('apoio');
+        list($hash, $token) = SS::verificaSessao('apoio');
 
         $sessao = SELF::obterSessao($hash, $token);
 
@@ -278,7 +187,7 @@ class Run
     }
     public static function apoioPost($dataObj)
     {
-        list($hash, $token) = SELF::verificaSessao('apoio');
+        list($hash, $token) = SS::verificaSessao('apoio');
         //$sessao = SELF::obterSessao($hash, $token);
         switch ($dataObj->acao) {
             case 'instantaneo':
@@ -297,7 +206,7 @@ class Run
 
     public static function painelGet()
     {
-        list($hash, $token) = SELF::verificaSessao('painel');
+        list($hash, $token) = SS::verificaSessao('painel');
 
         $sessao = SELF::obterSessao($hash, $token);
 
@@ -403,26 +312,26 @@ class Run
         }
     }
 
-    protected static function template($addFile)
-    {
-        $tpl = new Template(TPL . '/main_template.html');
-        $tpl->wwwroot = getenv('WWWROOT');
+    // protected static function template($addFile)
+    // {
+    //     $tpl = new Template(TPL . '/main_template.html');
+    //     $tpl->wwwroot = getenv('WWWROOT');
 
-        $tpl->addFile('corpo', TPL . '/' . $addFile);
-        return $tpl;
-    }
+    //     $tpl->addFile('corpo', TPL . '/' . $addFile);
+    //     return $tpl;
+    // }
 
-    protected static function verificaSessao($tipo)
-    {
-        if (isset($_SESSION[$tipo]['hash'])) {
-            $hash = $_SESSION[$tipo]['hash'];
-            $token = $_SESSION[$tipo]['token'];
-            return [$hash, $token];
-        } else {
-            // vamos voltar ao inicio
-            $tpl = new Template('erro_sem_sessao.html');
-            $tpl->show();
-            exit;
-        }
-    }
+    // protected static function verificaSessao($tipo)
+    // {
+    //     if (isset($_SESSION[$tipo]['hash'])) {
+    //         $hash = $_SESSION[$tipo]['hash'];
+    //         $token = $_SESSION[$tipo]['token'];
+    //         return [$hash, $token];
+    //     } else {
+    //         // vamos voltar ao inicio
+    //         $tpl = new Template('erro_sem_sessao.html');
+    //         $tpl->show();
+    //         exit;
+    //     }
+    // }
 }

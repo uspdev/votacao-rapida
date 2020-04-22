@@ -5,15 +5,17 @@
     }
 </style>
 
-<h2>{S->nome}</h2>
+<h1>{S->nome}</h1>
 <hr />
 <p class="h4 text-secondary">
     <span class="badge badge-info">{V->tipo}</span>
+    <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
+
     <span class="badge badge-secondary">{S->token->nome}</span>
 </p>
 <div>
     <!-- BEGIN block_msg -->
-    <h3>{msg}</h3>
+    <h2>{msg}</h2>
     <!-- END block_msg -->
 
     <!-- BEGIN block_msg_sucesso -->

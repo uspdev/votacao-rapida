@@ -1,0 +1,77 @@
+<h1>{S->nome}</h1>
+
+<div>
+    Unidade: {S->unidade}<br>
+    Tokens: quantidade<br>
+    Baixar arquivo <br>
+
+    <!-- Nomes: {S->nomes_json} -->
+</div>
+<br>
+<hr>
+<div id="autorizacao">
+    <h3>Autorização <a href class="adicionar_btn btn btn-sm btn-primary bold">+</a>
+        <span class="form_span hide">
+            <form class="d-inline" method="POST" action="gerente/{S->id}">
+                <input type="text" name="codpes" value="" placeholder="Número USP ..">
+                <input type="hidden" name="acao" value="addUser">
+                <input class="btn btn-sm btn-outline-primary" type="submit" name="ok" value="ok">
+            </form>
+        </span>
+    </h3>
+    <!-- BEGIN block_autorizacao -->
+    <div class="item" id="autorizacao_{U->id}">
+        {U->codpes} - {U->nome} ({U->unidade}) 
+        <a href class="remover_btn btn btn-sm btn-danger hide bold {U->self}" title="Remover">X</a>
+        <span class="btn btn-sm btn-danger hide">sou eu</span>
+    </div>
+    <!-- END block_autorizacao -->
+    <script type="text/javascript">
+        $(function () {
+            $('#autorizacao .adicionar_btn').click(function (e) {
+                e.preventDefault();
+                $('#autorizacao .form_span').toggle();
+                $('#autorizacao form input:text').focus();
+            });
+
+            $('#autorizacao .remover_btn').click(function (e) {
+                e.preventDefault();
+                id = $(this).parent().attr('id').split('_').pop();
+                if (confirm('Quer remover este usuário?') == false) {
+                    return false;
+                }
+                console.log('remover usuario ', id);
+                $.post(
+                    window.location,
+                    { acao: 'delUser', id: id },
+                    function (data) {
+                        res = JSON.parse(data);
+                        if (res.status == 'ok') {
+                            console.log('Usuario removido com sucesso')
+                            location.reload();
+                        }
+                    }
+                );
+            });
+
+            $('#autorizacao .item').hover(
+                function () {
+                    if ($(this).find('a').hasClass('self')) {
+                        $(this).find('span').show();
+                    } else {
+                        $(this).find('a').show();
+                    }
+                },
+                function () {
+                    $(this).find('a').hide();
+                    $(this).find('span').hide();
+
+                }
+            );
+        });
+    </script>
+</div>
+<hr>
+<h2>
+    Votações
+</h2>

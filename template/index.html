@@ -1,10 +1,10 @@
-<h2>Votação rápida</h2>
+<h1>Votação rápida</h1>
 <!-- BEGIN block_user -->
 <div>
-    <h3>Minhas votações</h3>
+    <h2>Minhas votações</h2>
     {MSG22}
     <!-- BEGIN block_sessao -->
-    <a href="sessao/{S->id}">{S->nome}</a> |
+    <a href="gerente/{S->id}">{S->nome}</a> |
     <a href="demo?acao=tokens_pdf&arq={S->tokens_pdf}">Tokens PDF</a> <br>
     <!-- END block_sessao -->
 </div>

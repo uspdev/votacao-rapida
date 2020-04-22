@@ -10,12 +10,6 @@ class Api
         return SELF::send($endpoint);
     }
 
-    public static function obterSessaoPorId($id)
-    {
-        $endpoint = '/gerente/sessao/' . $id;
-        return SELF::send($endpoint);
-    }
-
     public static function post($hash, $token, $data)
     {
         $endpoint = '/run/' . $hash . '/' . $token;

@@ -45,7 +45,7 @@ class Demo
         //print_r($sessao);exit;
 
         $tpl = new Template('demo.html');
-        $tpl->block('block_topo_img');
+        //$tpl->block('block_topo_img');
 
         $tokens = Api::send('/gerente/listarTokens/' . SELF::hash);
         $tpl->S = $sessao;
@@ -115,7 +115,7 @@ class Demo
 
 
 
-        $tpl->show();
+        $tpl->show('userbar');
         exit;
     }
 }
