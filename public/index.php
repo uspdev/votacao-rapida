@@ -3,6 +3,7 @@
 namespace Uspdev\Votacao\View;
 
 use Uspdev\Votacao\SessaoPhp as SS;
+use Uspdev\Votacao\Factory;
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
@@ -22,9 +23,7 @@ Flight::route('/session', function () {
 });
 
 Flight::route('GET /login', function () {
-    $gerente = new Gerente();
-    $gerente->data = Flight::request()->data;
-    $gerente->request = Flight::request();
+    $gerente = Factory::gerente(Flight::request());
     $gerente->login();
 });
 
@@ -41,9 +40,7 @@ Flight::route('GET /gerente/@id', function ($id) {
 });
 
 Flight::route('POST /gerente/@id', function ($id) {
-    $gerente = new Gerente();
-    $gerente->data = Flight::request()->data;
-    $gerente->request = Flight::request();
+    $gerente = Factory::gerente(Flight::request());
     $gerente->sessaoPost($id);
 });
 

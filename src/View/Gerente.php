@@ -51,8 +51,9 @@ class Gerente
             'callback_id' => getenv('SENHA_UNICA_CALLBACK_ID'), // callback_id é o sequencial no servidor
             'amb' => getenv('SENHA_UNICA_AMB'), // 'dev' = teste, 'prod' = producao
         ]);
-
         $res = $auth->login();
+
+        // todo: ainda tem de ajustar os vinculos permitidos
         $vinculo = $auth->obterVinculo('tipoVinculo', ['SERVIDOR', 'Estagiário']);
         if ($vinculo) {
             $user['codpes'] = $res['loginUsuario'];
@@ -63,7 +64,8 @@ class Gerente
             $usr = Api::send('/gerente/login', $user);
             SS::set('user', $user);
         }
-        header('Location:' . SS::getDel('next'));
+
+        header('Location:' . SS::getNext());
         exit;
     }
 
@@ -112,7 +114,7 @@ class Gerente
         }
         $data = $this->data->getData();
         $ret = Api::send('/gerente/sessao/' . $id . '?codpes=' . $user['codpes'], $data);
-        if ($this->request->ajax) {
+        if ($this->ajax) {
             echo json_encode(['status' => 'ok', 'msg' => $ret]);
         } else {
             header('Location:' . getenv('WWWROOT') . '/gerente/' . $id);

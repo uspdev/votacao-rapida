@@ -84,25 +84,26 @@ class sessaoPhp
             return $user;
         } else {
             SELF::set('next', $_SERVER['REQUEST_URI']);
-            //phpinfo();exit;
             header('Location:' . getenv('WWWROOT') . '/login');
+            exit;
         }
     }
 
-    public static function get($var)
+    public static function getNext()
     {
-        return isset($_SESSION[$var]) ? $_SESSION[$var] : '';
+        $ret = empty($_SESSION['next']) ? getenv('WWWROOT') : $_SESSION['next'];
+        unset($_SESSION['next']);
+        return $ret;
+    }
+
+    public static function get($chave)
+    {
+        return isset($_SESSION[$chave]) ? $_SESSION[$chave] : '';
     }
 
     public static function set($chave, $valor)
     {
         $_SESSION[$chave] = $valor;
-    }
-
-    public static function getDel($var)
-    {
-        $ret = isset($_SESSION[$var]) ? $_SESSION[$var] : '';
-        unset($_SESSION[$var]);
-        return $ret;
+        return true;
     }
 }
