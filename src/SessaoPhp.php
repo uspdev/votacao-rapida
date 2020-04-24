@@ -81,9 +81,10 @@ class sessaoPhp
     public static function getUser()
     {
         if ($user = SELF::get('user')) {
-            return $user['codpes'];
+            return $user;
         } else {
-            //SELF::set('next', $_SERVER['PHP_SELF']);
+            SELF::set('next', $_SERVER['REQUEST_URI']);
+            //phpinfo();exit;
             header('Location:' . getenv('WWWROOT') . '/login');
         }
     }
@@ -96,5 +97,12 @@ class sessaoPhp
     public static function set($chave, $valor)
     {
         $_SESSION[$chave] = $valor;
+    }
+
+    public static function getDel($var)
+    {
+        $ret = isset($_SESSION[$var]) ? $_SESSION[$var] : '';
+        unset($_SESSION[$var]);
+        return $ret;
     }
 }

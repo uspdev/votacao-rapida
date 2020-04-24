@@ -19,13 +19,13 @@ class Gerente
         }
 
         // buscar as sessões desse usuário
-        if (!($user['codpes'] == '1575309' ||
-            $user['codpes'] == '3567082' || //poliana
-            $user['codpes'] == '4807059' || //adriana
-            $user['codpes'] == '2508632'    //nivaldo
-        )) {
-            SelF::ajuda('Você não tem acesso à esse sistema.');
-        }
+        // if (!($user['codpes'] == '1575309' ||
+        //     $user['codpes'] == '3567082' || //poliana
+        //     $user['codpes'] == '4807059' || //adriana
+        //     $user['codpes'] == '2508632'    //nivaldo
+        // )) {
+        //     SelF::ajuda('Você não tem acesso à esse sistema.');
+        // }
 
         // usuário está ok, vamos procurar dados dele
         $tpl = new Template('index.html');
@@ -43,7 +43,7 @@ class Gerente
         exit;
     }
 
-    public static function login()
+    public function login()
     {
         $auth = new Senhaunica([
             'consumer_key' => getenv('CONSUMER_KEY'),
@@ -63,7 +63,7 @@ class Gerente
             $usr = Api::send('/gerente/login', $user);
             SS::set('user', $user);
         }
-        header('Location:' . getenv('WWWROOT'));
+        header('Location:' . SS::getDel('next'));
         exit;
     }
 
@@ -81,23 +81,21 @@ class Gerente
         $tpl = new Template('ajuda.html');
         $tpl->msg = $msg;
 
-        //$tpl->block('block_topo_img');
-
         $tpl->show('userbar');
         exit;
     }
 
     public static function sessao($id)
     {
-        $codpes = SS::getUser();
-        $sessao = Api::send('/gerente/sessao/' . $id . '?codpes=' . $codpes);
+        $user = SS::getUser();
+        $sessao = Api::send('/gerente/sessao/' . $id . '?codpes=' . $user['codpes']);
 
         $tpl = new Template('gerente/sessao.html');
         $tpl->S = $sessao;
 
         $usuarios = $sessao->sharedUsuario;
         foreach ($usuarios as $u) {
-            $u->self = ($u->codpes == $codpes) ? 'self' : '';
+            $u->self = ($u->codpes == $user['codpes']) ? 'self' : '';
             $tpl->U = $u;
             $tpl->block('block_autorizacao');
         }
@@ -107,11 +105,15 @@ class Gerente
 
     public function sessaoPost($id)
     {
+        $user = SS::get('user');
+        if (!$user) {
+            echo json_encode(['status' => 'erro', 'msg' => 'Necessário autenticar novamente']);
+            exit;
+        }
         $data = $this->data->getData();
-        $codpes = SS::get('user')['codpes'];
-        $ret = Api::send('/gerente/sessao/' . $id . '?codpes=' . $codpes, $data);
+        $ret = Api::send('/gerente/sessao/' . $id . '?codpes=' . $user['codpes'], $data);
         if ($this->request->ajax) {
-            echo json_encode(['status' => 'ok']);
+            echo json_encode(['status' => 'ok', 'msg' => $ret]);
         } else {
             header('Location:' . getenv('WWWROOT') . '/gerente/' . $id);
         }

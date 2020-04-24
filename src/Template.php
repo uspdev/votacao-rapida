@@ -19,7 +19,7 @@ namespace Uspdev\Votacao {
             // vamos renderizar o userbar: logado, deslogado e barra fina
             if ($bloco == 'userbar') {
                 $this->topbar_class = 'top-bar-user';
-                if ($user = SS::get('user')) {
+                if ($user = SS::getUser()) {
                     $this->user = json_decode(json_encode($user)); // transformando array em obj
                     $this->block('block_user_in');
                 } else {

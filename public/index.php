@@ -22,7 +22,10 @@ Flight::route('/session', function () {
 });
 
 Flight::route('GET /login', function () {
-    Gerente::login();
+    $gerente = new Gerente();
+    $gerente->data = Flight::request()->data;
+    $gerente->request = Flight::request();
+    $gerente->login();
 });
 
 Flight::route('GET /logout', function () {
