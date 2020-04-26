@@ -19,7 +19,7 @@ WS::admin();
 $classes['gerente'] = 'Uspdev\Votacao\Controller\Gerente';
 WS::classes($classes);
 
-$metodos['run'] = 'Uspdev\Votacao\Controller\Votacao::run';
+$metodos['run'] = 'Uspdev\Votacao\Controller\Run::run';
 //$metodos['sessao'] = 'Uspdev\Votacao\Controller\Gerente::sessao';
 WS::metodos($metodos);
 
