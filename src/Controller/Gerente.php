@@ -48,20 +48,29 @@ class Gerente
                     return $usuario;
                     break;
                 case 'emailTeste':
-                    $dest = $this->data->dest;
-                    $data = Email::send([
-                        'destinatario' => $dest,
-                        'assunto' => 'Credenciais de votação: ' . $sessao->nome . ' - data hora - ' . generateRandomString(4),
-                        'mensagem' => file_get_contents(TPL . '/email/teste.html'),
-                        'responderPara' => $sessao->email,
-                        'anexo1' => ROOTDIR . '/sandbox/qrcode.png',
-                        //  'anexo1' => LOCAL . '/arquivos/UUZEWSRWKBXOGJVWIYJV-aberta-Masaki.pdf',
-                    ]);
+                    $token = [
+                        'token' => 'ABCDEF',
+                        'tipo' => 'teste',
+                        'apelido' => 'Joãozinho',
+                        'nome' => 'João Batista da Silva',
+                        'email' => $this->data->dest
+                    ];
+                    $data = Email::sendVotacao($sessao, json_decode(json_encode($token)));
+
                     if ($data !== true) {
                         return ['status' => 'erro', 'data' => $data];
                     }
                     //print_r($data);exit;
                     return ['status' => 'ok', 'data' => 'Email enviado com sucesso.'];
+                    break;
+                case 'atualizar':
+                    foreach ($this->data as $key => $val) {
+                        if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
+                            $sessao->$key = $val;
+                        }
+                    }
+                    R::store($sessao);
+                    return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
                     break;
             }
             return ['status' => 'erro', 'data' => 'Sem ação para ' . $this->data->acao];
@@ -72,6 +81,7 @@ class Gerente
         $sessao->recepcao = R::findOne('token', "tipo = 'recepcao' and sessao_id = ?", [$sessao->id]);
 
         $sessao->sharedUsuarioList;
+        $sessao->ownVotacaoList;
         return $sessao;
     }
 
@@ -80,6 +90,7 @@ class Gerente
         $sessao = R::dispense('sessao');
         $sessao->sharedUsuarioList[] = $usuario;
         $sessao->nome = 'Nova sessão criada em ' . date('d/m/Y H:i:s');
+        $sessao->quando = date('d/m/Y');
         $sessao->hash = generateRandomString(20);
         $sessao->unidade = $usuario->unidade;
         $sessao->email = $usuario->email;

@@ -34,7 +34,7 @@ class Votacao
                 return ['msg' => '', 'votacao' => $votacao];
             }
         }
-        return ['msg' => 'Sem votação aberta', 'votacao' => null];
+        return ['msg' => 'Aguarde a próxima votação', 'votacao' => null];
     }
 
     public static function exportar($sessao, $votacao)

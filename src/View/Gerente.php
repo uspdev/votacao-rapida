@@ -6,7 +6,6 @@ use Uspdev\Votacao\Api;
 use Uspdev\Votacao\Template;
 use Uspdev\Votacao\SessaoPHP as SS;
 use Uspdev\Senhaunica\Senhaunica;
-use Uspdev\Votacao\Mail;
 
 
 
@@ -116,12 +115,8 @@ class Gerente
                     $data['dest'] = 'kawabata@sc.usp.br';
                     $ret = Api::send($endpoint, $data);
                     if ($ret->status == 'ok') {
-                        SS::setMsg([
-                            'msg' => $ret->data,
-                            'class' => 'alert-info',
-                        ]);
+                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
                     }
-
                     header('Location:' . $_SERVER['REDIRECT_URL']);
                     exit;
                     break;
@@ -142,14 +137,18 @@ class Gerente
 
         // autorizacao
         $tpl->addFile('autorizacao', TPL . '/gerente/sessao_autorizacao.html');
-        $usuarios = $sessao->sharedUsuario;
-        foreach ($usuarios as $u) {
+        foreach ($sessao->sharedUsuario as $u) {
             $u->self = ($u->codpes == $user['codpes']) ? 'self' : '';
             $tpl->U = $u;
             $tpl->block('block_autorizacao');
         }
 
         // votacoes
+        foreach ($sessao->ownVotacao as $v) {
+            $tpl->V = $v;
+            $tpl->block('block_votacao');
+        }
+        //print_r($sessao->ownVotacao);exit;
 
 
         $tpl->show('userbar');
@@ -162,8 +161,10 @@ class Gerente
             echo json_encode(['status' => 'erro', 'msg' => 'Necessário autenticar novamente']);
             exit;
         }
+        $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user['codpes'];
+
         $data = $this->data->getData();
-        $ret = Api::send('/gerente/sessao/' . $id . '?codpes=' . $user['codpes'], $data);
+        $ret = Api::send($endpoint, $data);
         if ($this->ajax) {
             echo json_encode(['status' => 'ok', 'msg' => $ret]);
         } else {

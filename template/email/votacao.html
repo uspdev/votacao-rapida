@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="pt-br">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div style="width:640px;">
+
+        <div style="border: orange 2px solid;">
+            <img style="background-repeat: repeat-x; height: 20px; width:100%; margin:0px; padding:0px; border: 0px"
+                src="cid:headtop.png" alt="cabecalho" />
+
+            <h3 style="margin:3px 0 3px 8px;">
+                Votação rápida - credenciais de acesso 
+            </h3>
+
+            <p style="line-height: 1.5; font-size: larger; padding-left: 8px">
+                <span style="color:gray;">Evento:</span> {S->nome}<br>
+                <span style="color:gray;">Quando:</span> {S->quando}<br>
+                <span style="color:gray;">Link de acesso:</span>
+                <a href="{S->link_direto}">{S->link_direto|substr:0:10}..{S->link_direto|substr:-5}</a><br>
+                <span style="color:gray;">Token de acesso (voto aberto):</span> {T->token}<br>
+                <span style="color:gray;">Nome de exibição:</span> {T->apelido}<br>
+                <br>
+                <span style="color:gray; vertical-align:top;">Qrcode</span> &nbsp;
+                <img style="padding-left:5px;" src="cid:qrcode.png" alt="qrcode">
+            </p>
+        </div>
+        <p>
+            Este email foi enviado para <b>{T->nome}</b>.
+        </p>
+        <p>
+            O sistema de votação rápida permitirá ao senhor(a) votar nas pautas
+            do evento a partir de um computador ou dispositivo móvel (smartphone, tablet, etc).
+        </p>
+        <p>
+            Utilize o <b>link de acesso</b> ou escaneie o QRCode com um aplicativo apropriado.
+            Caso você não possua leitor de QRCode no seu dispositivo,
+            instale um a partir de sua loja de aplicativos.
+        </p>
+        <p>
+            Faça um teste de acesso com o <b>link de acesso</b> ou QRCode. Caso tenha algum problema,
+            solicite suporte respondendo à esta mensagem.
+        </p>
+        <p>
+            IMPORTANTE: Este email contém informações confidenciais direcionadas somente 
+            a este destinatário. A credencial é nominal e intransferível.
+            Caso o senhor(a) não venha a participar do evento, responda a este email
+            informando os dados de seu substituto que será providenciado nova credencial.
+        </p>
+    </div>
+</body>
+
+</html>

@@ -3,9 +3,12 @@
     <h1>
         <span class="nome">{S->nome} </span>
         <span class="nome_edit hide">
-            <input type="text" class="col-md-7" name="nome" value="{S->nome}">
-            <button class="ok_btn">OK</button>
-            <button class="cancel_btn">Cancelar</button>
+            <form method="POST" action="">
+                <input type="text" class="col-md-7" name="nome" value="{S->nome}">
+                <input type="hidden" name="acao" value="atualizar">
+                <input type="submit" name="OK" value="ok" class="btn btn-sm btn-outline-primary">
+                <button class="btn btn-sm btn-outline-warning cancel_btn">Cancelar</button>
+            </form>
         </span>
         <button class="edit_btn">Editar</button>
     </h1>
@@ -13,11 +16,12 @@
         <div class="col-md-8">
             <div id="sessao">
                 Unidade: {S->unidade}<br>
+                Quando: {S->quando}<br>
 
                 Link: {S->link} <a href title="Copie este link e use em e.usp.br para gerar link encurtado. 
                 Depois cole o link encurtado de volta aqui.">AJUDA</a><br>
 
-                Tokens de controle: 
+                Tokens de controle:
                 <a href="{S->hash}/{S->apoio->token}" target="apoio">Token de apoio</a> |
                 <a href="{S->hash}/{S->painel->token}" target="painel">Token de Painel</a> |
                 <a href="{S->hash}/{S->recepcao->token}" target="recepcao">Token de Recepção</a><br>
@@ -31,7 +35,23 @@
 
             <br>
             <hr>
-            <h2>Votações</h2>
+            <div class="row">
+                <div class="col-md-7">
+                    <h2>Votações</h2>
+                    <div>
+                        <!-- BEGIN block_votacao -->
+                        <div>
+                            {V->nome} ({V->tipo})
+                        </div>
+                        <!-- END block_votacao -->
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <h2>Tokens de votação</h2>
+
+                </div>
+            </div>
+
 
         </div>
         <div class="col-md-4">
@@ -40,10 +60,10 @@
             <br>
             {autorizacao}
             <br>
-            <h3>Finalização</h3>
+            <h3>Email</h3>
             <div class="ml-2">
-                <a href="{main->self}?acao=email_teste">Testar envio de tokens por email</a><br>
-                <a href>Enviar tokens por email</a><br>
+                <a href="{main->self}?acao=email_teste">Enviar tokens de controle</a><br>
+                <a href>Enviar tokens de votação</a><br>
                 <a href>Tokens para impressão</a><br>
             </div>
 
@@ -59,12 +79,16 @@
                 sessao.find('.nome_edit input').focus();
             });
 
-            sessao.find('.cancel_btn').click(function() {
+            sessao.find('.cancel_btn').click(function () {
                 sessao.find('.nome_edit').hide();
                 sessao.find('.nome').show();
                 sessao.find('.edit_btn').show();
             });
-
+            sessao.find('.ok_btn').click(function () {
+                sessao.find('.nome_edit').hide();
+                sessao.find('.nome').show();
+                sessao.find('.edit_btn').show();
+            });
 
         });
     </script>
