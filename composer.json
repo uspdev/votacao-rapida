@@ -19,7 +19,8 @@
         "oomphinc/composer-installers-extender": "^1.1",
         "bower-asset/bootstrap4": "^4.4",
         "npm-asset/jquery": "3.4.*",
-        "uspdev/senhaunica": "^1.1"
+        "uspdev/senhaunica": "^1.1",
+        "phpmailer/phpmailer": "^6.1"
     },
     "repositories": [
         {

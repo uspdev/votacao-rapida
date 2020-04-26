@@ -1,0 +1,18 @@
+<h1>Votação rápida</h1>
+<!-- BEGIN block_user -->
+<div>
+    <h3>
+        <a href="gerente/0">Nova sessão de votação</a>
+    </h3>
+
+    <hr />
+    <h2>Minhas sessões</h2>
+
+    <div class="ml-3">
+        <!-- BEGIN block_sessao -->
+        <a href="gerente/{S->id}">{S->nome} ({S->unidade})</a> | {S->estado}<br>
+        <!-- END block_sessao -->
+    </div>
+</div>
+<hr>
+<!-- END block_user -->

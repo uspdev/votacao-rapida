@@ -53,8 +53,13 @@ class sessaoPhp
 
             $hash = $_SESSION['hash'];
             if ($perfil == 'votacao') {
-                $token[] = isset($p['aberta']) ? $p['aberta']['token'] : '';
-                $token[] = isset($p['fechada']) ? $p['fechada']['token'] : '';
+                $token = [];
+                if (isset($p['aberta'])) {
+                    $token[] = $p['aberta']['token'];
+                }
+                if (isset($p['fechada'])) {
+                    $token[] = $p['fechada']['token'];
+                }
             } else {
                 $token = $_SESSION[$perfil][$perfil]['token'];
             }
@@ -91,9 +96,21 @@ class sessaoPhp
 
     public static function getNext()
     {
-        $ret = empty($_SESSION['next']) ? getenv('WWWROOT') : $_SESSION['next'];
+        $ret = empty($_SESSION['next']) ? getenv('WWWROOT').'/gerente' : $_SESSION['next'];
         unset($_SESSION['next']);
         return $ret;
+    }
+
+    public static function getMsg()
+    {
+        $ret = empty($_SESSION['msg']) ? '' : $_SESSION['msg'];
+        unset($_SESSION['msg']);
+        return $ret;
+    }
+
+    // msg é array
+    public static function setMsg($msg) {
+        return SELF::set('msg', $msg);
     }
 
     public static function get($chave)
@@ -105,5 +122,11 @@ class sessaoPhp
     {
         $_SESSION[$chave] = $valor;
         return true;
+    }
+
+    public static function getDel($chave) {
+        $ret = empty($_SESSION[$chave]) ? '' : $_SESSION[$chave];
+        unset($_SESSION[$chave]);
+        return $ret;
     }
 }

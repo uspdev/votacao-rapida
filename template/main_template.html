@@ -6,7 +6,7 @@
     <title>Votação rápida</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <base href="{wwwroot}/">
+    <base href="{main->wwwroot}/">
 
     <link href="assets/bootstrap4/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -28,18 +28,22 @@
             color: #0F94AB;
         }
 
-        h3 {
+        h3,
+        .h3 {
             font-size: 20px;
             color: rgb(15, 122, 171);
         }
 
         h4 {
-            font-size: 18px;
+            font-size: 16px;
             color: rgb(15, 96, 171);
         }
 
         .hide {
             display: none;
+        }
+        .gray {
+            color: gray;
         }
 
         .bold {
@@ -47,7 +51,7 @@
         }
 
         hr {
-            margin-top: 0px;
+            margin-top: 1px;
         }
 
         .top-bar-user {
@@ -80,6 +84,19 @@
             height: 50px;
             margin: 10px;
         }
+
+        /* https://www.codeply.com/go/bp/qjvYXfWLuN */
+        .row .vdivide [class*='col-']:not(:last-child):after {
+            background: #e0e0e0;
+            width: 2px;
+            content: "";
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            min-height: 70px;
+        }
     </style>
 
 </head>
@@ -97,7 +114,7 @@
 
                 <!-- BEGIN block_user_principal -->
                 <div class="{topbar_class} pr-2">
-                    <div class="float-left pl-2"><a class="text-reset" href="{wwwroot}">Início</a></div>
+                    <div class="float-left pl-2"><a class="text-reset" href="{main->wwwroot}">Início</a></div>
                     <div class="float-right">
                         <!-- BEGIN block_user_in -->
                         {user->nome} ({user->unidade}) |
@@ -116,6 +133,25 @@
                 <!-- END block_no_user -->
             </div>
         </div>
+        <!-- BEGIN block_principal_msg -->
+        <div id="block_principal_msg" class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="alert {PM->class}">
+                    {PM->msg}
+                </div>
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+        <script>
+            $(function () {
+                $('#block_principal_msg').fadeTo(2000, 500).slideUp(500, function () {
+                    $(this).slideUp(500);
+                });
+            });
+        </script>
+        <!-- END block_principal_msg -->
+
         <div class="row">
             <div class="col-md-12">
                 {corpo}

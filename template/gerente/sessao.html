@@ -1,77 +1,71 @@
-<h1>{S->nome}</h1>
-
-<div>
-    Unidade: {S->unidade}<br>
-    Tokens: quantidade<br>
-    Baixar arquivo <br>
-
-    <!-- Nomes: {S->nomes_json} -->
-</div>
 <br>
-<hr>
-<div id="autorizacao">
-    <h3>Autorização <a href class="adicionar_btn btn btn-sm btn-primary bold">+</a>
-        <span class="form_span hide">
-            <form class="d-inline" method="POST" action="gerente/{S->id}">
-                <input type="text" name="codpes" value="" placeholder="Número USP ..">
-                <input type="hidden" name="acao" value="addUser">
-                <input class="btn btn-sm btn-outline-primary" type="submit" name="ok" value="ok">
-            </form>
+<div id="sessao_div">
+    <h1>
+        <span class="nome">{S->nome} </span>
+        <span class="nome_edit hide">
+            <input type="text" class="col-md-7" name="nome" value="{S->nome}">
+            <button class="ok_btn">OK</button>
+            <button class="cancel_btn">Cancelar</button>
         </span>
-    </h3>
-    <!-- BEGIN block_autorizacao -->
-    <div class="item" id="autorizacao_{U->id}">
-        {U->codpes} - {U->nome} ({U->unidade}) 
-        <a href class="remover_btn btn btn-sm btn-danger hide bold {U->self}" title="Remover">X</a>
-        <span class="btn btn-sm btn-danger hide">sou eu</span>
+        <button class="edit_btn">Editar</button>
+    </h1>
+    <div class="row vdivide">
+        <div class="col-md-8">
+            <div id="sessao">
+                Unidade: {S->unidade}<br>
+
+                Link: {S->link} <a href title="Copie este link e use em e.usp.br para gerar link encurtado. 
+                Depois cole o link encurtado de volta aqui.">AJUDA</a><br>
+
+                Tokens de controle: 
+                <a href="{S->hash}/{S->apoio->token}" target="apoio">Token de apoio</a> |
+                <a href="{S->hash}/{S->painel->token}" target="painel">Token de Painel</a> |
+                <a href="{S->hash}/{S->recepcao->token}" target="recepcao">Token de Recepção</a><br>
+                <br>
+                Email do remetente: <input type="text" value="{S->email}"><br>
+                <div>
+                    Quantidade de tokens de votação: <input type="text">
+                </div>
+                Logo: <a href="download/{S->hash}/{S->logo|basename}">{S->logo|basename}</a> <input type="file">
+            </div>
+
+            <br>
+            <hr>
+            <h2>Votações</h2>
+
+        </div>
+        <div class="col-md-4">
+            <h3>Estado</h3>
+            {S->estado} >> Em elaboração | Aberto | Finalizado<br>
+            <br>
+            {autorizacao}
+            <br>
+            <h3>Finalização</h3>
+            <div class="ml-2">
+                <a href="{main->self}?acao=email_teste">Testar envio de tokens por email</a><br>
+                <a href>Enviar tokens por email</a><br>
+                <a href>Tokens para impressão</a><br>
+            </div>
+
+        </div>
     </div>
-    <!-- END block_autorizacao -->
-    <script type="text/javascript">
+    <script>
         $(function () {
-            $('#autorizacao .adicionar_btn').click(function (e) {
-                e.preventDefault();
-                $('#autorizacao .form_span').toggle();
-                $('#autorizacao form input:text').focus();
+            var sessao = $('#sessao_div');
+            sessao.find('.edit_btn').click(function () {
+                $(this).hide();
+                sessao.find('.nome').hide();
+                sessao.find('.nome_edit').show();
+                sessao.find('.nome_edit input').focus();
             });
 
-            $('#autorizacao .remover_btn').click(function (e) {
-                e.preventDefault();
-                id = $(this).parent().attr('id').split('_').pop();
-                if (confirm('Quer remover este usuário?') == false) {
-                    return false;
-                }
-                console.log('remover usuario ', id);
-                $.post(
-                    window.location,
-                    { acao: 'delUser', id: id },
-                    function (data) {
-                        res = JSON.parse(data);
-                        if (res.status == 'ok') {
-                            console.log('Usuario removido com sucesso')
-                            location.reload();
-                        }
-                    }
-                );
+            sessao.find('.cancel_btn').click(function() {
+                sessao.find('.nome_edit').hide();
+                sessao.find('.nome').show();
+                sessao.find('.edit_btn').show();
             });
 
-            $('#autorizacao .item').hover(
-                function () {
-                    if ($(this).find('a').hasClass('self')) {
-                        $(this).find('span').show();
-                    } else {
-                        $(this).find('a').show();
-                    }
-                },
-                function () {
-                    $(this).find('a').hide();
-                    $(this).find('span').hide();
 
-                }
-            );
         });
     </script>
 </div>
-<hr>
-<h2>
-    Votações
-</h2>

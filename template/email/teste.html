@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <style>
+        .box {
+            border: orange 2px solid;
+            padding-left: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="width:640px;">
+
+        <!-- <h1 style="font-size:small">This is a test of PHPMailer.</h1> -->
+        <p><b>Este email foi enviado para {Nome completo}</b></p>
+        <p>Caro senhor(a):</p>
+
+        <p>Estamos enviando as credenciais de acesso ao sistema de votação eletrônica
+            para:</p>
+        <div class="box">
+            <h3>Votação rápida - credenciais de acesso </h3>
+            <p style="line-height: 1.5; font-size: larger;">
+                <span style="color:gray;">Evento:</span> Reunião XXXXX<br>
+                <span style="color:gray;">Quando:</span> 30/09/2020, quinta-feira<br>
+                <span style="color:gray;">Link de acesso:</span> {LINK}<br>
+                <span style="color:gray;">Token de acesso (voto aberto):</span> {TOKEN} <br>
+                <span style="color:gray;">Nome de exibição:</span> {nome}<br>
+                <br>
+                <span style="color:gray;">Qrcode</span><br>
+                <img style="padding-left:5px;" src="cid:anexo1">
+            </p>
+        </div>
+
+
+
+        <p>O sistema devotação rápida pertmitirá aos senhores(as) votarem nas pautas
+            do evento a partir de um computador ou dispositivo móvel.
+        </p>
+        <p>Para acesso às votações estou enviando um arquivo PDF contendo a credencial de acesso. Nesse arquivo há um
+            QRCode que pode ser escaneado em dispositivos móveis (smartphone, tablet, etc). Ao escanear esse código, ele
+            apontará para um link a ser aberto no navegador.</p>
+
+        <p>Caso você não possua leitor de QRCode no seu dispositivo, instale um a partir de sua loja de aplicativos.</p>
+
+        <p>Ao abrir o link, deverá aparecer uma tela similar ao print de tela anexo, com o texto "Sem votação aberta".
+        </p>
+
+        <p>Se preferir utilizar um computador para acessar a votação, utilize o link mais o token disponíveis na
+            credencial.</p>
+
+        <p>Por favor, faça o teste de acesso o quanto antes e caso tenha algum problema estou à disposição para
+            esclarecer
+            dúvidas nesse email ou por Whatsapp 16 98137-0299.</p>
+
+        <p>IMPORTANTE: A credencial é nominal portanto não passe para ninguém. Caso no horário da reunião você não possa
+            participar e seu suplente participe, instrua ele a solicitar credencial própria por este email.</p>
+    </div>
+</body>
+
+</html>

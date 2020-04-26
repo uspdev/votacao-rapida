@@ -65,56 +65,62 @@ class Run
 
     public static function votacaoGet()
     {
+        // vamos ver se o token já está na session
         list($hash, $token) = SS::verificaSessao('votacao');
+        if (empty($token)) {
+            header('Location:' . $hash);
+            exit;
+        }
+
+        // vamos tentar votar com os tokens existentes
         foreach ($token as $t) {
             $sessao = SELF::obterSessao($hash, $t);
-            //print_r($sessao);exit;
             if (empty($sessao->msg) && isset($sessao->render_form)) break;
         }
 
-        //print_r($sessao);exit;
         $tpl = new Template('votacao_index.html');
-
         $tpl->S = $sessao;
 
         // se veio msg é porque houve algum problema
         if (!empty($sessao->msg)) {
             $tpl->msg = $sessao->msg;
             $tpl->block('block_msg');
-        } else {
-            $v = $sessao->render_form;
-
-            if (!empty($_SESSION['msg'])) {
-                // aqui trata o retorno do post
-                $msg = json_decode($_SESSION['msg']);
-                unset($_SESSION['msg']);
-
-                if ($msg->status == 'ok') {
-                    $msg->msg = 'Voto computado com sucesso';
-                    $msg->datajson = json_encode($msg->data);
-                    $block = 'block_msg_sucesso';
-                } else {
-                    $msg->datajson = '';
-                    $block = 'block_msg_erro';
-                }
-                $tpl->M = $msg;
-
-                $tpl->V = $v;
-                $tpl->block($block);
-            } else {
-                // aqui mostra o form de votacao
-                
-                $tpl->V = $v;
-                $form = new Form($v);
-                $tpl->form = $form->render();
-                $tpl->block('block_form');
-            }
-
-            $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
-            $v->estado = 'Em votação';
-            $v->estado_class = SELF::getEstadoClass($v->estado);
-
+            $tpl->show();
+            exit;
         }
+
+        // se não veio msg, vamos continuar
+        $v = $sessao->render_form;
+
+        if (!empty($msg = SS::getDel('votacao_msg'))) {
+            // aqui trata o retorno do post
+            $msg = json_decode($msg);
+
+            if ($msg->status == 'ok') {
+                $msg->msg = 'Voto computado com sucesso';
+                $msg->datajson = json_encode($msg->data);
+                $msg->voto = $msg->data;
+                $block = 'block_msg_sucesso';
+            } else {
+                $msg->datajson = '';
+                $block = 'block_msg_erro';
+            }
+            $tpl->M = $msg;
+
+            $tpl->V = $v;
+            $tpl->block($block);
+        } else {
+            // aqui mostra o form de votacao
+
+            $tpl->V = $v;
+            $form = new Form($v);
+            $tpl->form = $form->render();
+            $tpl->block('block_form');
+        }
+
+        $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+        $v->estado = 'Em votação';
+        $v->estado_class = SELF::getEstadoClass($v->estado);
 
         $tpl->show();
     }
@@ -134,7 +140,9 @@ class Run
             //print_r($data);
             //echo json_encode((Array) $data);exit;
             $res = Api::post($hash, $sessao->token->token, $data);
-            $_SESSION['msg'] = json_encode($res); //exit;
+
+            SS::set('votacao_msg', json_encode($res));
+            //$_SESSION['msg'] = json_encode($res); //exit;
             header('Location:' .  getenv('WWWROOT') . '/votacao');
             exit;
         }

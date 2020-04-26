@@ -9,7 +9,17 @@ namespace Uspdev\Votacao {
         function __construct($addFile)
         {
             parent::__construct(TPL . '/main_template.html');
-            $this->wwwroot = getenv('WWWROOT');
+
+            $main = new \Stdclass;
+            $main->wwwroot = getenv('WWWROOT');
+            $main->self = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $this->main = $main;
+
+            // vamos mostrar mensagem se necessário
+            if ($msg = SS::getMsg()) {
+                $this->PM = json_decode(json_encode($msg));
+                $this->block('block_principal_msg');
+            }
 
             $this->addFile('corpo', TPL . '/' . $addFile);
         }
@@ -26,13 +36,20 @@ namespace Uspdev\Votacao {
                     $this->block('block_user_out');
                 }
                 $this->block('block_topo_img');
-
             } else {
                 $this->topbar_class = 'top-bar-no-user';
                 $this->block('block_no_user');
             }
 
             parent::show();
+        }
+
+        public static function erro($msg)
+        {
+            $tpl = new Template('erro.html');
+            $tpl->msg = $msg;
+            $tpl->show('userbar');
+            exit;
         }
     }
 }

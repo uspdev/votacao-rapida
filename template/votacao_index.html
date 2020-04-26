@@ -22,15 +22,17 @@
     <div class="alert alert-success">{M->msg}</div>
     <p>
         Aguarde a próxima votação ou escolha uma opção.
-        Se finalizar, será necessário escaner o QRCode novamente.
+        Você pode votar quantas vezes quiser, somente o último voto será contabilizado.
     </p>
     <div>
         <input type="button" id="mostrar_data" class="btn btn-outline-primary" name="Mostrar voto" value="Mostrar voto">
-        <a class="btn btn-outline-warning ml-2" href="{S->hash}">Finalizar</a>
+        <a class="btn btn-outline-warning" href="votacao/">Votar novamente</a>
     </div>
     <br>
     <div style="display:none;" id="data">
-        {M->dataJson}
+        <div>{V->nome}</div>
+        <span class="gray">Alternativa escolhida:</span> {M->voto->alternativa->texto}
+        <!-- {M->dataJson} -->
     </div>
 
     <script type="text/javascript">

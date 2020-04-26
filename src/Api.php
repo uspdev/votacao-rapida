@@ -18,7 +18,14 @@ class Api
 
     public static function send($endpoint, $postdata = '')
     {
+
         $ch = curl_init(API . $endpoint);
+
+        // vamos coletar informaçoes de debug, caso precise
+        // https://stackoverflow.com/questions/3757071/php-debugging-curl
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        $verbose = fopen('php://temp', 'w+');
+        curl_setopt($ch, CURLOPT_STDERR, $verbose);
 
         if (!empty($_SERVER['HTTP_USER_AGENT'])) {
             $headers = [
@@ -35,7 +42,7 @@ class Api
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, getenv('API_USER') . ':' . getenv('API_PWD'));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 3);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // timeout
 
         // get ou post
         if (!empty($postdata)) {
@@ -47,12 +54,18 @@ class Api
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
-        $sessao = curl_exec($ch);
+        $ret = curl_exec($ch);
         curl_close($ch);
-
-        $obj = json_decode($sessao);
+        rewind($verbose);
+        $verboseLog = stream_get_contents($verbose);
+        $obj = json_decode($ret);
         if (!is_object($obj)) {
-            echo 'Mensagem ao tentar obter sessão: ', $sessao;
+            echo '<pre>';
+            echo 'Erro no retorno da API: ', PHP_EOL;
+            echo 'endpoint = ', API, $endpoint, PHP_EOL;
+            echo 'postdata = ', json_encode($postdata), PHP_EOL;
+            echo 'retorno = ', var_dump($ret), PHP_EOL;
+            echo 'verboselog = ', $verboseLog, PHP_EOL;
             exit;
         }
 

@@ -17,14 +17,22 @@ Flight::route('/', function () {
     Gerente::index();
 });
 
+Flight::route('/gerente', function () {
+    Gerente::index();
+});
+
 Flight::route('/session', function () {
     echo '<pre>';
     print_r($_SESSION);
 });
 
-Flight::route('GET /login', function () {
+Flight::route('/email', function () {
+    Gerente::email();
+});
+
+Flight::route('GET /login(/@cod)', function ($cod) {
     $gerente = Factory::gerente(Flight::request());
-    $gerente->login();
+    $gerente->login($cod);
 });
 
 Flight::route('GET /logout', function () {
@@ -36,7 +44,8 @@ Flight::route('GET /demo', function () {
 });
 
 Flight::route('GET /gerente/@id', function ($id) {
-    Gerente::sessao($id);
+    $gerente = Factory::gerente(Flight::request());
+    $gerente->sessao($id);
 });
 
 Flight::route('POST /gerente/@id', function ($id) {
