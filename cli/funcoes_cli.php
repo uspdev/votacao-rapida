@@ -139,28 +139,7 @@ function importarVotacao($hash, $arq)
 function excluirSessao($hash)
 {
     if ($sessao = R::findOne('sessao', 'hash = ?', [$hash])) {
-
-        // vamos limpar tokens
-        R::trashAll($sessao->ownTokenList);
-
-        $votacoes = $sessao->ownVotacaoList;
-        foreach ($votacoes as $votacao) {
-            // alternativas e respostas
-            R::trashAll($votacao->ownAlternativaList);
-            R::trashAll($votacao->ownRespostaList);
-        }
-        // votacoes
-        R::trashAll($votacoes);
-
-        // arquivos
-        exec('rm ' . ARQ . '/' . $hash . '*.pdf', $out, $ret);
-        // if (is_file(ARQ . '/' . $sessao->tokens_pdf)) {
-        //     unlink(ARQ . '/' . $sessao->tokens_pdf);
-        // }
-
-        // e finalmente a sessao
-        R::trash($sessao);
-
+        $ret = Uspdev\Votacao\Controller\Gerente::apagarSessao($sessao);
         return 'Sessão excluída com sucesso';
     } else {
         return 'Nada para excluir';

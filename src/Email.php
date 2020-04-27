@@ -5,7 +5,7 @@ namespace Uspdev\Votacao;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use raelgc\view\Template;
-use Uspdev\Votacao\Controller\Gerente;
+use Uspdev\Votacao\Controller\Token;
 
 class Email
 {
@@ -16,7 +16,6 @@ class Email
         $tpl = new Template(TPL . '/email/votacao.html');
         $tpl->S = $sessao;
         $tpl->T = $token;
-        //$tpl->qrcode = base64_encode($qrcode);
         $corpo = $tpl->parse();
 
         return SELF::send([
@@ -30,6 +29,36 @@ class Email
                 ['nome' => 'headtop.png', 'data' => file_get_contents(TPL . '/email/headtop.png')],
             ],
         ]);
+    }
+
+    public static function sendControle($sessao)
+    {
+        $sessao->wwwroot = getenv('WWWROOT');
+        $lista = $sessao->sharedUsuarioList;
+        foreach ($lista as $dest) {
+            //$sessao->link_direto = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
+            //$qrcode = SELF::qrCodePngData($sessao->link_direto);
+            $tpl = new Template(TPL . '/email/controle.html');
+            $tpl->S = $sessao;
+            $tpl->TA = Token::ObterToken($sessao, 'apoio');
+            $tpl->TP = Token::ObterToken($sessao, 'painel');
+            $tpl->TR = Token::ObterToken($sessao, 'recepcao');
+            $tpl->dest = $dest;
+            $corpo = $tpl->parse();
+
+            SELF::send([
+                'destinatario' => $dest->email,
+                'assunto' => 'Credenciais de controle: ' . $sessao->nome . ' - '.$sessao->quando,
+                'corpo' => $corpo,
+                'alt' => $corpo,
+                'responderPara' => $sessao->email,
+                'embedded' => [
+                    // ['nome' => 'qrcode.png', 'data' => $qrcode],
+                    ['nome' => 'headtop.png', 'data' => file_get_contents(TPL . '/email/headtop.png')],
+                ],
+            ]);
+        }
+        return true;
     }
 
     public static function send($arr)
@@ -62,9 +91,10 @@ class Email
 
         //$mail->WordWrap = 50; // Definir quebra de linha
         $mail->IsHTML = true; // Enviar como HTML
-        $mail->Subject = utf8_decode($arr['assunto']); // Assunto
-        $mail->Body = $arr['corpo']; //Corpo da mensagem caso seja HTML
-        $mail->AltBody = $arr['alt']; //PlainText, para caso quem receber o email não aceite o corpo HTML
+        $mail->Subject = utf8_decode($arr['assunto']);
+        //$mail->Body = $arr['corpo']; 
+        $mail->msgHTML($arr['corpo']);
+        //$mail->AltBody = $arr['alt']; //PlainText, para caso quem receber o email não aceite o corpo HTML
         $mail->send();
         return true;
         if (!$mail->send()) {

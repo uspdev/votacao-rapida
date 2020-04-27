@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="pt-br">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div style="width:840px;">
+
+        <div style="border: orange 2px solid;">
+            <img style="background-repeat: repeat-x; height: 20px; width:100%; margin:0px; padding:0px; border: 0px"
+                src="cid:headtop.png" alt="cabecalho" />
+
+            <h3 style="margin:3px 0 3px 8px;">
+                Votação rápida - credenciais de controle 
+            </h3>
+
+            <p style="line-height: 1.5; font-size: larger; padding-left: 8px">
+                <span style="color:gray;">Evento:</span> {S->nome}<br>
+                <span style="color:gray;">Quando:</span> {S->quando}<br>
+                <span style="color:gray;">Estado:</span> {S->estado}<br>
+                
+                <span style="color:gray;">Link:</span> {S->link}<br>
+                <span style="color:gray;">Tela do gerente:</span> {S->wwwroot}/gerente/{S->id}<br>
+                <span style="color:gray;">Token de apoio:</span> {TA->token} | <a href="{S->wwwroot}/{S->hash}/{TA->token}">Clique para acessar</a><br>
+                <span style="color:gray;">Token de painel:</span> {TP->token} | <a href="{S->wwwroot}/{S->hash}/{TP->token}">Clique para acessar</a><br>
+                <span style="color:gray;">Token de recepção:</span> {TR->token} | <a href="{S->wwwroot}/{S->hash}/{TR->token}">Clique para acessar</a><br>
+            </p>
+        </div>
+        <p>
+            Este email foi enviado para <b>{dest->nome}</b> pois você está autorizado 
+            a gerenciar essa sessão.
+        </p>
+        <p>
+            IMPORTANTE: Este email contém informações confidenciais direcionadas somente 
+            a este destinatário.
+        </p>
+    </div>
+</body>
+
+</html>

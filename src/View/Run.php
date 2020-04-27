@@ -276,6 +276,18 @@ class Run
         $tpl->show();
     }
 
+    public static function recepcao()
+    {
+        list($hash, $token) = SS::verificaSessao('recepcao');
+
+        $sessao = SELF::obterSessao($hash, $token);
+
+        //print_r($sessao);exit;
+        $tpl = new Template('recepcao_index.html');
+        $tpl->S = $sessao;
+        $tpl->show();
+    }
+
     protected static function getEstadoClass($estado)
     {
         switch ($estado) {

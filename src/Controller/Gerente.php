@@ -47,7 +47,7 @@ class Gerente
                     R::store($sessao);
                     return $usuario;
                     break;
-                case 'emailTeste':
+                case 'emailTokensControle':
                     $token = [
                         'token' => 'ABCDEF',
                         'tipo' => 'teste',
@@ -55,7 +55,8 @@ class Gerente
                         'nome' => 'João Batista da Silva',
                         'email' => $this->data->dest
                     ];
-                    $data = Email::sendVotacao($sessao, json_decode(json_encode($token)));
+                    $data = Email::sendControle($sessao);
+                    //$data = Email::sendVotacao($sessao, json_decode(json_encode($token)));
 
                     if ($data !== true) {
                         return ['status' => 'erro', 'data' => $data];
@@ -72,6 +73,10 @@ class Gerente
                     R::store($sessao);
                     return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
                     break;
+                case 'apagarSessao':
+                    $ret = SELF::apagarSessao($sessao);
+                    return ['status' => 'ok', 'data' => 'Sessão excluída com sucesso.'];
+                    break;
             }
             return ['status' => 'erro', 'data' => 'Sem ação para ' . $this->data->acao];
         }
@@ -85,21 +90,44 @@ class Gerente
         return $sessao;
     }
 
+    protected static function apagarSessao($sessao)
+    {
+        // vamos limpar tokens
+        R::trashAll($sessao->ownTokenList);
+
+        $votacoes = $sessao->ownVotacaoList;
+        foreach ($votacoes as $votacao) {
+            // alternativas e respostas
+            R::trashAll($votacao->ownAlternativaList);
+            R::trashAll($votacao->ownRespostaList);
+        }
+        // votacoes
+        R::trashAll($votacoes);
+
+        // arquivos
+        exec('rm ' . ARQ . '/' . $sessao->hash . '*.pdf', $out, $ret);
+
+        // e finalmente a sessao
+        R::trash($sessao);
+        return true;
+    }
+
     protected static function criarSessao($usuario)
     {
         $sessao = R::dispense('sessao');
-        $sessao->sharedUsuarioList[] = $usuario;
+        $sessao->unidade = $usuario->unidade;
+        $sessao->ano = date('Y');
         $sessao->nome = 'Nova sessão criada em ' . date('d/m/Y H:i:s');
         $sessao->quando = date('d/m/Y');
         $sessao->hash = generateRandomString(20);
-        $sessao->unidade = $usuario->unidade;
-        $sessao->email = $usuario->email;
-        $sessao->ano = date('Y');
         $sessao->estado = 'Em elaboração';
+        $sessao->email = $usuario->email;
+        $sessao->logo = '';
         $sessao->link = getenv('WWWROOT') . '/' . $sessao->hash;
+        $sessao->sharedUsuarioList[] = $usuario;
         $id = R::store($sessao);
 
-        $sessao = R::load('sessao', $id);
+        //$sessao = R::load('sessao', $id);
         Token::gerarTokensControle($sessao);
 
         return $sessao;

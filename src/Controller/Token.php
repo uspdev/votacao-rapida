@@ -36,6 +36,8 @@ class Token
                     $token->tipo = $tipo['tipo'];
                     $token->token = $newToken;
                     $token->nome = '';
+                    $token->apelido = '';
+                    $token->email = '';
                     $token->ativo = 0;
                     $token->sessao_id = $sessao->id;
                     R::store($token);
@@ -52,6 +54,12 @@ class Token
         SELF::db();
         $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
         return $sessao->ownTokenList;
+    }
+
+    public static function ObterToken($sessao, $tipo)
+    {
+        SELF::db();
+        return R::findOne('token', 'sessao_id = ? AND tipo = ?', [$sessao->id, $tipo]);
     }
 
     protected static function db()

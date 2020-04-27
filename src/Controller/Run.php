@@ -51,7 +51,7 @@ class Run
             case ['painel', 'GET']:
                 return SELF::painel($sessao);
                 break;
-            case ['recepcao', '']:
+            case ['recepcao', 'GET']:
                 return SELF::recepcao($sessao);
                 break;
         }

@@ -110,14 +110,23 @@ class Gerente
 
         if (!empty($this->query->acao)) {
             switch ($this->query->acao) {
-                case 'email_teste':
-                    $data['acao'] = 'emailTeste';
-                    $data['dest'] = 'kawabata@sc.usp.br';
+                case 'emailTokensControle':
+                    $data['acao'] = 'emailTokensControle';
+                    //$data['dest'] = 'kawabata@sc.usp.br';
                     $ret = Api::send($endpoint, $data);
                     if ($ret->status == 'ok') {
                         SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
                     }
                     header('Location:' . $_SERVER['REDIRECT_URL']);
+                    exit;
+                    break;
+                case 'apagarSessao':
+                    $data['acao'] = 'apagarSessao';
+                    $ret = Api::send($endpoint, $data);
+                    if ($ret->status == 'ok') {
+                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
+                    }
+                    header('Location: ' . getenv('WWWROOT'));
                     exit;
                     break;
             }

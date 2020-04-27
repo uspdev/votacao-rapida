@@ -1,16 +1,17 @@
 <br>
 <div id="sessao_div">
-    <h1>
+    <h1 class="titulo">
         <span class="nome">{S->nome} </span>
+        <button class="edit_btn">Editar</button>
+
         <span class="nome_edit hide">
             <form method="POST" action="">
-                <input type="text" class="col-md-7" name="nome" value="{S->nome}">
+                <input type="text" class="col-md-7" name="nome" value="{S->nome}" pristine="{S->nome}">
                 <input type="hidden" name="acao" value="atualizar">
                 <input type="submit" name="OK" value="ok" class="btn btn-sm btn-outline-primary">
                 <button class="btn btn-sm btn-outline-warning cancel_btn">Cancelar</button>
             </form>
         </span>
-        <button class="edit_btn">Editar</button>
     </h1>
     <div class="row vdivide">
         <div class="col-md-8">
@@ -21,22 +22,20 @@
                 Link: {S->link} <a href title="Copie este link e use em e.usp.br para gerar link encurtado. 
                 Depois cole o link encurtado de volta aqui.">AJUDA</a><br>
 
-                Tokens de controle:
+                Controle:
                 <a href="{S->hash}/{S->apoio->token}" target="apoio">Token de apoio</a> |
                 <a href="{S->hash}/{S->painel->token}" target="painel">Token de Painel</a> |
                 <a href="{S->hash}/{S->recepcao->token}" target="recepcao">Token de Recepção</a><br>
                 <br>
                 Email do remetente: <input type="text" value="{S->email}"><br>
-                <div>
-                    Quantidade de tokens de votação: <input type="text">
-                </div>
+                <br>
                 Logo: <a href="download/{S->hash}/{S->logo|basename}">{S->logo|basename}</a> <input type="file">
             </div>
 
             <br>
             <hr>
             <div class="row">
-                <div class="col-md-7">
+                <div class="col-md-6">
                     <h2>Votações</h2>
                     <div>
                         <!-- BEGIN block_votacao -->
@@ -46,40 +45,46 @@
                         <!-- END block_votacao -->
                     </div>
                 </div>
-                <div class="col-md-5">
-                    <h2>Tokens de votação</h2>
+                <div class="col-md-6">
+                    <h2>Eleitores</h2>
 
                 </div>
             </div>
 
-
         </div>
         <div class="col-md-4">
-            <h3>Estado</h3>
-            {S->estado} >> Em elaboração | Aberto | Finalizado<br>
-            <br>
-            {autorizacao}
-            <br>
-            <h3>Email</h3>
-            <div class="ml-2">
-                <a href="{main->self}?acao=email_teste">Enviar tokens de controle</a><br>
-                <a href>Enviar tokens de votação</a><br>
-                <a href>Tokens para impressão</a><br>
+            <div>
+                <h3>Estado</h3>
+                {S->estado} >> Em elaboração | Aberto | Finalizado<br>
             </div>
-
+            <br>
+            <div>
+                {autorizacao}
+            </div>
+            <br>
+            <div>
+                <h3>Manutenção</h3>
+                <div class="ml-2">
+                    <a id="apagar_sessao" href="{main->self}?acao=apagarSessao" class="text-danger">Apagar esta sessão</a><br>
+                </div>
+            </div>
         </div>
     </div>
     <script>
         $(function () {
-            var sessao = $('#sessao_div');
+            var sessao = $('.titulo');
             sessao.find('.edit_btn').click(function () {
                 $(this).hide();
                 sessao.find('.nome').hide();
                 sessao.find('.nome_edit').show();
-                sessao.find('.nome_edit input').focus();
+                sessao.find('.nome_edit input:text').select();
             });
+            sessao.find('.cancel_btn').click(function (e) {
+                e.preventDefault();
+                var input = sessao.find('input:text');
+                var pristine = input.attr('pristine');
+                input.attr('value', pristine);
 
-            sessao.find('.cancel_btn').click(function () {
                 sessao.find('.nome_edit').hide();
                 sessao.find('.nome').show();
                 sessao.find('.edit_btn').show();
@@ -88,6 +93,20 @@
                 sessao.find('.nome_edit').hide();
                 sessao.find('.nome').show();
                 sessao.find('.edit_btn').show();
+            });
+            sessao.find('form').submit(function () {
+                // nao vamos submeter se não foi alterado nada
+                var input = $(this).find('input:text');
+                if (input.val() == input.attr('pristine')) {
+                    sessao.find('.cancel_btn').click();
+                    return false;
+                }
+            });
+
+            $('#apagar_sessao').click(function (e) {
+                if (!confirm('Apagar esta sessão removerá todas as informações e não poderá ser desfeito.\nTem certeza?')) {
+                    return false;
+                }
             });
 
         });

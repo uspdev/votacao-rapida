@@ -17,17 +17,9 @@ Flight::route('/', function () {
     Gerente::index();
 });
 
-Flight::route('/gerente', function () {
-    Gerente::index();
-});
-
 Flight::route('/session', function () {
     echo '<pre>';
     print_r($_SESSION);
-});
-
-Flight::route('/email', function () {
-    Gerente::email();
 });
 
 Flight::route('GET /login(/@cod)', function ($cod) {
@@ -41,6 +33,10 @@ Flight::route('GET /logout', function () {
 
 Flight::route('GET /demo', function () {
     Demo::demo();
+});
+
+Flight::route('/gerente', function () {
+    Gerente::index();
 });
 
 Flight::route('GET /gerente/@id', function ($id) {
@@ -68,6 +64,10 @@ Flight::route('GET /painel', function () {
 
 Flight::route('GET /votacao', function () {
     Run::votacaoGet();
+});
+
+Flight::route('GET /recepcao', function () {
+    Run::recepcao();
 });
 
 Flight::route('POST /votacao', function () {
