@@ -158,6 +158,9 @@ class Gerente
         } else {
             $sessoes = $usuario->sharedSessao;
         }
+        if (!$sessoes) {
+            $sessoes = ['status'=>'ok', 'data'=>'Sem sessões para listar'];
+        }
         return $sessoes;
     }
 

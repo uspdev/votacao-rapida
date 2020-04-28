@@ -4,7 +4,6 @@
     <h3>
         <a href="gerente/0">Nova sessão de votação</a>
     </h3>
-
     <hr />
     <h2>Minhas sessões</h2>
 
@@ -12,12 +11,13 @@
         <!-- BEGIN block_sessao -->
         <a href="gerente/{S->id}">{S->nome} ({S->unidade})</a> | {S->estado}<br>
         <!-- END block_sessao -->
+        Sem sessões.
+        <!-- FINALLY block_sessao -->
     </div>
 </div>
-<hr>
 <!-- END block_user -->
-
+<br>
+<hr>
 <div>
-    <br>
     <a href="demo/">Painel de demostração</a>
 </div>

@@ -2,7 +2,7 @@
 <div id="sessao_div">
     <h1 class="titulo">
         <span class="nome">{S->nome} </span>
-        <button class="edit_btn">Editar</button>
+        <!-- <button class="edit_btn btn btn-sm btn-outline-secondary">Editar</button> -->
 
         <span class="nome_edit hide">
             <form method="POST" action="">
@@ -16,23 +16,89 @@
     <div class="row vdivide">
         <div class="col-md-8">
             <div id="sessao">
-                Unidade: {S->unidade}<br>
-                Quando: {S->quando}<br>
 
-                Link: {S->link} <a href title="Copie este link e use em e.usp.br para gerar link encurtado. 
-                Depois cole o link encurtado de volta aqui.">AJUDA</a><br>
+                <div class="dados">
+                    <button class="edit_btn btn btn-sm btn-link">Editar</button>
+                    <hr>
+                    <div>
+                        <span class="text-secondary">Unidade:</span> {S->unidade}
+                    </div>
+                    <div>
+                        <span class="text-secondary">Quando:</span> {S->quando}
+                    </div>
+                    <div>
+                        <span class="text-secondary">Email de retorno</span> {S->email}
+                    </div>
+                    <div>
+                        <span class="text-secondary">Link</span> {S->link}
+                    </div>
+                </div>
+                <div class="form hide">
+                    <!-- <button class="ok_btn btn btn-sm btn-outline-primary">OK</button> -->
+                    <form method="POST" action="">
+                        <input type="submit" name="OK" value="ok" class="btn btn-sm btn-outline-primary">
 
-                Controle:
-                <a href="{S->hash}/{S->apoio->token}" target="apoio">Token de apoio</a> |
-                <a href="{S->hash}/{S->painel->token}" target="painel">Token de Painel</a> |
-                <a href="{S->hash}/{S->recepcao->token}" target="recepcao">Token de Recepção</a><br>
+                        <button class="cancel_btn btn btn-sm btn-outline-warning">Cancelar</button>
+                        <hr>
+
+                        <input type="hidden" name="acao" value="atualizar">
+
+                        <div class="form-group row ml-2">
+                            <label for="nome" class="col-form-label text-secondary">Nome</label>
+                            <div class="col-sm-8">
+                                <input id="nome" class="form-control" type="text" name="nome" value="{S->nome}">
+                            </div>
+                        </div>
+                        <div class="form-group row ml-2">
+                            <label for="unidade" class="col-form-label text-secondary">Unidade</label>
+                            <div class="col-sm-2">
+                                <input id="unidade" class="form-control" type="text" name="unidade"
+                                    value="{S->unidade}">
+                            </div>
+                        </div>
+                        <div class="form-group row ml-2">
+                            <label for="quando" class="col-form-label text-secondary">Quando</label>
+                            <div class="col-sm-4">
+                                <input id="quando" class="form-control" type="text" name="quando" value="{S->quando}">
+                            </div>
+                        </div>
+                        <div class="form-group form-row ml-2">
+                            <label for="email" class="col-form-label text-secondary">Email de retorno</label>
+                            <div class="col-sm-4">
+                                <input id="email" class="form-control" type="text" name="email" value="{S->email}">
+                            </div>
+                        </div>
+                        <div class="form-group form-row ml-2">
+                            <label for="link" class="col-form-label text-secondary">Link</label>
+                            <div class="col-sm-8">
+                                <input id="link" class="form-control" type="text" name="link" value="{S->link}">
+                            </div>
+                        </div>
+
+                        <a href title="Copie este link e use em e.usp.br para gerar link encurtado. 
+                        Depois cole o link encurtado de volta aqui.">AJUDA</a><br>
+                    </form>
+                </div>
+
                 <br>
-                Email do remetente: <input type="text" value="{S->email}"><br>
-                <br>
-                Logo: <a href="download/{S->hash}/{S->logo|basename}">{S->logo|basename}</a> <input type="file">
             </div>
+            <script>
+                $(function () {
+                    var sessao = $('#sessao');
+                    sessao.find('.edit_btn').click(function () {
+                        sessao.find('.dados').hide();
+                        sessao.find('.form').show();
+                        sessao.find('input[name="nome"]').focus();
+                    });
+                    sessao.find('.cancel_btn').click(function (e) {
+                        e.preventDefault();
+                        sessao.find('.dados').show();
+                        sessao.find('.form').hide();
+                    });
 
-            <br>
+                });
+            </script>
+
             <hr>
             <div class="row">
                 <div class="col-md-6">
@@ -54,8 +120,19 @@
         </div>
         <div class="col-md-4">
             <div>
+                <h3>Controles</h3>
+                <div class="ml-2">
+                    <a href="{S->hash}/{S->apoio->token}" target="apoio">Apoio</a> |
+                    <a href="{S->hash}/{S->painel->token}" target="painel">Painel</a> |
+                    <a href="{S->hash}/{S->recepcao->token}" target="recepcao">Recepção</a>
+                </div>
+                <br>
+            </div>
+            <div>
                 <h3>Estado</h3>
-                {S->estado} >> Em elaboração | Aberto | Finalizado<br>
+                <div class="ml-2">
+                    {S->estado} >> Em elaboração | Aberto | Finalizado<br>
+                </div>
             </div>
             <br>
             <div>
@@ -63,10 +140,34 @@
             </div>
             <br>
             <div>
+                <h3>Logo <a href class="logo_btn btn btn-sm btn-outline-primary">Trocar</a></h3>
+                <div class="ml-2">
+                    <img src="media/usp-logo.png" style="height:60px">
+                </div>
+                <script>
+                    $(function () {
+                        $('.logo_btn').click(function (e) {
+                            e.preventDefault();
+                        });
+                    });
+                </script>
+            </div>
+            <br>
+            <div>
                 <h3>Manutenção</h3>
                 <div class="ml-2">
-                    <a id="apagar_sessao" href="{main->self}?acao=apagarSessao" class="text-danger">Apagar esta sessão</a><br>
+                    <a id="apagarSessaoLnk" href="{main->self}?acao=apagarSessao" class="text-danger">Apagar esta
+                        sessão</a>
                 </div>
+                <script>
+                    $(function () {
+                        $('#apagarSessaoLnk').click(function (e) {
+                            if (!confirm('Apagar esta sessão removerá todas as informações e não poderá ser desfeito.\nTem certeza?')) {
+                                return false;
+                            }
+                        });
+                    });
+                </script>
             </div>
         </div>
     </div>
@@ -102,13 +203,6 @@
                     return false;
                 }
             });
-
-            $('#apagar_sessao').click(function (e) {
-                if (!confirm('Apagar esta sessão removerá todas as informações e não poderá ser desfeito.\nTem certeza?')) {
-                    return false;
-                }
-            });
-
         });
     </script>
 </div>

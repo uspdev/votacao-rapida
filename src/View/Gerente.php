@@ -27,18 +27,19 @@ class Gerente
         // )) {
         //     SelF::ajuda('Você não tem acesso à esse sistema.');
         // }
+        $endpoint = '/gerente/listarSessoes?codpes=' . $user['codpes'];
+        $sessoes = Api::send($endpoint);
 
-        // usuário está ok, vamos procurar dados dele
         $tpl = new Template('gerente/index.html');
 
-        // buscar as sessões desse usuário
-        $sessoes = Api::send('/gerente/listarSessoes?codpes=' . $user['codpes']);
-        foreach ($sessoes as $sessao) {
-            $tpl->S = $sessao;
-            $tpl->block('block_sessao');
+            // listar as sessões desse usuário se houver
+            if (empty($sessoes->status)) {
+            foreach ($sessoes as $sessao) {
+                $tpl->S = $sessao;
+                $tpl->block('block_sessao');
+            }
         }
-
-        //$tpl->block('block_topo_img');
+        $tpl->block('block_user');
 
         $tpl->show('userbar');
         exit;
