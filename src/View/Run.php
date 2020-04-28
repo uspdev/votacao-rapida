@@ -257,7 +257,11 @@ class Run
             }
             if (!empty($v->votos) && $v->tipo == 'Voto aberto') {
                 $i = 0;
-                $dividir = intdiv(count($v->votos), 3);
+                if (count($v->votos) > 10) {
+                    $dividir = intdiv(count($v->votos), 3);
+                } else {
+                    $dividir = count($v->votos)-1;
+                }
                 foreach ($v->votos as $voto) {
                     $tpl->voto = $voto;
                     $tpl->block('resultado_voto');
