@@ -110,7 +110,7 @@ class Gerente
 
         $sessao->sharedUsuarioList;
         $sessao->ownVotacaoList;
-        $sessao->ownTokenList;
+        $sessao->with('ORDER BY apelido')->ownTokenList;
         return $sessao;
     }
 
