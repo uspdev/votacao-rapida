@@ -20,6 +20,7 @@ class Email
 
         return SELF::send([
             'destinatario' => $token->email,
+            'bcc' => $sessao->email, // manda com cópia para o email da sessão
             'assunto' => 'Credenciais de votação: ' . $sessao->nome . ' - ' . $sessao->quando . ' - ',
             'corpo' => $corpo,
             'alt' => $corpo,
@@ -80,6 +81,8 @@ class Email
 
         $mail->setFrom(getenv('EMAIL'), utf8_decode("Votação rápida"));
         $mail->AddAddress($arr['destinatario']);
+
+        (isset($arr['bcc'])) ? $mail->addBCC($arr['bcc']) : '';
 
         !empty($arr['responderPara']) ? $mail->addReplyTo($arr['responderPara']) : '';
 
