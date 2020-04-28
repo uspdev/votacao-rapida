@@ -16,7 +16,7 @@ class Api
         return SELF::send($endpoint, $data);
     }
 
-    public static function send($endpoint, $postdata = '')
+    public static function send($endpoint, $postdata = '', $files = '')
     {
 
         $ch = curl_init(API . $endpoint);
@@ -28,10 +28,15 @@ class Api
         curl_setopt($ch, CURLOPT_STDERR, $verbose);
 
         if (!empty($_SERVER['HTTP_USER_AGENT'])) {
-            $headers = [
-                'Content-Type: application/json',
-                'user-agent:' . $_SERVER['HTTP_USER_AGENT']
-            ];
+
+            if (!$files) {
+                $headers = [
+                    'Content-Type: application/json',
+                    'user-agent:cli user agent'
+                ];
+            } else {
+                $headers = ['user-agent:' . $_SERVER['HTTP_USER_AGENT']];
+            }
         } else {
             $headers = [
                 'Content-Type: application/json',
@@ -42,12 +47,20 @@ class Api
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, 1);
         curl_setopt($ch, CURLOPT_USERPWD, getenv('API_USER') . ':' . getenv('API_PWD'));
-        curl_setopt($ch, CURLOPT_TIMEOUT, 10); // timeout
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30); // timeout
 
         // get ou post
         if (!empty($postdata)) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postdata));
             curl_setopt($ch, CURLOPT_POST, 1);
+            if ($files) {
+                foreach ($files as $key => $file) {
+                    $cfile = new \CURLFile($file['tmp_name'], $file['type'], $file['name']);
+                    $postdata[$key] = $cfile;
+                }
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
+            } else {
+                curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postdata));
+            }
         } else {
             curl_setopt($ch, CURLOPT_POST, 0);
         }

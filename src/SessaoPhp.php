@@ -110,6 +110,8 @@ class sessaoPhp
 
     // msg é array
     public static function setMsg($msg) {
+        //$msg['class'];
+        //$msg['msg'];
         return SELF::set('msg', $msg);
     }
 

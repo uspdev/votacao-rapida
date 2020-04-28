@@ -1,0 +1,68 @@
+<style>
+    #eleitores .item:hover {
+        background-color: #ecedee;
+    }
+</style>
+<div id="eleitores">
+    <h2>Eleitores |
+        <span class="small">
+            <a href class="importar_btn" title="formato: apelido;nome;email">Importar lista</a> |
+            <!-- <a href>Adicionar</a></span> -->
+        <form enctype="multipart/form-data" method="POST" class="importar_form"
+            style="width: 0px; height: 0px; overflow: hidden;">
+            <input type="hidden" name="acao" value="importarEleitores">
+            <input type="file" name="arq_eleitores" accept=".csv, .txt">
+        </form>
+    </h2>
+    <!-- BEGIN block_eleitor -->
+    <div class="item" id="token_{T->id}">
+        {T->apelido} ({T->email})
+        <a class="remover_btn hide btn btn-sm btn-outline-danger">X</a>
+        <a class="hide btn btn-sm btn-outline-warning">Editar</a>
+        <a class="hide btn btn-sm btn-outline-warning">Enviar email</a>
+    </div>
+    <!-- END block_eleitor -->
+    <script>
+        $(function () {
+            var eleitores = $('#eleitores');
+
+            eleitores.find('.item').hover(
+                function () { $(this).find('a').show(); },
+                function () { $(this).find('a').hide(); }
+            );
+
+            eleitores.find('.remover_btn').click(function (e) {
+                e.preventDefault();
+                id = $(this).parent().attr('id').split('_').pop();
+                if (confirm('Quer remover este eleitor?') == false) {
+                    return false;
+                }
+                console.log('remover eleitor ', id);
+                $.post(
+                    window.location,
+                    { acao: 'removerEleitor', id: id },
+                    function (data) {
+                        console.log(data);
+
+                        res = JSON.parse(data);
+                        if (res.status == 'ok') {
+                            console.log('Eleitor removido com sucesso')
+                            location.reload();
+                        } else {
+                            alert(res.msg);
+                        }
+                    }
+                );
+            });
+
+            eleitores.find('.importar_btn').click(function (e) {
+                e.preventDefault();
+                eleitores.find('.importar_form input[type=file]').click();
+            });
+
+            eleitores.find('.importar_form input[type=file]').change(function () {
+                eleitores.find('.importar_form').submit();
+            });
+        });
+    </script>
+</div>

@@ -19,21 +19,13 @@ class Gerente
             SELF::ajuda('');
         }
 
-        // buscar as sessões desse usuário
-        // if (!($user['codpes'] == '1575309' ||
-        //     $user['codpes'] == '3567082' || //poliana
-        //     $user['codpes'] == '4807059' || //adriana
-        //     $user['codpes'] == '2508632'    //nivaldo
-        // )) {
-        //     SelF::ajuda('Você não tem acesso à esse sistema.');
-        // }
         $endpoint = '/gerente/listarSessoes?codpes=' . $user['codpes'];
         $sessoes = Api::send($endpoint);
 
         $tpl = new Template('gerente/index.html');
 
-            // listar as sessões desse usuário se houver
-            if (empty($sessoes->status)) {
+        // listar as sessões desse usuário se houver
+        if (empty($sessoes->status)) {
             foreach ($sessoes as $sessao) {
                 $tpl->S = $sessao;
                 $tpl->block('block_sessao');
@@ -160,6 +152,17 @@ class Gerente
         }
         //print_r($sessao->ownVotacao);exit;
 
+        // Eleitores
+        $tpl->addFile('eleitores', TPL . '/gerente/sessao_eleitores.html');
+        foreach ($sessao->ownToken as $token) {
+            if ($token->tipo == 'aberta') {
+                $tpl->T = $token;
+                $tpl->block('block_eleitor');
+            }
+        }
+        //echo '<pre>';print_r($sessao->ownToken);exit;
+
+
 
         $tpl->show('userbar');
     }
@@ -174,10 +177,13 @@ class Gerente
         $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user['codpes'];
 
         $data = $this->data->getData();
-        $ret = Api::send($endpoint, $data);
+
+        $ret = Api::send($endpoint, $data, $this->files);
         if ($this->ajax) {
-            echo json_encode(['status' => 'ok', 'msg' => $ret]);
+            echo json_encode(['status' => $ret->status, 'msg' => $ret->data]);
         } else {
+            $class = $ret->status == 'erro' ? 'alert-danger' : 'alert-success';
+            SS::setMsg(['class' => $class, 'msg' => $ret->data]);
             header('Location:' . getenv('WWWROOT') . '/gerente/' . $id);
         }
         exit;

@@ -9,10 +9,9 @@ class Gerente
 {
     public function sessao($id)
     {
-        //$query = \Flight::request()->query;
-        if (empty($this->query->codpes))
+        if (empty($this->query->codpes)) {
             return ['status' => 'erro', 'msg' => 'Sem usuário codpes'];
-
+        }
         SELF::db();
 
         $usuario = R::findOne('usuario', 'codpes = ?', [$this->query->codpes]);
@@ -61,9 +60,9 @@ class Gerente
                     if ($data !== true) {
                         return ['status' => 'erro', 'data' => $data];
                     }
-                    //print_r($data);exit;
                     return ['status' => 'ok', 'data' => 'Email enviado com sucesso.'];
                     break;
+
                 case 'atualizar':
                     foreach ($this->data as $key => $val) {
                         if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
@@ -73,9 +72,33 @@ class Gerente
                     R::store($sessao);
                     return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
                     break;
+
                 case 'apagarSessao':
                     $ret = SELF::apagarSessao($sessao);
                     return ['status' => 'ok', 'data' => 'Sessão excluída com sucesso.'];
+                    break;
+
+                case 'removerEleitor':
+                    $id = $this->data->id;
+                    R::exec('DELETE FROM token WHERE id = ?',[$id]);
+                    //$ret = SELF::apagarSessao($sessao);
+                    return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
+                    break;
+
+                case 'importarEleitores':
+                    $arq = $this->files['arq_eleitores'];
+                    ini_set('auto_detect_line_endings', TRUE);
+                    $handle = fopen($arq['tmp_name'], 'r');
+                    $eleitores = [];
+                    while (($eleitor = fgetcsv($handle, 1000, ';')) !== false) {
+                        Token::adiconarTokenAberto($sessao, $eleitor);
+                    }
+                    fclose($handle);
+                    unlink($arq['tmp_name']);
+                    //$eleitores = str_getcsv($eleitores, ';');
+                    //print_r($eleitores);
+                    //exit;
+                    return ['status' => 'ok', 'data' => 'Arquivo carregado com sucesso.'];
                     break;
             }
             return ['status' => 'erro', 'data' => 'Sem ação para ' . $this->data->acao];
@@ -87,6 +110,7 @@ class Gerente
 
         $sessao->sharedUsuarioList;
         $sessao->ownVotacaoList;
+        $sessao->ownTokenList;
         return $sessao;
     }
 
@@ -159,7 +183,7 @@ class Gerente
             $sessoes = $usuario->sharedSessao;
         }
         if (!$sessoes) {
-            $sessoes = ['status'=>'ok', 'data'=>'Sem sessões para listar'];
+            $sessoes = ['status' => 'ok', 'data' => 'Sem sessões para listar'];
         }
         return $sessoes;
     }

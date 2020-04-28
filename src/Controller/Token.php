@@ -16,7 +16,28 @@ class Token
         return SELF::gerarTokens($sessao, $tipos);
     }
 
-    protected static function gerarTokensVotacao($sessao, $qt)
+    public static function adiconarTokenAberto($sessao, $eleitor)
+    {
+        while ($newToken = generateRandomString(6)) {
+            $token = R::find('token', 'sessao_id = ? and token = ?', [$sessao->id, $newToken]);
+            if (!$token) {
+                $token = R::dispense('token');
+                $token->tipo = 'aberta';
+                $token->token = $newToken;
+                $token->apelido = trim($eleitor[0]);
+                $token->nome = trim($eleitor[1]);
+                $token->email = trim($eleitor[2]);
+                $token->ativo = 0;
+                $token->sessao_id = $sessao->id;
+                R::store($token);
+                break;
+            }
+            //echo 'gerou repetido! ', $newToken,PHP_EOL;exit;
+        }
+        return $token;
+    }
+
+    public static function gerarTokensVotacao($sessao, $qt)
     {
         $tipos = [
             ['tipo' => 'fechada', 'qt' => $qt],
