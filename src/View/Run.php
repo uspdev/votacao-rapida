@@ -125,7 +125,7 @@ class Run
         }
 
         $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
-        if (!empty($token->nome)) {
+        if (!empty($token->apelido)) {
             $v->tipo_class = 'hide';
         } else {
             $v->tipo_class = '';

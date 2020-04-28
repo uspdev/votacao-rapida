@@ -95,9 +95,6 @@ class Gerente
                     }
                     fclose($handle);
                     unlink($arq['tmp_name']);
-                    //$eleitores = str_getcsv($eleitores, ';');
-                    //print_r($eleitores);
-                    //exit;
                     return ['status' => 'ok', 'data' => 'Arquivo carregado com sucesso.'];
                     break;
             }

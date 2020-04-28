@@ -108,7 +108,7 @@ class Votacao
         $resposta->votacao_id = $data->votacao_id;
         $resposta->alternativa_id = $data->alternativa_id;
         $resposta->token = $sessao->token->token;
-        $resposta->nome = $sessao->token->nome;
+        $resposta->apelido = $sessao->token->apelido;
         $resposta->datetime = date("Y-m-d H:i:s");
         $resposta->dispositivo = \Flight::request()->user_agent;
         $resposta->signature = sha1(json_encode($resposta) . $sessao->hash);
