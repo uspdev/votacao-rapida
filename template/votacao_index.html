@@ -7,72 +7,76 @@
 
 <h1>{S->nome}</h1>
 <hr />
-<p class="h4 text-secondary">
-    <span class="badge badge-info">{V->tipo}</span>
-    <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
-
-    <span class="badge badge-secondary">{S->token->nome}</span>
-</p>
+<!-- BEGIN block_msg -->
 <div>
-    <!-- BEGIN block_msg -->
     <h2>{msg}</h2>
-    <!-- END block_msg -->
+    <br>
+    <button class="btn btn-outline-primary" onclick="window.location.reload();">Recarregar</button>
+</div>
+<!-- END block_msg -->
+
+<!-- BEGIN block_em_votacao -->
+<div>
+    <div class="mb-2">
+        <span class="badge badge-info">{V->tipo}</span>
+        <span class="badge badge-info">{S->token->nome}</span>
+        <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
+    </div>
 
     <!-- BEGIN block_msg_sucesso -->
-    <div class="alert alert-success">{M->msg}</div>
-    <p>
-        Aguarde a próxima votação ou escolha uma opção.
-        Você pode votar quantas vezes quiser, somente o último voto será contabilizado.
-    </p>
-    <div>
-        <input type="button" id="mostrar_data" class="btn btn-outline-primary" name="Mostrar voto" value="Mostrar voto">
-        <a class="btn btn-outline-warning" href="votacao/">Votar novamente</a>
-    </div>
-    <br>
-    <div style="display:none;" id="data">
-        <div>{V->nome}</div>
-        <span class="gray">Alternativa escolhida:</span> {M->voto->alternativa->texto}
-        <!-- {M->dataJson} -->
-    </div>
-
-    <script type="text/javascript">
-        $(function () {
-            $('#mostrar_data').click(function () {
-                $('#data').slideToggle(400);
-                //$(this).addClass('d-none');
+    <div id="sucesso">
+        <h3>{V->nome}</h3>
+        <div class="alert alert-success">
+            {M->msg}
+        </div>
+        <div class="mb-2">
+            <button class="mostrar_btn btn btn-outline-success">Mostrar voto</button>
+            <button class="btn btn-outline-primary ml-4" onclick="window.location.reload();">Recarregar</button>
+        </div>
+        <div class="data alert alert-success hide my-2">
+            <span class="text-secondary">Alternativa escolhida:</span> {M->voto->alternativa->texto}
+        </div>
+        <p class="text-secondary my-4">
+            Recarregue para votar novamente ou para ir para a próxima votação.<br>
+            Você pode votar quantas vezes quiser, somente o último voto será contabilizado.
+        </p>
+        <script type="text/javascript">
+            $(function () {
+                var sucesso = $('#sucesso');
+                sucesso.find('.mostrar_btn').click(function () {
+                    sucesso.find('.data').slideToggle(400);
+                });
             });
-        });
-    </script>
+        </script>
+    </div>
     <!-- END block_msg_sucesso -->
 
     <!-- BEGIN block_msg_erro -->
-    <div class="alert alert-success">{M->msg}</div>
-    <a class="btn btn-outline-warning" href="votacao/">Tentar novamente</a>
-
+    <div>
+        <div class="alert alert-success">{M->msg}</div>
+        <a class="btn btn-outline-warning" href="votacao/">Tentar novamente</a>
+    </div>
     <!-- END block_msg_erro -->
 
     <!-- BEGIN block_form -->
-    {form}
-    <!-- {V->input_count } -->
-    <script type="text/javascript">
-        $(function () {
-            var max = 3;
-
-            $('input[type="checkbox"]').click(function () {
-                var countcheck = $('input[type="checkbox"]:checked').length;
-                console.log(countcheck);
-                if (countcheck >= max) {
-                    $("input:checkbox:not(:checked)").attr("disabled", true);
-                } else {
-                    $("input:checkbox").attr("disabled", false);
-                }
-            });
-        });
-    </script>
-    <!-- END block_form -->
     <div>
-        <br>
-        <!-- <a class="btn btn-outline-success btn-sm" href="">Votar novamente</a> -->
-        <!-- <a class="btn btn-outline-warning btn-sm" href="">Finalizar</a> -->
+        {form}
+        <script type="text/javascript">
+            $(function () {
+                var max = 3;
+
+                $('input[type="checkbox"]').click(function () {
+                    var countcheck = $('input[type="checkbox"]:checked').length;
+                    console.log(countcheck);
+                    if (countcheck >= max) {
+                        $("input:checkbox:not(:checked)").attr("disabled", true);
+                    } else {
+                        $("input:checkbox").attr("disabled", false);
+                    }
+                });
+            });
+        </script>
     </div>
+    <!-- END block_form -->
 </div>
+<!-- END block_em_votacao -->

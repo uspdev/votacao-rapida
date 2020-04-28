@@ -12,26 +12,28 @@
 
 <h1>{S->nome}</h1>
 <hr>
+<!-- BEGIN block_msg -->
+<h2>{msg}</h2>
+<!-- END block_msg -->
 
+<div class="text-secondary h2 mb-4">
+    <span class="badge badge-info">{V->tipo}</span>
+    <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
+
+    <!-- BEGIN block_computados -->
+    <span class="badge badge-secondary">Total: {V->computados} votos</span>
+    <!-- END block_computados -->
+
+    <!-- BEGIN block_em_votacao -->
+    <img src="media/progress_bar.gif" height="30px">
+    <!-- END block_em_votacao -->
+</div>
+
+<h2>{V->nome}</h2>
+
+<!-- BEGIN block_exibicao -->
 <div>
-    <!-- BEGIN block_msg -->
-    <h2>{msg}</h2>
-    <!-- END block_msg -->
-
-
-
-    <!-- BEGIN block_exibicao -->
-    <div class="text-secondary h4 mb-4">
-        <span class="badge badge-info">{V->tipo}</span>
-        <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
-        <!-- BEGIN block_computados -->
-        <span class="badge badge-secondary">Total: {V->computados} votos</span>
-        <img src="media/progress_bar.gif" height="35px">
-        <!-- END block_computados -->
-    </div>
-
     <div>
-        <h2>{V->nome}</h2>
         <!-- BEGIN exibicao_descricao -->
         <div class="pl-3 text-secondary mb-4">{V->descricao}</div>
         <!-- END exibicao_descricao -->
@@ -43,45 +45,35 @@
             <!-- END exibicao_alternativa -->
         </div>
     </div>
-    <!-- END block_exibicao -->
+</div>
+<!-- END block_exibicao -->
 
-
-
-
-
-
-
-    <!-- BEGIN block_resultado -->
-    <div class="text-secondary h4 mb-4">
-        <span class="badge badge-info">{V->tipo}</span>
-        <span id="estado" class="badge {V->estado_class}">{V->estado}</span>
-
-        <!-- BEGIN resultado_computados -->
-        <span class="badge badge-secondary">Total: {V->computados} votos</span>
-        <!-- END resultado_computados -->
-    </div>
-
-    <div>
-        <h3>{V->nome}</h3>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="pb-2 strong">TOTAIS PARCIAIS</div>
-                <div class="zebra">
-                    <!-- BEGIN resultado_resposta -->
-                    <div class="pl-1 ml-2 py-1">{R->texto}: {R->votos} votos</div>
-                    <!-- END resultado_resposta -->
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="pb-2 strong">VOTOS</div>
-                <div class="zebra">
-                    <!-- BEGIN resultado_voto -->
-                    <div class="pl-1 ml-2 py-1">{voto->nome}: {voto->alternativa}</div>
-                    <!-- END resultado_voto -->
-                </div>
+<!-- BEGIN block_resultado -->
+<div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="pb-2 strong">TOTAIS PARCIAIS</div>
+            <div class="zebra">
+                <!-- BEGIN resultado_resposta -->
+                <div class="pl-1 ml-2 py-1">{R->texto}: {R->votos} votos</div>
+                <!-- END resultado_resposta -->
             </div>
         </div>
-        <br>
+        <div class="col-md-9">
+            <div class="pb-2 strong">VOTOS</div>
+            <div class="row">
+                <!-- BEGIN block_coluna -->
+                <div class="col-md-4">
+                    <div class="zebra">
+                        <!-- BEGIN resultado_voto -->
+                        <div class="pl-1 ml-2 py-1">{voto->nome}: {voto->alternativa}</div>
+                        <!-- END resultado_voto -->
+                    </div>
+                </div>
+                <!-- END block_coluna -->
+            </div>
+        </div>
     </div>
-    <!-- END block_resultado -->
+    <br>
 </div>
+<!-- END block_resultado -->

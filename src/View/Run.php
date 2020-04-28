@@ -75,11 +75,17 @@ class Run
         // vamos tentar votar com os tokens existentes
         foreach ($token as $t) {
             $sessao = SELF::obterSessao($hash, $t);
-            if (empty($sessao->msg) && isset($sessao->render_form)) break;
+            if (empty($sessao->msg) && isset($sessao->render_form)) {
+                $token = $t;
+                break;
+            }
         }
 
         $tpl = new Template('votacao_index.html');
         $tpl->S = $sessao;
+
+        // print_r($token);
+        // exit;
 
         // se veio msg é porque houve algum problema
         if (!empty($sessao->msg)) {
@@ -119,6 +125,11 @@ class Run
         }
 
         $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
+        if (!empty($token->nome)) {
+            $v->tipo_class = 'hide';
+        } else {
+            $v->tipo_class = '';
+        }
         $v->estado = 'Em votação';
         $v->estado_class = SELF::getEstadoClass($v->estado);
 
@@ -137,8 +148,6 @@ class Run
         // post de formulario
         if (isset($data->acao)) {
             $data = $_POST;
-            //print_r($data);
-            //echo json_encode((Array) $data);exit;
             $res = Api::post($hash, $sessao->token->token, $data);
 
             SS::set('votacao_msg', json_encode($res));
@@ -247,18 +256,26 @@ class Run
                 }
             }
             if (!empty($v->votos) && $v->tipo == 'Voto aberto') {
+                $i = 0;
+                $dividir = intdiv(count($v->votos), 3);
                 foreach ($v->votos as $voto) {
                     $tpl->voto = $voto;
                     $tpl->block('resultado_voto');
+                    if ($dividir == $i or $dividir * 2 == $i) {
+                        $tpl->block('block_coluna');
+                    }
+                    $i++;
                 }
             }
-            $tpl->block('resultado_computados');
+            $tpl->block('block_computados');
             $tpl->block('block_resultado');
         } elseif ($v->estado == 'Em exibição' || $v->estado == 'Em votação' || $v->estado == 'Em pausa') {
 
             if ($v->estado == 'Em votação') {
-                $tpl->block('block_computados');
+                $tpl->block('block_em_votacao');
             }
+            $tpl->block('block_computados');
+
 
             if (!empty($v->descricao)) {
                 $tpl->block('exibicao_descricao');
@@ -292,7 +309,7 @@ class Run
     {
         switch ($estado) {
             case 'Em exibição':
-                return 'badge-secondary';
+                return 'badge-primary';
                 break;
             case 'Em votação':
                 return 'badge-success';
