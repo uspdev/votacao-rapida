@@ -21,7 +21,7 @@
                 <span style="color:gray;">Evento:</span> {S->nome}<br>
                 <span style="color:gray;">Quando:</span> {S->quando}<br>
                 <span style="color:gray;">Link de acesso:</span>
-                <a href="{S->link_direto}">{S->link_direto|substr:0:10}..{S->link_direto|substr:-5}</a><br>
+                <a href="{S->link_direto}">{S->link_direto|substr:0:25}..{S->link_direto|substr:-3}</a><br>
                 <span style="color:gray;">Token de acesso (voto aberto):</span> {T->token}<br>
                 <span style="color:gray;">Nome de exibição:</span> {T->apelido}<br>
                 <br>

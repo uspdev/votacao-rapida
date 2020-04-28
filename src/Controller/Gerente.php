@@ -63,6 +63,16 @@ class Gerente
                     return ['status' => 'ok', 'data' => 'Email enviado com sucesso.'];
                     break;
 
+                case 'emailEleitor':
+                    $token = R::load('token', $this->data->id);
+                    $data = Email::sendVotacao($sessao, $token);
+
+                    if ($data !== true) {
+                        return ['status' => 'erro', 'data' => $data];
+                    }
+                    return ['status' => 'ok', 'data' => 'Email enviado com sucesso.'];
+                    break;
+
                 case 'atualizar':
                     foreach ($this->data as $key => $val) {
                         if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
@@ -80,7 +90,7 @@ class Gerente
 
                 case 'removerEleitor':
                     $id = $this->data->id;
-                    R::exec('DELETE FROM token WHERE id = ?',[$id]);
+                    R::exec('DELETE FROM token WHERE id = ?', [$id]);
                     //$ret = SELF::apagarSessao($sessao);
                     return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
                     break;

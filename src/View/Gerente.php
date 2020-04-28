@@ -105,7 +105,16 @@ class Gerente
             switch ($this->query->acao) {
                 case 'emailTokensControle':
                     $data['acao'] = 'emailTokensControle';
-                    //$data['dest'] = 'kawabata@sc.usp.br';
+                    $ret = Api::send($endpoint, $data);
+                    if ($ret->status == 'ok') {
+                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
+                    }
+                    header('Location:' . $_SERVER['REDIRECT_URL']);
+                    exit;
+                    break;
+                case 'emailEleitor':
+                    $data['acao'] = 'emailEleitor';
+                    $data['id'] = $this->query->id;
                     $ret = Api::send($endpoint, $data);
                     if ($ret->status == 'ok') {
                         SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);

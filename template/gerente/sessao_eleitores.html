@@ -16,10 +16,10 @@
     </h2>
     <!-- BEGIN block_eleitor -->
     <div class="item" id="token_{T->id}">
-        {T->apelido} ({T->email}) {T->token}
+        {T->apelido} ({T->email})
         <a class="remover_btn hide btn btn-sm btn-outline-danger">X</a>
         <a class="hide btn btn-sm btn-outline-warning">Editar</a>
-        <a class="hide btn btn-sm btn-outline-warning">Enviar email</a>
+        <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-warning">Enviar email</a>
     </div>
     <!-- END block_eleitor -->
     <script>
@@ -54,6 +54,13 @@
                     }
                 );
             });
+
+            eleitores.find('.email_btn').click(function(e){
+                //e.preventDefault();
+                if (confirm('Quer enviar email?') == false) {
+                    return false;
+                }
+            })
 
             eleitores.find('.importar_btn').click(function (e) {
                 e.preventDefault();

@@ -20,7 +20,7 @@ class Email
 
         return SELF::send([
             'destinatario' => $token->email,
-            'assunto' => 'Credenciais de votação: ' . $sessao->nome . ' - data hora - ' . generateRandomString(4),
+            'assunto' => 'Credenciais de votação: ' . $sessao->nome . ' - ' . $sessao->quando . ' - ',
             'corpo' => $corpo,
             'alt' => $corpo,
             'responderPara' => $sessao->email,
@@ -48,7 +48,7 @@ class Email
 
             SELF::send([
                 'destinatario' => $dest->email,
-                'assunto' => 'Credenciais de controle: ' . $sessao->nome . ' - '.$sessao->quando,
+                'assunto' => 'Credenciais de controle: ' . $sessao->nome . ' - ' . $sessao->quando,
                 'corpo' => $corpo,
                 'alt' => $corpo,
                 'responderPara' => $sessao->email,
