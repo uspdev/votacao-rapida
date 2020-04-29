@@ -56,7 +56,7 @@ class Gerente
 
                 case 'emailEleitor':
                     $token = R::load('token', $this->data->id);
-                    $data = Email::sendVotacao($sessao, $token);
+                    $data = Email::sendVotacao($sessao, $token, true);
                     if ($data !== true) {
                         return ['status' => 'erro', 'data' => $data];
                     }

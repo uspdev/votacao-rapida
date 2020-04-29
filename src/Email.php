@@ -16,18 +16,20 @@ class Email
         $count = 0;
         $erro = 0;
         foreach ($tokens as $token) {
-            $ret = SELF::sendVotacao($sessao, $token);
-            if (!$ret) {
-                $erro++;
-            } else {
-                $count++;
+            if (!empty($token->email)) {
+                $ret = SELF::sendVotacao($sessao, $token);
+                if (!$ret) {
+                    $erro++;
+                } else {
+                    $count++;
+                }
             }
         }
         exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
         return [$count, $erro];
     }
 
-    public static function sendVotacao($sessao, $token)
+    public static function sendVotacao($sessao, $token, $now = false)
     {
         $sessao->link_direto = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
         $qrcode = SELF::qrCodePngData($sessao->link_direto);
@@ -48,7 +50,9 @@ class Email
                 ['nome' => 'headtop.png', 'data' => base64_encode(file_get_contents(TPL . '/email/headtop.png'))],
             ],
         ]);
-        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        if ($now) {
+            exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        }
         return $ret;
     }
 
