@@ -87,6 +87,11 @@
                 eleitores.find('.importar_form input[type=file]').click();
             });
 
+            eleitores.find('.adicionar_btn').click(function (e) {
+                e.preventDefault();
+               // eleitores.find('.importar_form input[type=file]').click();
+            });
+
             eleitores.find('.importar_form input[type=file]').change(function () {
                 eleitores.find('.importar_form').submit();
             });
