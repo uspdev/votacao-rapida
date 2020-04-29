@@ -6,14 +6,21 @@
 <div id="eleitores">
     <h2>Eleitores <span class="badge badge-pill badge-info">{S->countTokenAberto}</span>
         <span class="small"> |
-            <a href class="importar_btn btn btn-sm btn-outline-primary"
-                title="Importar lista de eleitores. Formato: apelido;nome;email">
-                <i class="fas fa-file-upload"></i></a>
+            <a href class="importar_btn btn btn-sm btn-outline-primary ml-2"
+                title="Adicionar">
+                <i class="fas fa-user-plus"></i>
+            </a>
 
-            <a href="{main->self}?acao=emailTodosEleitores" class="email_all_btn btn btn-sm btn-outline-primary"
+            <a href class="importar_btn btn btn-sm btn-outline-primary ml-2"
+                title="Importar lista de eleitores. Formato: apelido;nome;email">
+                <i class="fas fa-file-upload"></i>
+            </a>
+
+            <a href="{main->self}?acao=emailTodosEleitores" class="email_all_btn btn btn-sm btn-outline-primary ml-2"
                 title="Enviar email para todos">
-                <i class="fas fa-mail-bulk"></i> <i class="fas fa-paper-plane"></i></a>
-            <!-- <a href>Adicionar</a></span> -->
+                <i class="fas fa-mail-bulk"></i> <i class="fas fa-paper-plane"></i>
+            </a>
+
             <form enctype="multipart/form-data" method="POST" class="importar_form"
                 style="width: 0px; height: 0px; overflow: hidden;">
                 <input type="hidden" name="acao" value="importarEleitores">
@@ -27,6 +34,7 @@
         <a class="hide btn btn-sm btn-outline-warning" title="Editar"><i class="fas fa-edit"></i></a>
         <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-primary"
             title="Enviar email"><i class="fas fa-paper-plane"></i></a>
+            <a class="hide">{T->token}</a>
     </div>
     <!-- END block_eleitor -->
     <script>
