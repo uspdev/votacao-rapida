@@ -152,7 +152,7 @@ class Gerente
         $sessao->estado = 'Em elaboração';
         $sessao->email = $usuario->email;
         $sessao->logo = '';
-        $sessao->link = getenv('WWWROOT') . '/' . $sessao->hash;
+        $sessao->link = '';
         $sessao->sharedUsuarioList[] = $usuario;
         $id = R::store($sessao);
 

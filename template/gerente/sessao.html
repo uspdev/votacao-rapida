@@ -17,9 +17,27 @@
     <div class="row vdivide">
         <div class="col-md-8">
             <div id="sessao">
-
+                <button class="edit_btn btn btn-link"><i class="fas fa-edit"></i> Editar</button>
+                <button class="ajuda_btn btn btn-link"><i class="fas fa-question-circle"></i> Ajuda</button>
+                <div class="ajuda hide alert alert-info">
+                    <div class="h3 mt-2">Informações da Sessão</div>
+                    <div>
+                        <p>Estas são as informações principais da sessão de votação.<br>
+                            A <b>unidade</b> é utilizada somente no GERENTE para facilitar a identificação na lista
+                            desessões.<br>
+                            <b>quando</b> é utilizado no email enviado aos eleitores.<br>
+                            O <b>email de retorno</b> receberá uma cópia de todos os emails enviados pelo sistema,
+                            inclusive contendo os tokens abertos enviados para cada eleitor. Também é o email
+                            que receberá as mensagens de "reply" dos eleitores.<br>
+                            O <b>link alternativo</b> é onde deverá ser colado o link encurtado gerado em e.usp.br
+                            ou outro serviço similar. Copie o link original e cole no encurtador. Copie o link encurtado
+                            gerado e cole no link alternativo.
+                            É importante apenas quando o eleitor recebe suas credenciais por papel facilitando
+                            a digitação manual do endereço da sessão de votação.
+                        </p>
+                    </div>
+                </div>
                 <div class="dados">
-                    <button class="edit_btn btn btn-sm btn-link"><i class="fas fa-edit"></i> Editar</button>
                     <hr>
                     <div>
                         <span class="text-secondary">Unidade:</span> {S->unidade}
@@ -31,7 +49,10 @@
                         <span class="text-secondary">Email de retorno</span> {S->email}
                     </div>
                     <div>
-                        <span class="text-secondary">Link</span> {S->link}
+                        <span class="text-secondary">Link alternativo</span> {S->link}
+                    </div>
+                    <div>
+                        <span class="text-secondary">Link original</span> {main->wwwroot}/{S->hash}
                     </div>
                 </div>
                 <div class="form hide">
@@ -70,7 +91,7 @@
                             </div>
                         </div>
                         <div class="form-group form-row ml-2">
-                            <label for="link" class="col-form-label text-secondary">Link</label>
+                            <label for="link" class="col-form-label text-secondary">Link alternativo</label>
                             <div class="col-sm-8">
                                 <input id="link" class="form-control" type="text" name="link" value="{S->link}">
                             </div>
@@ -88,6 +109,7 @@
                     var sessao = $('#sessao');
                     sessao.find('.edit_btn').click(function () {
                         sessao.find('.dados').hide();
+                        sessao.find('.ajuda').slideUp(500);
                         sessao.find('.form').show();
                         sessao.find('input[name="nome"]').focus();
                     });
@@ -95,6 +117,10 @@
                         e.preventDefault();
                         sessao.find('.dados').show();
                         sessao.find('.form').hide();
+                    });
+
+                    sessao.find('.ajuda_btn').click(function () {
+                        sessao.find('.ajuda').slideToggle();
                     });
 
                 });
@@ -135,7 +161,7 @@
             <div>
                 <h3>Logo
                     <span class="small"> >
-                        <a href >Trocar</a>
+                        <a href>Trocar</a>
                     </span>
                 </h3>
                 <div class="ml-2">
