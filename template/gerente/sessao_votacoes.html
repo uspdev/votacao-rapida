@@ -1,0 +1,35 @@
+<div id="votacoes">
+    <style>
+        #votacoes .item:hover {
+            background-color: #ecedee;
+        }
+    </style>
+    <h2>Votações</h2>
+    <div>
+        <!-- BEGIN block_votacao -->
+        <div class="item">
+            <div class="nome">
+                {V->nome} ({V->tipo})
+                <a class="hide btn btn-sm btn-outline-primary"> Editar</a>
+            </div>
+            <div class="detalhes hide">
+            <div class="small">{V->descricao}</div>
+        </div>
+        </div>
+        <!-- END block_votacao -->
+    </div>
+    <script>
+        $(function(){
+            var votacoes = $('#votacoes');
+
+            votacoes.find('.nome').click(function(){
+                $(this).parent().find('.detalhes').slideToggle(500);
+            });
+
+            votacoes.find('.item').hover(
+                function () { $(this).find('a').show(); },
+                function () { $(this).find('a').hide(); }
+            );
+        });
+    </script>
+</div>

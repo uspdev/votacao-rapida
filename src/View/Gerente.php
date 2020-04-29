@@ -155,6 +155,7 @@ class Gerente
         }
 
         // votacoes
+        $tpl->addFile('votacoes', TPL . '/gerente/sessao_votacoes.html');
         foreach ($sessao->ownVotacao as $v) {
             $tpl->V = $v;
             $tpl->block('block_votacao');

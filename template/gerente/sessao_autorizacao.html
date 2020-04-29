@@ -1,13 +1,15 @@
-<style>
-    #gerente .item:hover {
-        background-color: #ecedee;
-    }
-</style>
 <div id="gerente">
+    <style>
+        #gerente .item:hover {
+            background-color: #ecedee;
+        }
+    </style>
+
     <h3>
-        Gerentes 
+        Gerentes
         <a href class="adicionar_btn btn btn-sm btn-outline-primary bold">+</a>
-        <a class="btn btn-sm btn-outline-info enviar_btn" href="{main->self}?acao=emailTokensControle">Enviar tokens de controle</a><br>
+        <a class="btn btn-sm btn-outline-info enviar_btn" href="{main->self}?acao=emailTokensControle">Enviar tokens de
+            controle</a><br>
 
     </h3>
     <span class="form_span hide">
@@ -78,7 +80,7 @@
                 }
             );
 
-            gerente.find('.enviar_btn').click(function() {
+            gerente.find('.enviar_btn').click(function () {
                 if (!confirm('Isto enviará email a todos os gerentes com os tokens de controle.\nTem certeza?')) {
                     return false;
                 }
