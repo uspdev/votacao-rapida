@@ -6,7 +6,7 @@
 <div id="eleitores">
     <h2>Eleitores |
         <span class="small">
-            <a href class="importar_btn" title="formato: apelido;nome;email">Importar lista</a> |
+            <a href class="importar_btn" title="formato: apelido;nome;email"><i class="fas fa-file-upload"></i> Importar lista</a> |
             <!-- <a href>Adicionar</a></span> -->
         <form enctype="multipart/form-data" method="POST" class="importar_form"
             style="width: 0px; height: 0px; overflow: hidden;">
@@ -17,9 +17,9 @@
     <!-- BEGIN block_eleitor -->
     <div class="item" id="token_{T->id}">
         {T->apelido} ({T->email})
-        <a class="remover_btn hide btn btn-sm btn-outline-danger">X</a>
-        <a class="hide btn btn-sm btn-outline-warning">Editar</a>
-        <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-warning">Enviar email</a>
+        <a class="remover_btn hide btn btn-sm btn-outline-danger" title="Remover"><i class="fas fa-trash-alt"></i></a>
+        <a class="hide btn btn-sm btn-outline-warning" title="Editar"><i class="fas fa-edit"></i></a>
+        <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-primary" title="Enviar email"><i class="fas fa-paper-plane"></i></a>
     </div>
     <!-- END block_eleitor -->
     <script>
