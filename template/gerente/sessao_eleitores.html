@@ -4,22 +4,29 @@
     }
 </style>
 <div id="eleitores">
-    <h2>Eleitores |
-        <span class="small">
-            <a href class="importar_btn" title="formato: apelido;nome;email"><i class="fas fa-file-upload"></i> Importar lista</a> |
+    <h2>Eleitores <span class="badge badge-pill badge-info">{S->countTokenAberto}</span>
+        <span class="small"> |
+            <a href class="importar_btn btn btn-sm btn-outline-primary"
+                title="Importar lista de eleitores. Formato: apelido;nome;email">
+                <i class="fas fa-file-upload"></i></a>
+
+            <a href="{main->self}?acao=emailTodosEleitores" class="email_all_btn btn btn-sm btn-outline-primary"
+                title="Enviar email para todos">
+                <i class="fas fa-mail-bulk"></i> <i class="fas fa-paper-plane"></i></a>
             <!-- <a href>Adicionar</a></span> -->
-        <form enctype="multipart/form-data" method="POST" class="importar_form"
-            style="width: 0px; height: 0px; overflow: hidden;">
-            <input type="hidden" name="acao" value="importarEleitores">
-            <input type="file" name="arq_eleitores" accept=".csv, .txt">
-        </form>
+            <form enctype="multipart/form-data" method="POST" class="importar_form"
+                style="width: 0px; height: 0px; overflow: hidden;">
+                <input type="hidden" name="acao" value="importarEleitores">
+                <input type="file" name="arq_eleitores" accept=".csv, .txt">
+            </form>
     </h2>
     <!-- BEGIN block_eleitor -->
     <div class="item" id="token_{T->id}">
         {T->apelido} ({T->email})
         <a class="remover_btn hide btn btn-sm btn-outline-danger" title="Remover"><i class="fas fa-trash-alt"></i></a>
         <a class="hide btn btn-sm btn-outline-warning" title="Editar"><i class="fas fa-edit"></i></a>
-        <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-primary" title="Enviar email"><i class="fas fa-paper-plane"></i></a>
+        <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-primary"
+            title="Enviar email"><i class="fas fa-paper-plane"></i></a>
     </div>
     <!-- END block_eleitor -->
     <script>
@@ -55,12 +62,17 @@
                 );
             });
 
-            eleitores.find('.email_btn').click(function(e){
-                //e.preventDefault();
+            eleitores.find('.email_btn').click(function (e) {
                 if (confirm('Quer enviar email?') == false) {
                     return false;
                 }
-            })
+            });
+
+            eleitores.find('.email_all_btn').click(function (e) {
+                if (confirm('Quer enviar email?') == false) {
+                    return false;
+                }
+            });
 
             eleitores.find('.importar_btn').click(function (e) {
                 e.preventDefault();

@@ -104,36 +104,42 @@ class Gerente
         if (!empty($this->query->acao)) {
             switch ($this->query->acao) {
                 case 'emailTokensControle':
-                    $data['acao'] = 'emailTokensControle';
+                    $data['acao'] = $this->query->acao;
                     $ret = Api::send($endpoint, $data);
-                    if ($ret->status == 'ok') {
-                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
-                    }
-                    header('Location:' . $_SERVER['REDIRECT_URL']);
-                    exit;
                     break;
                 case 'emailEleitor':
-                    $data['acao'] = 'emailEleitor';
+                    $data['acao'] = $this->query->acao;
                     $data['id'] = $this->query->id;
                     $ret = Api::send($endpoint, $data);
-                    if ($ret->status == 'ok') {
-                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
-                    }
-                    header('Location:' . $_SERVER['REDIRECT_URL']);
-                    exit;
+                    break;
+                case 'emailTodosEleitores':
+                    $data['acao'] = $this->query->acao;
+                    $data['id'] = $this->query->id;
+                    $ret = Api::send($endpoint, $data);
+                    //echo $endpoint;
+                    //echo '<pre>'; print_r($ret);exit;
                     break;
                 case 'apagarSessao':
-                    $data['acao'] = 'apagarSessao';
+                    $data['acao'] = $this->query->acao;
                     $ret = Api::send($endpoint, $data);
                     if ($ret->status == 'ok') {
                         SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
+                    } else {
+                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-danger',]);
                     }
                     header('Location: ' . getenv('WWWROOT'));
                     exit;
                     break;
             }
+            // vamos mostrar a mensagem de retorno
+            if ($ret->status == 'ok') {
+                SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
+            } else {
+                SS::setMsg(['msg' => $ret->data, 'class' => 'alert-danger',]);
+            }
+            header('Location:' . $_SERVER['REDIRECT_URL']);
+            exit;
         }
-
 
         // echo '<pre>';
         // print_r($sessao);
@@ -164,15 +170,16 @@ class Gerente
 
         // Eleitores
         $tpl->addFile('eleitores', TPL . '/gerente/sessao_eleitores.html');
+        $count = 0;
         foreach ($sessao->ownToken as $token) {
             if ($token->tipo == 'aberta') {
                 $tpl->T = $token;
                 $tpl->block('block_eleitor');
+                $count++;
             }
         }
+        $sessao->countTokenAberto = $count;
         //echo '<pre>';print_r($sessao->ownToken);exit;
-
-
 
         $tpl->show('userbar');
     }

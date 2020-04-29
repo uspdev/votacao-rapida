@@ -5,10 +5,28 @@ namespace Uspdev\Votacao;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use raelgc\view\Template;
-use Uspdev\Votacao\Controller\Token;
+use \RedBeanPHP\R as R;
 
 class Email
 {
+    public static function sendTodosVotacao($sessao)
+    {
+        $tokens = $sessao->withCondition("tipo = 'aberta'")->ownTokenList;
+        //return $tokens;
+        $count = 0;
+        $erro = 0;
+        foreach ($tokens as $token) {
+            $ret = SELF::sendVotacao($sessao, $token);
+            if (!$ret) {
+                $erro++;
+            } else {
+                $count++;
+            }
+        }
+        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        return [$count, $erro];
+    }
+
     public static function sendVotacao($sessao, $token)
     {
         $sessao->link_direto = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
@@ -18,18 +36,20 @@ class Email
         $tpl->T = $token;
         $corpo = $tpl->parse();
 
-        return SELF::send([
+        $ret = SELF::adicionarFila($sessao, [
             'destinatario' => $token->email,
             'bcc' => $sessao->email, // manda com cópia para o email da sessão
-            'assunto' => 'Credenciais de votação: ' . $sessao->nome . ' - ' . $sessao->quando . ' - ',
+            'assunto' => 'Credenciais de votação: ' . $sessao->nome . ' - ' . $sessao->quando,
             'corpo' => $corpo,
             'alt' => $corpo,
-            'responderPara' => $sessao->email,
+            'responder_para' => $sessao->email,
             'embedded' => [
-                ['nome' => 'qrcode.png', 'data' => $qrcode],
-                ['nome' => 'headtop.png', 'data' => file_get_contents(TPL . '/email/headtop.png')],
+                ['nome' => 'qrcode.png', 'data' => base64_encode($qrcode)],
+                ['nome' => 'headtop.png', 'data' => base64_encode(file_get_contents(TPL . '/email/headtop.png'))],
             ],
         ]);
+        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        return $ret;
     }
 
     public static function sendControle($sessao)
@@ -37,29 +57,57 @@ class Email
         $sessao->wwwroot = getenv('WWWROOT');
         $lista = $sessao->sharedUsuarioList;
         foreach ($lista as $dest) {
-            //$sessao->link_direto = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
-            //$qrcode = SELF::qrCodePngData($sessao->link_direto);
             $tpl = new Template(TPL . '/email/controle.html');
             $tpl->S = $sessao;
-            $tpl->TA = Token::ObterToken($sessao, 'apoio');
-            $tpl->TP = Token::ObterToken($sessao, 'painel');
-            $tpl->TR = Token::ObterToken($sessao, 'recepcao');
+            $tpl->TA = array_pop($sessao->withCondition("tipo = 'apoio'")->ownTokenList);
+            $tpl->TP = array_pop($sessao->withCondition("tipo = 'painel'")->ownTokenList);
+            $tpl->TR = array_pop($sessao->withCondition("tipo = 'recepcao'")->ownTokenList);
             $tpl->dest = $dest;
             $corpo = $tpl->parse();
 
-            SELF::send([
+            SELF::adicionarFila($sessao, [
                 'destinatario' => $dest->email,
                 'assunto' => 'Credenciais de controle: ' . $sessao->nome . ' - ' . $sessao->quando,
                 'corpo' => $corpo,
                 'alt' => $corpo,
-                'responderPara' => $sessao->email,
+                'responder_para' => $sessao->email,
                 'embedded' => [
-                    // ['nome' => 'qrcode.png', 'data' => $qrcode],
-                    ['nome' => 'headtop.png', 'data' => file_get_contents(TPL . '/email/headtop.png')],
+                    ['nome' => 'headtop.png', 'data' => base64_encode(file_get_contents(TPL . '/email/headtop.png'))],
                 ],
             ]);
         }
+        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
         return true;
+    }
+
+    public static function adicionarFila($sessao, $arr)
+    {
+        $email = R::dispense('email');
+        $email->import(array_map('serialize', $arr));
+        $email->enviado = null;
+        $email->sessao_id = $sessao->id;
+        $id = R::store($email);
+        return true;
+    }
+
+    public static function processarFila()
+    {
+        return R::transaction(function () {
+            $emails = R::findForUpdate('email', 'enviado IS NULL');
+            $count = 0;
+            foreach ($emails as $email) {
+                $email_arr = $email->export();
+                unset($email_arr['id']);
+                unset($email_arr['sessao_id']);
+                $arr = array_map('unserialize', $email_arr);
+
+                SELF::send($arr);
+                $email->enviado = date('Y-m-d H:i:s');
+                R::store($email);
+                $count++;
+            }
+            return $count;
+        });
     }
 
     public static function send($arr)
@@ -84,11 +132,11 @@ class Email
 
         (isset($arr['bcc'])) ? $mail->addBCC($arr['bcc']) : '';
 
-        !empty($arr['responderPara']) ? $mail->addReplyTo($arr['responderPara']) : '';
+        !empty($arr['responder_para']) ? $mail->addReplyTo($arr['responder_para']) : '';
 
         if (!empty($arr['embedded'])) {
             foreach ($arr['embedded'] as $embedded) {
-                $mail->addStringEmbeddedImage($embedded['data'], $embedded['nome'], $embedded['nome']);
+                $mail->addStringEmbeddedImage(base64_decode($embedded['data']), $embedded['nome'], $embedded['nome']);
             }
         }
 

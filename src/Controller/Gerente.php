@@ -38,39 +38,37 @@ class Gerente
                     ]);
                     $sessao->sharedUsuarioList[] = $novo_usuario;
                     R::store($sessao);
-                    return ['status' => 'ok', 'data' => json_encode($usuario->export())];
+                    return ['status' => 'ok', 'data' => 'Usuário adicionado com sucesso.'];
                     break;
                 case 'delUser':
                     $usuario = $sessao->withCondition('usuario.id = ? ', [$this->data->id])->sharedUsuarioList;
                     unset($sessao->sharedUsuarioList[key($usuario)]);
                     R::store($sessao);
-                    return $usuario;
+                    return ['status' => 'ok', 'data' => 'Usuário removido com sucesso.'];
                     break;
                 case 'emailTokensControle':
-                    $token = [
-                        'token' => 'ABCDEF',
-                        'tipo' => 'teste',
-                        'apelido' => 'Joãozinho',
-                        'nome' => 'João Batista da Silva',
-                        'email' => $this->data->dest
-                    ];
                     $data = Email::sendControle($sessao);
-                    //$data = Email::sendVotacao($sessao, json_decode(json_encode($token)));
-
                     if ($data !== true) {
                         return ['status' => 'erro', 'data' => $data];
                     }
-                    return ['status' => 'ok', 'data' => 'Email enviado com sucesso.'];
+                    return ['status' => 'ok', 'data' => 'Email de controle enviado com sucesso.'];
                     break;
 
                 case 'emailEleitor':
                     $token = R::load('token', $this->data->id);
                     $data = Email::sendVotacao($sessao, $token);
-
                     if ($data !== true) {
                         return ['status' => 'erro', 'data' => $data];
                     }
-                    return ['status' => 'ok', 'data' => 'Email enviado com sucesso.'];
+                    return ['status' => 'ok', 'data' => 'Email de eleitor enviado com sucesso.'];
+                    break;
+
+                case 'emailTodosEleitores':
+                    $data = Email::sendTodosVotacao($sessao);
+                    if ($data == false) {
+                        return ['status' => 'erro', 'data' => $data];
+                    }
+                    return ['status' => 'ok', 'data' => 'Fila de envio: sucesso: ' . $data[0] . ', erro: ' . $data[1]];
                     break;
 
                 case 'atualizar':
