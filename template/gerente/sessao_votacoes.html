@@ -4,27 +4,69 @@
             background-color: #ecedee;
         }
     </style>
-    <h2>Votações</h2>
+    <h2>Votações <span class="badge badge-pill badge-info">{S->countVotacao}</span></h2>
     <div>
         <!-- BEGIN block_votacao -->
-        <div class="item">
+        <div class="item my-2">
             <div class="nome">
                 {V->nome} ({V->tipo})
-                <a class="hide btn btn-sm btn-outline-primary"> Editar</a>
+                <a href="" class="editar_btn hide btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></a>
+            </div>
+            <div class="form hide">
+                <form method="POST">
+
+                    <!-- <input type="hidden" name="acao" value="atualizarVotacao"> -->
+                    <input type="hidden" name="id" value="{V->id}">
+                    <div>
+                        <label class="col-sm-12">
+                            <span class="text-secondary">Nome</span>
+                            <div>
+                                <input type="text" name="nome" value="{V->nome}" style="width:100%">
+                            </div>
+                        </label>
+                    </div>
+                    <div>
+                        <label class="col-form-label col-sm-12">
+                            <span class="text-secondary">Descrição</span>
+                            <div>
+                                <textarea name="descricao" rows="4" style="width:100%">{V->descricao}</textarea>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-sm btn-outline-primary" name="acao"
+                            value="atualizarVotacao">
+                            <i class="fas fa-check"></i> Salvar</button>
+                        <button type="button" class="cancelar_btn btn btn-sm btn-outline-warning">Cancelar</button>
+                        <button type="submit" class="btn btn-sm btn-outline-danger" name="acao" value="removerVotacao">
+                            <i class="fas fa-trash"></i></button>
+                    </div>
+                </form>
             </div>
             <div class="detalhes hide">
-            <div class="small">{V->descricao}</div>
-        </div>
+                <div class="small">{V->descricao}</div>
+            </div>
         </div>
         <!-- END block_votacao -->
     </div>
     <script>
-        $(function(){
+        $(function () {
             var votacoes = $('#votacoes');
 
-            votacoes.find('.nome').click(function(){
-                $(this).parent().find('.detalhes').slideToggle(500);
+            // votacoes.find('.nome').click(function () {
+            //     $(this).parent().find('.detalhes').slideToggle(500);
+            // });
+
+            votacoes.find('.editar_btn').click(function (e) {
+                e.preventDefault();
+                $(this).parent().parent().find('.form').slideToggle(500);
             });
+
+            votacoes.find('.cancelar_btn').click(function (e) {
+                e.preventDefault();
+                $(this).parent().parent().parent().slideToggle(500);
+            });
+
 
             votacoes.find('.item').hover(
                 function () { $(this).find('a').show(); },

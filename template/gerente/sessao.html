@@ -58,12 +58,9 @@
                 <div class="form hide">
                     <!-- <button class="ok_btn btn btn-sm btn-outline-primary">OK</button> -->
                     <form method="POST" action="">
-                        <input type="submit" name="OK" value="ok" class="btn btn-sm btn-outline-primary">
 
-                        <button class="cancel_btn btn btn-sm btn-outline-warning">Cancelar</button>
-                        <hr>
 
-                        <input type="hidden" name="acao" value="atualizar">
+                        <input type="hidden" name="acao" value="atualizarSessao">
 
                         <div class="form-group row ml-2">
                             <label for="nome" class="col-form-label text-secondary">Nome</label>
@@ -96,9 +93,11 @@
                                 <input id="link" class="form-control" type="text" name="link" value="{S->link}">
                             </div>
                         </div>
+                        <div class="text-right">
+                            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-check"></i> Salvar</button>
+                            <button class="cancel_btn btn btn-sm btn-outline-warning"><i class="fas fa-ban"></i> Cancelar</button>
+                        </div>
 
-                        <a href title="Copie este link e use em e.usp.br para gerar link encurtado. 
-                        Depois cole o link encurtado de volta aqui.">AJUDA</a><br>
                     </form>
                 </div>
 
@@ -128,10 +127,10 @@
 
             <hr>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-7">
                     {votacoes}
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-5">
                     {eleitores}
                 </div>
             </div>

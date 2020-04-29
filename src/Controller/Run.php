@@ -204,7 +204,7 @@ class Run
 
             case '9': // criar instantaneo
                 // aqui não precisa de $votacao, pois vai criar uma nova
-                $votacao = Votacao::novoInstantaneo($data['texto']);
+                $votacao = Votacao::novoInstantaneo(trim($data['texto']));
                 $votacao->sessao_id = $sessao->id;
                 R::store($votacao);
 

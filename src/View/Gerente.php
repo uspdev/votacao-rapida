@@ -166,6 +166,8 @@ class Gerente
             $tpl->V = $v;
             $tpl->block('block_votacao');
         }
+        $sessao->countVotacao = count($sessao->ownVotacao);
+
         //print_r($sessao->ownVotacao);exit;
 
         // Eleitores
@@ -205,19 +207,4 @@ class Gerente
         }
         exit;
     }
-
-    // public function email($sessao, $dest)
-    // {
-    //     //$tpl = new Template(TPL./)
-    //     Mail::send(
-    //         [
-    //             'destinatario' => $dest,
-    //             'assunto' => 'Credenciais: '. $sessao->nome. ' - data hora - ' . generateRandomString(4),
-    //             'mensagem' => file_get_contents(TPL . '/email/teste.html'),
-    //             'responderPara' => $sessao->email,
-    //             'anexo1' => ROOTDIR . '/sandbox/qrcode.png',
-    //           //  'anexo1' => LOCAL . '/arquivos/UUZEWSRWKBXOGJVWIYJV-aberta-Masaki.pdf',
-    //         ]
-    //     );
-    // }
 }

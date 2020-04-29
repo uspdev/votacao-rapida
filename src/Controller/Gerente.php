@@ -71,7 +71,7 @@ class Gerente
                     return ['status' => 'ok', 'data' => 'Fila de envio: sucesso: ' . $data[0] . ', erro: ' . $data[1]];
                     break;
 
-                case 'atualizar':
+                case 'atualizarSessao':
                     foreach ($this->data as $key => $val) {
                         if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
                             $sessao->$key = $val;
@@ -79,6 +79,21 @@ class Gerente
                     }
                     R::store($sessao);
                     return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
+                    break;
+
+                case 'atualizarVotacao':
+                    $votacao = array_pop($sessao->withCondition('id = ?', [$this->data->id])->ownVotacao);
+                    if ($votacao) {
+                        foreach ($this->data as $key => $val) {
+                            if (in_array($key, ['nome', 'descricao'])) {
+                                $votacao->$key = trim($val);
+                            }
+                        }
+                        R::store($votacao);
+                        return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
+                    }
+                    return ['status' => 'erro', 'data' => 'Votação id=' . $this->data->id . ' não encontrada.'];
+
                     break;
 
                 case 'apagarSessao':
