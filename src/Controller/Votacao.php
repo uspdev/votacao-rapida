@@ -89,6 +89,56 @@ class Votacao
         return R::load('votacao', $id);
     }
 
+    public static function adicionar($sessao, $data)
+    {
+        $votacao = R::dispense('votacao');
+        $votacao->sessao = $sessao;
+        $votacao->estado = 0;
+        $votacao->input_type = 'checkbox';
+        $votacao->input_count = '1';
+        foreach ($data as $key => $val) {
+            if (in_array($key, ['nome', 'descricao', 'tipo'])) {
+                $votacao->$key = trim($val);
+            }
+        }
+        R::store($votacao);
+        if ($votacao->tipo == 'aberta') {
+            SELF::adicionarAlternativas($votacao, ['Favorável', 'Contrário', 'Abstenção']);
+        }
+        return true;
+    }
+
+    public static function adicionarAlternativas($votacao, $alternativas)
+    {
+        foreach ($alternativas as $a) {
+            $alternativa = R::dispense('alternativa');
+            $alternativa->texto = $a;
+            $alternativa->votacao = $votacao;
+            R::store($alternativa);
+        }
+        return true;
+    }
+
+    public static function atualizar($votacao, $data)
+    {
+        foreach ($data as $key => $val) {
+            if (in_array($key, ['nome', 'descricao', 'tipo'])) {
+                $votacao->$key = trim($val);
+            }
+        }
+        R::store($votacao);
+        return true;
+    }
+
+    public static function remover($id)
+    {
+        // tem de remover as alternativas e respostas
+        $votacao = R::load('votacao', $id);
+        R::trashALl($votacao->ownAlternativaList);
+        R::trashAll($votacao->ownRespostaList);
+        R::trash($votacao);
+    }
+
     public static function limparVotosExistentes($votacao)
     {
         R::exec('DELETE FROM resposta WHERE votacao_id = ' . $votacao->id);

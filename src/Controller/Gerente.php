@@ -84,16 +84,28 @@ class Gerente
                 case 'atualizarVotacao':
                     $votacao = array_pop($sessao->withCondition('id = ?', [$this->data->id])->ownVotacao);
                     if ($votacao) {
-                        foreach ($this->data as $key => $val) {
-                            if (in_array($key, ['nome', 'descricao'])) {
-                                $votacao->$key = trim($val);
-                            }
+                        if ($ret = Votacao::atualizar($votacao, $data)) {
+                            return ['status' => 'ok', 'data' => 'Votação atualizada com sucesso.'];
+                        } else {
+                            return ['status' => 'erro', 'data' => $ret];
                         }
-                        R::store($votacao);
-                        return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
                     }
                     return ['status' => 'erro', 'data' => 'Votação id=' . $this->data->id . ' não encontrada.'];
+                    break;
 
+                case 'adicionarVotacao':
+                    if ($ret = Votacao::adicionar($sessao, $this->data)) {
+                        return ['status' => 'ok', 'data' => 'Votação adicionada com sucesso.'];
+                    }
+                    return ['status' => 'erro', 'data' => $ret];
+                    break;
+
+                case 'removerVotacao':
+                    if ($ret = Votacao::remover($this->data->id)) {
+                        return ['status' => 'ok', 'data' => 'Votação removida com sucesso.'];
+                    } else {
+                        return ['status' => 'erro', 'data' => $ret];
+                    }
                     break;
 
                 case 'apagarSessao':

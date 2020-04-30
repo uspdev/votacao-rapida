@@ -262,7 +262,7 @@ class Run
                 } else {
                     $dividir = count($v->votos) - 1;
                 }
-                // ordenando por nome
+                // ordenando por apelido
                 usort($v->votos, function ($a, $b) {
                     return strcmp($a->apelido, $b->apelido);
                 });

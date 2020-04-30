@@ -25,7 +25,7 @@
                         <p>Estas são as informações principais da sessão de votação.<br>
                             A <b>unidade</b> é utilizada somente no GERENTE para facilitar a identificação na lista
                             desessões.<br>
-                            <b>quando</b> é utilizado no email enviado aos eleitores.<br>
+                            <b>Quando</b> é utilizado no email enviado aos eleitores.<br>
                             O <b>email de retorno</b> receberá uma cópia de todos os emails enviados pelo sistema,
                             inclusive contendo os tokens abertos enviados para cada eleitor. Também é o email
                             que receberá as mensagens de "reply" dos eleitores.<br>
@@ -56,12 +56,7 @@
                     </div>
                 </div>
                 <div class="form hide">
-                    <!-- <button class="ok_btn btn btn-sm btn-outline-primary">OK</button> -->
                     <form method="POST" action="">
-
-
-                        <input type="hidden" name="acao" value="atualizarSessao">
-
                         <div class="form-group row ml-2">
                             <label for="nome" class="col-form-label text-secondary">Nome</label>
                             <div class="col-sm-8">
@@ -93,38 +88,44 @@
                                 <input id="link" class="form-control" type="text" name="link" value="{S->link}">
                             </div>
                         </div>
+
+                        <input type="hidden" name="acao" value="atualizarSessao">
                         <div class="text-right">
-                            <button type="submit" class="btn btn-sm btn-outline-primary"><i class="fas fa-check"></i> Salvar</button>
-                            <button class="cancel_btn btn btn-sm btn-outline-warning"><i class="fas fa-ban"></i> Cancelar</button>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-check"></i> Salvar
+                            </button>
+                            <button type="button" class="cancel_btn btn btn-sm btn-outline-warning">
+                                <i class="fas fa-ban"></i> Cancelar
+                            </button>
                         </div>
 
                     </form>
                 </div>
-
                 <br>
+                <script>
+                    $(function () {
+                        var sessao = $('#sessao');
+                        sessao.find('.edit_btn').click(function () {
+                            sessao.find('.dados').hide();
+                            sessao.find('.ajuda').slideUp(500);
+                            sessao.find('.form').show();
+                            sessao.find('input[name="nome"]').focus();
+                        });
+                        
+                        sessao.find('.cancel_btn').click(function (e) {
+                            e.preventDefault();
+                            sessao.find('.dados').show();
+                            sessao.find('.form').hide();
+                        });
+
+                        sessao.find('.ajuda_btn').click(function () {
+                            sessao.find('.ajuda').slideToggle();
+                        });
+
+                    });
+                </script>
             </div>
-            <script>
-                $(function () {
-                    var sessao = $('#sessao');
-                    sessao.find('.edit_btn').click(function () {
-                        sessao.find('.dados').hide();
-                        sessao.find('.ajuda').slideUp(500);
-                        sessao.find('.form').show();
-                        sessao.find('input[name="nome"]').focus();
-                    });
-                    sessao.find('.cancel_btn').click(function (e) {
-                        e.preventDefault();
-                        sessao.find('.dados').show();
-                        sessao.find('.form').hide();
-                    });
-
-                    sessao.find('.ajuda_btn').click(function () {
-                        sessao.find('.ajuda').slideToggle();
-                    });
-
-                });
-            </script>
-
+            
             <hr>
             <div class="row">
                 <div class="col-md-7">

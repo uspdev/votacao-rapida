@@ -5,9 +5,8 @@
 </style>
 <div id="eleitores">
     <h2>Eleitores <span class="badge badge-pill badge-info">{S->countTokenAberto}</span>
-        <span class="small"> |
-            <a href class="adicionar_btn btn btn-sm btn-outline-primary ml-2"
-                title="Adicionar">
+        <span>
+            <a href class="adicionar_btn btn btn-sm btn-outline-primary ml-2" title="Adicionar">
                 <i class="fas fa-user-plus"></i>
             </a>
 
@@ -26,15 +25,17 @@
                 <input type="hidden" name="acao" value="importarEleitores">
                 <input type="file" name="arq_eleitores" accept=".csv, .txt">
             </form>
+        </span>
     </h2>
     <!-- BEGIN block_eleitor -->
     <div class="item" id="token_{T->id}">
         {T->apelido} ({T->email})
-        <a href="" class="remover_btn hide btn btn-sm btn-outline-danger" title="Remover"><i class="fas fa-trash-alt"></i></a>
+        <a href="" class="remover_btn hide btn btn-sm btn-outline-danger" title="Remover"><i
+                class="fas fa-trash-alt"></i></a>
         <a href="" class="editar_btn hide btn btn-sm btn-outline-warning" title="Editar"><i class="fas fa-edit"></i></a>
         <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-primary"
             title="Enviar email"><i class="fas fa-paper-plane"></i></a>
-            <a class="hide">{T->token}</a>
+        <a class="hide">{T->token}</a>
     </div>
     <!-- END block_eleitor -->
     <script>
@@ -89,12 +90,12 @@
 
             eleitores.find('.adicionar_btn').click(function (e) {
                 e.preventDefault();
-               // eleitores.find('.importar_form input[type=file]').click();
+                // eleitores.find('.importar_form input[type=file]').click();
             });
 
             eleitores.find('.editar_btn').click(function (e) {
                 e.preventDefault();
-               // eleitores.find('.importar_form input[type=file]').click();
+                // eleitores.find('.importar_form input[type=file]').click();
             });
 
             eleitores.find('.importar_form input[type=file]').change(function () {

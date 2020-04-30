@@ -4,68 +4,148 @@
             background-color: #ecedee;
         }
     </style>
-    <h2>Votações <span class="badge badge-pill badge-info">{S->countVotacao}</span></h2>
-    <div>
-        <!-- BEGIN block_votacao -->
-        <div class="item my-2">
-            <div class="nome">
-                {V->nome} ({V->tipo})
-                <a href="" class="editar_btn hide btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></a>
-            </div>
-            <div class="form hide">
-                <form method="POST">
+    <h2>Votações <span class="badge badge-pill badge-info">{S->countVotacao}</span>
+        <span>
+            <a href class="adicionar_btn btn btn-sm btn-outline-primary ml-2" title="Nova votação">
+                <i class="fas fa-plus"></i>
+            </a>
+        </span>
+    </h2>
+    <div class="adicionar_div hide"></div>
 
-                    <!-- <input type="hidden" name="acao" value="atualizarVotacao"> -->
-                    <input type="hidden" name="id" value="{V->id}">
-                    <div>
-                        <label class="col-sm-12">
-                            <span class="text-secondary">Nome</span>
-                            <div>
-                                <input type="text" name="nome" value="{V->nome}" style="width:100%">
-                            </div>
-                        </label>
-                    </div>
-                    <div>
-                        <label class="col-form-label col-sm-12">
-                            <span class="text-secondary">Descrição</span>
-                            <div>
-                                <textarea name="descricao" rows="4" style="width:100%">{V->descricao}</textarea>
-                            </div>
-                        </label>
-                    </div>
-                    <div class="text-right">
-                        <button type="submit" class="btn btn-sm btn-outline-primary" name="acao"
-                            value="atualizarVotacao">
-                            <i class="fas fa-check"></i> Salvar</button>
-                        <button type="button" class="cancelar_btn btn btn-sm btn-outline-warning">Cancelar</button>
-                        <button type="submit" class="remover_btn btn btn-sm btn-outline-danger" name="acao"
-                            value="removerVotacao">
-                            <i class="fas fa-trash"></i></button>
-                    </div>
-                </form>
-            </div>
-            <div class="descricao">
-                <div class="small ml-3">{V->descricao|nl2br}</div>
-            </div>
+    <!-- BEGIN block_votacao -->
+    <div class="item my-2">
+        <div class="nome">
+            {V->nome} ({V->tipo})
+            <a class="editar_btn hide btn btn-sm btn-outline-warning"><i class="fas fa-edit"></i></a>
+            <!-- <a href="" class="clone_btn hide btn btn-sm btn-outline-warning"><i class="fas fa-clone"></i></a> -->
         </div>
-        <!-- END block_votacao -->
+        <div class="form hide">
+            <form method="POST">
+                <input type="hidden" name="id" value="{V->id}">
+                <div>
+                    <label class="col-sm-12">
+                        <span class="text-secondary">Nome</span>
+                        <div>
+                            <input type="text" name="nome" value="{V->nome}" style="width:100%">
+                        </div>
+                    </label>
+                </div>
+                <div>
+                    <label class="col-form-label col-sm-12">
+                        <span class="text-secondary">Descrição</span>
+                        <div>
+                            <textarea name="descricao" rows="4" style="width:100%">{V->descricao}</textarea>
+                        </div>
+                    </label>
+                </div>
+                <div class="text-right">
+                    <button type="submit" class="btn btn-sm btn-outline-primary" name="acao" value="atualizarVotacao">
+                        <i class="fas fa-check"></i> Salvar</button>
+                    <button type="button" class="cancelar_btn btn btn-sm btn-outline-warning">Cancelar</button>
+                    <button type="submit" class="remover_btn btn btn-sm btn-outline-danger mr-4" name="acao"
+                        value="removerVotacao">
+                        <i class="fas fa-trash"></i></button>
+                </div>
+            </form>
+        </div>
+        <div class="descricao small ml-3">
+            {V->descricao|nl2br}
+        </div>
+
+    </div>
+    <!-- END block_votacao -->
+
+    <div class="form_template hide">
+        <form method="POST">
+            <div>
+                <label class="col-sm-12">
+                    <span class="text-secondary">Nome</span>
+                    <div>
+                        <input type="text" name="nome" style="width:100%">
+                    </div>
+                </label>
+            </div>
+            <div>
+                <label class="col-form-label col-sm-12">
+                    <span class="text-secondary">Descrição</span>
+                    <div>
+                        <textarea name="descricao" rows="4" style="width:100%"></textarea>
+                    </div>
+                </label>
+            </div>
+            <div>
+                <span class="text-secondary">Tipo</span>
+                <div class="form-check form-check-inline">
+                    <label class="col-form-label col-sm-12">
+                        <span>Aberta</span>
+                        <input type="radio" name="tipo" value="aberta" checked>
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <label class="col-form-label col-sm-12">
+                        <span>Fechada</span>
+                        <input type="radio" name="tipo" value="fechada">
+                    </label>
+                </div>
+            </div>
+
+            <input type="hidden" name="id" value="">
+            <div class="text-right">
+                <button type="submit" class="btn btn-sm btn-outline-primary" name="acao" value="">
+                    <i class="fas fa-check"></i> Salvar</button>
+                <button type="button" class="cancelar_btn btn btn-sm btn-outline-warning">Cancelar</button>
+            </div>
+        </form>
     </div>
     <script>
         $(function () {
             var votacoes = $('#votacoes');
 
-            // votacoes.find('.nome').click(function () {
-            //     $(this).parent().find('.detalhes').slideToggle(500);
-            // });
-
-            thisItem = function(el) {
+            thisItem = function (el) {
                 var item = el.closest('.item');
                 var self = {};
-                self.form = item.find('.form');
-                self.descricao = item.find('.descricao');
-                return self;
+                item.form = item.find('.form');
+                item.descricao = item.find('.descricao');
+                item.cloned = item.find('.cloned');
+                return item;
             }
 
+            // votacoes.find('.clone_btn').click(function (e) {
+            //     e.preventDefault();
+            //     var clone = votacoes.find('.clone').html();
+            //     $(clone).insertAfter(thisItem($(this))).slideDown();
+            // });
+
+            votacoes.find('.adicionar_btn').click(function (e) {
+                e.preventDefault();
+                $(this).hide();
+                var clone = votacoes.find('.form_template').html();
+
+                // mostrando
+                var tpl = votacoes.find('.adicionar_div').append(clone);
+                tpl.slideDown(300);
+
+                // prenchendo valores
+                tpl.find('input[name=id]').attr('value', '0');
+                tpl.find('input[name=nome]').focus();
+                tpl.find('button[name=acao]').attr('value', 'adicionarVotacao');
+                //tpl.find('input[name=nome]').attr('value', 'Nome');
+
+                // cancelar do form
+                tpl.find('.cancelar_btn').click(function (e) {
+                    e.preventDefault();
+                    tpl.slideUp(300, function () {
+                        $(this).empty();
+                        votacoes.find('.adicionar_btn').show();
+                    });
+                });
+            });
+
+
+
+
+            // para editar votação ----------------
             votacoes.find('.editar_btn').click(function (e) {
                 e.preventDefault();
                 votacoes.find('.form').slideUp(500);
@@ -86,11 +166,11 @@
                 thisItem($(this)).descricao.slideDown(500);
             });
 
-            votacoes.find('.remover_btn').click(function (e) {
-                e.preventDefault();
-                alert('Ainda não implementado.');
+            votacoes.find('.remover_btn').click(function () {
+                if (confirm('Tem certeza que quer remover?') == false) {
+                    return false;
+                }
             });
-
 
             votacoes.find('.item').hover(
                 function () { $(this).find('a').show(); },
