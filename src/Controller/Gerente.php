@@ -84,7 +84,7 @@ class Gerente
                 case 'atualizarVotacao':
                     $votacao = array_pop($sessao->withCondition('id = ?', [$this->data->id])->ownVotacao);
                     if ($votacao) {
-                        if ($ret = Votacao::atualizar($votacao, $data)) {
+                        if ($ret = Votacao::atualizar($votacao, $this->data)) {
                             return ['status' => 'ok', 'data' => 'Votação atualizada com sucesso.'];
                         } else {
                             return ['status' => 'erro', 'data' => $ret];
