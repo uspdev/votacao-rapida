@@ -168,8 +168,6 @@ class Gerente
         }
         $sessao->countVotacao = count($sessao->ownVotacao);
 
-        //print_r($sessao->ownVotacao);exit;
-
         // Eleitores
         $tpl->addFile('eleitores', TPL . '/gerente/sessao_eleitores.html');
         $count = 0;
@@ -181,7 +179,6 @@ class Gerente
             }
         }
         $sessao->countTokenAberto = $count;
-        //echo '<pre>';print_r($sessao->ownToken);exit;
 
         $tpl->show('userbar');
     }
