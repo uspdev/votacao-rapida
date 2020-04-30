@@ -270,6 +270,7 @@ class Run
                     }
                     $i++;
                 }
+                $tpl->block('block_coluna');
             }
             $tpl->block('block_computados');
             $tpl->block('block_resultado');
