@@ -38,13 +38,14 @@
                             value="atualizarVotacao">
                             <i class="fas fa-check"></i> Salvar</button>
                         <button type="button" class="cancelar_btn btn btn-sm btn-outline-warning">Cancelar</button>
-                        <button type="submit" class="btn btn-sm btn-outline-danger" name="acao" value="removerVotacao">
+                        <button type="submit" class="remover_btn btn btn-sm btn-outline-danger" name="acao"
+                            value="removerVotacao">
                             <i class="fas fa-trash"></i></button>
                     </div>
                 </form>
             </div>
-            <div class="detalhes hide">
-                <div class="small">{V->descricao|nl2br}</div>
+            <div class="descricao">
+                <div class="small ml-3">{V->descricao|nl2br}</div>
             </div>
         </div>
         <!-- END block_votacao -->
@@ -57,14 +58,37 @@
             //     $(this).parent().find('.detalhes').slideToggle(500);
             // });
 
+            thisItem = function(el) {
+                var item = el.closest('.item');
+                var self = {};
+                self.form = item.find('.form');
+                self.descricao = item.find('.descricao');
+                return self;
+            }
+
             votacoes.find('.editar_btn').click(function (e) {
                 e.preventDefault();
-                $(this).parent().parent().find('.form').slideToggle(500);
+                votacoes.find('.form').slideUp(500);
+                votacoes.find('.descricao').slideDown(500);
+                if (thisItem($(this)).form.is(':visible')) {
+                    thisItem($(this)).form.slideUp(500);
+                    thisItem($(this)).descricao.slideDown(500);
+                } else {
+                    thisItem($(this)).descricao.slideUp(500);
+                    thisItem($(this)).form.slideDown(500);
+                }
             });
 
             votacoes.find('.cancelar_btn').click(function (e) {
                 e.preventDefault();
-                $(this).parent().parent().parent().slideToggle(500);
+
+                thisItem($(this)).form.slideUp(500);
+                thisItem($(this)).descricao.slideDown(500);
+            });
+
+            votacoes.find('.remover_btn').click(function (e) {
+                e.preventDefault();
+                alert('Ainda não implementado.');
             });
 
 
