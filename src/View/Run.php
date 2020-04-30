@@ -260,8 +260,12 @@ class Run
                 if (count($v->votos) > 10) {
                     $dividir = intdiv(count($v->votos), 3);
                 } else {
-                    $dividir = count($v->votos)-1;
+                    $dividir = count($v->votos) - 1;
                 }
+                // ordenando por nome
+                usort($v->votos, function ($a, $b) {
+                    return strcmp($a->apelido, $b->apelido);
+                });
                 foreach ($v->votos as $voto) {
                     $tpl->voto = $voto;
                     $tpl->block('resultado_voto');
