@@ -101,17 +101,17 @@ class Gerente
             exit;
         }
 
-        if ($aba == '') {
-            header('Location: ' . $_SERVER['REDIRECT_URL'] . '/votacoes');
-            exit;
-        }
-
         if ($this->method == "POST") {
             $this->sessaoPostActions($sessao);
         }
 
         if (!empty($this->query->acao)) {
             $this->sessaoGetActions($sessao);
+        }
+
+        if ($aba == '') {
+            header('Location: ' . $_SERVER['REDIRECT_URL'] . '/votacoes');
+            exit;
         }
 
         $tpl = new Template('gerente/sessao.html');

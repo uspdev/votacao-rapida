@@ -79,7 +79,7 @@ class Gerente
                     $r = 0;
                     $t = 0;
                     while (($eleitor = fgetcsv($handle, 1000, ';')) !== false) {
-                        $res = Token::adiconarTokenAberto($sessao, ['apelido' => $eleitor[0], 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
+                        $res = Token::adicionarTokenAberto($sessao, ['apelido' => $eleitor[0], 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
                         ($res) ? $s++ : $r++;
                         $t++;
                     }
