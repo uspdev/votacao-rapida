@@ -93,7 +93,7 @@ class Gerente
                     break;
 
                 case 'adicionarEleitor':
-                    $eleitor = array_intersect_key($this->data->getData(), array_flip(['apelido', 'nome', 'email']));
+                    //vamos considerar somente as chaves especificadas
                     if (empty($eleitor['apelido']) or empty($eleitor['nome'])) {
                         return ['status' => 'erro', 'data' => 'Todos os campos são obrigatórios'];
                     }
@@ -101,11 +101,26 @@ class Gerente
                         return ['status' => 'erro', 'data' => 'Email mal formado'];
                     }
 
-                    if (Token::adiconarTokenAberto($sessao, $eleitor)) {
+                    if (Token::adicionarTokenAberto($sessao, $eleitor)) {
                         return ['status' => 'ok', 'data' => 'Eleitor inserido com sucesso.'];
                     } else {
                         return ['status' => 'erro', 'data' => 'Eleitor já existe'];
                     }
+                    break;
+
+                case 'removerEleitor':
+                    $id = $this->data->id;
+                    R::exec('DELETE FROM token WHERE id = ?', [$id]);
+                    //$ret = SELF::apagarSessao($sessao);
+                    return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
+                    break;
+
+                case 'editarEleitor':
+                    $id = $this->data->id;
+                    $token = R::findOne('token', 'id = ?', [$id]);
+                    $token->import($this->data, 'apelido, nome, email');
+                    R::store($token);
+                    return ['status' => 'ok', 'data' => 'Eleitor atualizado com sucesso.'];
                     break;
 
                 case 'atualizarSessao':
@@ -148,13 +163,6 @@ class Gerente
                 case 'apagarSessao':
                     $ret = SELF::apagarSessao($sessao);
                     return ['status' => 'ok', 'data' => 'Sessão excluída com sucesso.'];
-                    break;
-
-                case 'removerEleitor':
-                    $id = $this->data->id;
-                    R::exec('DELETE FROM token WHERE id = ?', [$id]);
-                    //$ret = SELF::apagarSessao($sessao);
-                    return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
                     break;
             }
             return ['status' => 'erro', 'data' => 'Sem ação para ' . $this->data->acao];
