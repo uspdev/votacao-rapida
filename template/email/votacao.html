@@ -14,19 +14,23 @@
                 src="cid:headtop.png" alt="cabecalho" />
 
             <h3 style="margin:3px 0 3px 8px;">
-                Votação rápida - credenciais de acesso 
+                Votação rápida - credenciais de acesso
             </h3>
 
             <p style="line-height: 1.5; font-size: larger; padding-left: 8px">
                 <span style="color:gray;">Evento:</span> {S->nome}<br>
                 <span style="color:gray;">Quando:</span> {S->quando}<br>
                 <span style="color:gray;">Link de acesso:</span>
-                <a href="{S->link_direto}">{S->link_direto|substr:0:25}..{S->link_direto|substr:-3}</a><br>
+                    <a href="{S->link_direto}">{S->link_direto|substr:0:25}..{S->link_direto|substr:-3}</a><br>
                 <span style="color:gray;">Token de acesso (voto aberto):</span> {T->token}<br>
                 <span style="color:gray;">Nome de exibição:</span> {T->apelido}<br>
                 <br>
                 <span style="color:gray; vertical-align:top;">Qrcode</span> &nbsp;
                 <img style="padding-left:5px;" src="cid:qrcode.png" alt="qrcode">
+                <!-- BEGIN block_fechada -->
+                <br><br>
+                <span style="color:gray;">Token de acesso (voto fechado): </span><a href="{S->link_fechado}">clique para obter</a>
+                <!-- END block_fechada -->
             </p>
         </div>
         <p>
@@ -37,6 +41,7 @@
             do evento a partir de um computador ou dispositivo móvel (smartphone, tablet, etc).
         </p>
         <p>
+            <b>Votação aberta</b><br>
             Utilize o <b>link de acesso</b> ou escaneie o QRCode com um aplicativo apropriado.
             Caso você não possua leitor de QRCode no seu dispositivo,
             instale um a partir de sua loja de aplicativos.
@@ -46,7 +51,12 @@
             solicite suporte respondendo à esta mensagem.
         </p>
         <p>
-            IMPORTANTE: Este email contém informações confidenciais direcionadas somente 
+            <b>Votação fechada</b><br>
+            Para votação fechada o token não é enviado por email para garantir o sigilo do acesso. 
+            Para esse caso, há um link para obtenção do token. 
+        </p>
+        <p>
+            <b>IMPORTANTE</b>: Este email contém informações confidenciais direcionadas somente
             a este destinatário. A credencial é nominal e intransferível.
             Caso o senhor(a) não venha a participar do evento, responda a este email
             informando os dados de seu substituto que será providenciado nova credencial.

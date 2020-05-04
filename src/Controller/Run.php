@@ -24,6 +24,14 @@ class Run
             return $sessao;
         }
 
+        // se o tamanho do token == 25, então é ticket
+        if (strlen($token) == 25) {
+            $ticket = $token;
+            $sessao->withCondition('hash = ?', [$ticket])->ownTicketList;
+            return $sessao;
+        }
+
+
         // verifica se o token pertence à sessão
         $sessao->token = R::findOne('token', 'sessao_id = ? and token = ?', [$sessao->id, $token]);
         if (empty($sessao->token)) {

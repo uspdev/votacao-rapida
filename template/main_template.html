@@ -140,18 +140,18 @@
             </div>
         </div>
         <!-- BEGIN block_principal_msg -->
-        <div id="block_principal_msg" class="row">
-            <div class="col-md-1"></div>
-            <div class="col-md-10">
-                <div class="alert {PM->class}">
+        <div id="block_principal_msg" class="row fixed-top">
+            <div class="col-md-2"></div>
+            <div class="col-md-8">
+                <div class="alert {PM->class} lead">
                     {PM->msg}
                 </div>
             </div>
-            <div class="col-md-1"></div>
+            <div class="col-md-2"></div>
         </div>
         <script>
             $(function () {
-                $('#block_principal_msg').fadeTo(2000, 500).slideUp(500, function () {
+                $('#block_principal_msg').fadeTo(4000, 500).slideUp(500, function () {
                     $(this).slideUp(500);
                 });
             });

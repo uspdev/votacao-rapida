@@ -31,11 +31,25 @@ class Email
 
     public static function sendVotacao($sessao, $token, $now = false)
     {
+        $tpl = new Template(TPL . '/email/votacao.html');
+
+        $countFechada = $sessao->withCondition('tipo = ?', ['fechada'])->countOwn('votacao');
+        if ($countFechada) {
+            $ticket = R::dispense('ticket');
+            $ticket->sessao = $sessao;
+            $ticket->hash = generateRandomString(25);
+            // ao salvar $ticket salvamos também $sessao, 
+            // então não devemos modificar ele até salvar
+            R::store($ticket);
+
+            $sessao->link_fechado = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $ticket->hash;
+            $tpl->block('block_fechada');
+        }
         $sessao->link_direto = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
         $qrcode = SELF::qrCodePngData($sessao->link_direto);
-        $tpl = new Template(TPL . '/email/votacao.html');
         $tpl->S = $sessao;
         $tpl->T = $token;
+
         $corpo = $tpl->parse();
 
         $ret = SELF::adicionarFila($sessao, [

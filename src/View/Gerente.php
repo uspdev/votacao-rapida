@@ -89,7 +89,7 @@ class Gerente
         exit;
     }
 
-    public function sessao($id)
+    public function sessao($id, $aba)
     {
         $user = SS::getUser();
         $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user['codpes'];
@@ -101,49 +101,18 @@ class Gerente
             exit;
         }
 
-        if (!empty($this->query->acao)) {
-            switch ($this->query->acao) {
-                case 'emailTokensControle':
-                    $data['acao'] = $this->query->acao;
-                    $ret = Api::send($endpoint, $data);
-                    break;
-                case 'emailEleitor':
-                    $data['acao'] = $this->query->acao;
-                    $data['id'] = $this->query->id;
-                    $ret = Api::send($endpoint, $data);
-                    break;
-                case 'emailTodosEleitores':
-                    $data['acao'] = $this->query->acao;
-                    $data['id'] = $this->query->id;
-                    $ret = Api::send($endpoint, $data);
-                    //echo $endpoint;
-                    //echo '<pre>'; print_r($ret);exit;
-                    break;
-                case 'apagarSessao':
-                    $data['acao'] = $this->query->acao;
-                    $ret = Api::send($endpoint, $data);
-                    if ($ret->status == 'ok') {
-                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
-                    } else {
-                        SS::setMsg(['msg' => $ret->data, 'class' => 'alert-danger',]);
-                    }
-                    header('Location: ' . getenv('WWWROOT'));
-                    exit;
-                    break;
-            }
-            // vamos mostrar a mensagem de retorno
-            if ($ret->status == 'ok') {
-                SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
-            } else {
-                SS::setMsg(['msg' => $ret->data, 'class' => 'alert-danger',]);
-            }
-            header('Location:' . $_SERVER['REDIRECT_URL']);
+        if ($aba == '') {
+            header('Location: ' . $_SERVER['REDIRECT_URL'] . '/votacoes');
             exit;
         }
 
-        // echo '<pre>';
-        // print_r($sessao);
-        // exit;
+        if ($this->method == "POST") {
+            $this->sessaoPostActions($sessao);
+        }
+
+        if (!empty($this->query->acao)) {
+            $this->sessaoGetActions($sessao);
+        }
 
         $tpl = new Template('gerente/sessao.html');
         $tpl->S = $sessao;
@@ -160,37 +129,97 @@ class Gerente
             $tpl->block('block_autorizacao');
         }
 
-        // votacoes
-        $tpl->addFile('votacoes', TPL . '/gerente/sessao_votacoes.html');
-        foreach ($sessao->ownVotacao as $v) {
-            $tpl->V = $v;
-            $tpl->block('block_votacao');
-        }
-        $sessao->countVotacao = count($sessao->ownVotacao);
-
-        // Eleitores
-        $tpl->addFile('eleitores', TPL . '/gerente/sessao_eleitores.html');
-        $count = 0;
-        foreach ($sessao->ownToken as $token) {
-            if ($token->tipo == 'aberta') {
-                $tpl->T = $token;
-                $tpl->block('block_eleitor');
-                $count++;
+        if ($aba == 'votacoes' or $aba == '') {
+            // votacoes
+            $tpl->addFile('votacoes', TPL . '/gerente/sessao_votacoes.html');
+            foreach ($sessao->ownVotacao as $v) {
+                $tpl->V = $v;
+                $tpl->block('block_votacao');
             }
+            $sessao->countVotacao = count($sessao->ownVotacao);
         }
-        $sessao->countTokenAberto = $count;
-
+        if ($aba == 'eleitores') {
+            // Eleitores
+            $tpl->addFile('eleitores', TPL . '/gerente/sessao_eleitores.html');
+            $count = 0;
+            foreach ($sessao->ownToken as $token) {
+                if ($token->tipo == 'aberta') {
+                    $tpl->T = $token;
+                    $tpl->block('block_eleitor');
+                    $count++;
+                }
+            }
+            $sessao->countTokenAberto = $count;
+        }
         $tpl->show('userbar');
     }
 
-    public function sessaoPost($id)
+    protected function sessaoGetActions($sessao)
+    {
+        $endpoint = '/gerente/sessao/' . $sessao->id . '?codpes=' . SS::getUser()['codpes'];
+
+        switch ($this->query->acao) {
+            case 'exportarEleitores':
+                $data['acao'] = $this->query->acao;
+                $tokens = Api::send($endpoint, $data);
+
+                header('Content-Type: application/csv; charset=UTF-8');
+                header('Content-Disposition: attachment; filename="eleitores.txt";');
+                $f = fopen('php://output', 'w');
+                foreach ($tokens as $t) {
+                    fputcsv($f, [$t->apelido, $t->nome, $t->email], ';');
+                }
+                fclose($f);
+                exit;
+                break;
+
+            case 'emailTokensControle':
+                $data['acao'] = $this->query->acao;
+                $ret = Api::send($endpoint, $data);
+                break;
+
+            case 'emailEleitor':
+                $data['acao'] = $this->query->acao;
+                $data['id'] = $this->query->id;
+                $ret = Api::send($endpoint, $data);
+                break;
+
+            case 'emailTodosEleitores':
+                $data['acao'] = $this->query->acao;
+                $data['id'] = $this->query->id;
+                $ret = Api::send($endpoint, $data);
+                break;
+
+            case 'apagarSessao':
+                $data['acao'] = $this->query->acao;
+                $ret = Api::send($endpoint, $data);
+                if ($ret->status == 'ok') {
+                    SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
+                } else {
+                    SS::setMsg(['msg' => $ret->data, 'class' => 'alert-danger',]);
+                }
+                header('Location: ' . getenv('WWWROOT'));
+                exit;
+                break;
+        }
+        // vamos mostrar a mensagem de retorno
+        if ($ret->status == 'ok') {
+            SS::setMsg(['msg' => $ret->data, 'class' => 'alert-info',]);
+        } else {
+            SS::setMsg(['msg' => $ret->data, 'class' => 'alert-danger',]);
+        }
+        header('Location:' . $_SERVER['REDIRECT_URL']);
+        exit;
+    }
+
+    protected function sessaoPostActions($sessao)
     {
         $user = SS::get('user');
-        if (!$user) {
-            echo json_encode(['status' => 'erro', 'msg' => 'Necessário autenticar novamente']);
-            exit;
-        }
-        $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user['codpes'];
+        // if (!$user) {
+        //     echo json_encode(['status' => 'erro', 'msg' => 'Necessário autenticar novamente']);
+        //     exit;
+        // }
+        $endpoint = '/gerente/sessao/' . $sessao->id . '?codpes=' . $user['codpes'];
 
         $data = $this->data->getData();
 
@@ -200,7 +229,7 @@ class Gerente
         } else {
             $class = $ret->status == 'erro' ? 'alert-danger' : 'alert-success';
             SS::setMsg(['class' => $class, 'msg' => $ret->data]);
-            header('Location:' . getenv('WWWROOT') . '/gerente/' . $id);
+            header('Location:' . $_SERVER['REDIRECT_URL']);
         }
         exit;
     }

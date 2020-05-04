@@ -1,5 +1,5 @@
+<script src="js/crud.js"></script>
 <br>
-
 <div id="sessao_div">
     <h1 class="titulo">
         <span class="nome">{S->nome} </span>
@@ -111,7 +111,7 @@
                             sessao.find('.form').show();
                             sessao.find('input[name="nome"]').focus();
                         });
-                        
+
                         sessao.find('.cancel_btn').click(function (e) {
                             e.preventDefault();
                             sessao.find('.dados').show();
@@ -125,15 +125,11 @@
                     });
                 </script>
             </div>
-            
+
             <hr>
-            <div class="row">
-                <div class="col-md-7">
-                    {votacoes}
-                </div>
-                <div class="col-md-5">
-                    {eleitores}
-                </div>
+            <div>
+                {votacoes}
+                {eleitores}
             </div>
 
         </div>

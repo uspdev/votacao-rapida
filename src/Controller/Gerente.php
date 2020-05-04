@@ -71,6 +71,43 @@ class Gerente
                     return ['status' => 'ok', 'data' => 'Fila de envio: sucesso: ' . $data[0] . ', erro: ' . $data[1]];
                     break;
 
+                case 'importarEleitores':
+                    $arq = $this->files['arq_eleitores'];
+                    ini_set('auto_detect_line_endings', TRUE);
+                    $handle = fopen($arq['tmp_name'], 'r');
+                    $s = 0;
+                    $r = 0;
+                    $t = 0;
+                    while (($eleitor = fgetcsv($handle, 1000, ';')) !== false) {
+                        $res = Token::adiconarTokenAberto($sessao, ['apelido' => $eleitor[0], 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
+                        ($res) ? $s++ : $r++;
+                        $t++;
+                    }
+                    fclose($handle);
+                    unlink($arq['tmp_name']);
+                    return ['status' => 'ok', 'data' => "Resultado da importação: sucesso: $s, repetido: $r, total: $t"];
+                    break;
+
+                case 'exportarEleitores':
+                    return $sessao->withCondition('tipo = ?', ['aberta'])->ownTokenList;
+                    break;
+
+                case 'adicionarEleitor':
+                    $eleitor = array_intersect_key($this->data->getData(), array_flip(['apelido', 'nome', 'email']));
+                    if (empty($eleitor['apelido']) or empty($eleitor['nome'])) {
+                        return ['status' => 'erro', 'data' => 'Todos os campos são obrigatórios'];
+                    }
+                    if (!filter_var($eleitor['email'], FILTER_VALIDATE_EMAIL)) {
+                        return ['status' => 'erro', 'data' => 'Email mal formado'];
+                    }
+
+                    if (Token::adiconarTokenAberto($sessao, $eleitor)) {
+                        return ['status' => 'ok', 'data' => 'Eleitor inserido com sucesso.'];
+                    } else {
+                        return ['status' => 'erro', 'data' => 'Eleitor já existe'];
+                    }
+                    break;
+
                 case 'atualizarSessao':
                     foreach ($this->data as $key => $val) {
                         if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
@@ -118,19 +155,6 @@ class Gerente
                     R::exec('DELETE FROM token WHERE id = ?', [$id]);
                     //$ret = SELF::apagarSessao($sessao);
                     return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
-                    break;
-
-                case 'importarEleitores':
-                    $arq = $this->files['arq_eleitores'];
-                    ini_set('auto_detect_line_endings', TRUE);
-                    $handle = fopen($arq['tmp_name'], 'r');
-                    $eleitores = [];
-                    while (($eleitor = fgetcsv($handle, 1000, ';')) !== false) {
-                        Token::adiconarTokenAberto($sessao, $eleitor);
-                    }
-                    fclose($handle);
-                    unlink($arq['tmp_name']);
-                    return ['status' => 'ok', 'data' => 'Arquivo carregado com sucesso.'];
                     break;
             }
             return ['status' => 'erro', 'data' => 'Sem ação para ' . $this->data->acao];

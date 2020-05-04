@@ -314,6 +314,11 @@ class Run
         $tpl->show();
     }
 
+    public static function ticket($hash, $ticket) {
+        $sessao = SELF::obterSessao($hash, $ticket);
+        print_r($sessao);
+    }
+
     protected static function getEstadoClass($estado)
     {
         switch ($estado) {

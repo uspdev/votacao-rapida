@@ -16,17 +16,29 @@ class Token
         return SELF::gerarTokens($sessao, $tipos);
     }
 
+    public static function gerarTokensVotacao($sessao, $qt)
+    {
+        $tipos = [
+            ['tipo' => 'fechada', 'qt' => $qt],
+            ['tipo' => 'aberta', 'qt' => $qt],
+        ];
+        return SELF::gerarTokens($sessao, $tipos);
+    }
+
     public static function adiconarTokenAberto($sessao, $eleitor)
     {
+        $e = array_map('trim', json_decode(json_encode($eleitor), true));
+        if (R::find('token', 'sessao_id = ? and (apelido = ? or nome = ? or email = ?)', [$sessao->id, $e['apelido'], $e['nome'], $e['email']])) {
+            return false; // já existe 
+        }
+
         while ($newToken = generateRandomString(6)) {
             $token = R::find('token', 'sessao_id = ? and token = ?', [$sessao->id, $newToken]);
             if (!$token) {
                 $token = R::dispense('token');
                 $token->tipo = 'aberta';
                 $token->token = $newToken;
-                $token->apelido = trim($eleitor[0]);
-                $token->nome = trim($eleitor[1]);
-                $token->email = trim($eleitor[2]);
+                $token->import($e);
                 $token->ativo = 0;
                 $token->sessao_id = $sessao->id;
                 R::store($token);
@@ -35,15 +47,6 @@ class Token
             //echo 'gerou repetido! ', $newToken,PHP_EOL;exit;
         }
         return $token;
-    }
-
-    public static function gerarTokensVotacao($sessao, $qt)
-    {
-        $tipos = [
-            ['tipo' => 'fechada', 'qt' => $qt],
-            ['tipo' => 'aberta', 'qt' => $qt],
-        ];
-        return SELF::gerarTokens($sessao, $tipos);
     }
 
     protected static function gerarTokens($sessao, $tipos)
