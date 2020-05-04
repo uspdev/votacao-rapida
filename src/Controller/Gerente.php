@@ -135,7 +135,7 @@ class Gerente
                     return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
                     break;
 
-                case 'atualizarVotacao':
+                case 'editarVotacao':
                     $votacao = array_pop($sessao->withCondition('id = ?', [$this->data->id])->ownVotacao);
                     if ($votacao) {
                         if ($ret = Votacao::atualizar($votacao, $this->data)) {

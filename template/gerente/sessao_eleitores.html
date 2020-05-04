@@ -1,9 +1,9 @@
-<style>
-    #eleitores .item:hover {
-        background-color: #ecedee;
-    }
-</style>
 <div id="eleitores">
+    <style>
+        #eleitores .item:hover {
+            background-color: #ecedee;
+        }
+    </style>
 
     <h2><a href="{main->self}/../votacoes">Votações</a> |
         Eleitores <span class="badge badge-pill badge-info">{S->countTokenAberto}</span>
@@ -16,9 +16,9 @@
             </a>
 
             <a href="{main->self}?acao=exportarEleitores" class="exportar_btn btn btn-sm btn-outline-primary ml-2"
-            title="Exportar lista">
-            <i class="fas fa-file-download"></i>
-        </a>
+                title="Exportar lista">
+                <i class="fas fa-file-download"></i>
+            </a>
 
             <a href="{main->self}?acao=emailTodosEleitores" class="email_all_btn btn btn-sm btn-outline-primary ml-2"
                 title="Enviar email para todos">
