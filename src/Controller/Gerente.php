@@ -94,6 +94,8 @@ class Gerente
 
                 case 'adicionarEleitor':
                     //vamos considerar somente as chaves especificadas
+                    $eleitor = array_intersect_key($this->data, array_flip(['apelido', 'nome', 'email']));
+
                     if (empty($eleitor['apelido']) or empty($eleitor['nome'])) {
                         return ['status' => 'erro', 'data' => 'Todos os campos são obrigatórios'];
                     }

@@ -28,7 +28,7 @@ class Token
     public static function adicionarTokenAberto($sessao, $eleitor)
     {
         $e = array_map('trim', $eleitor);
-        $eleitor = array_intersect_key($eleitor, array_flip(['apelido', 'nome', 'email']));
+        //$eleitor = array_intersect_key($eleitor, array_flip(['apelido', 'nome', 'email']));
 
         if (R::find('token', 'sessao_id = ? and (apelido = ? or nome = ? or email = ?)', [$sessao->id, $e['apelido'], $e['nome'], $e['email']])) {
             return false; // já existe 
