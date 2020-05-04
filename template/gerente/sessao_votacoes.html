@@ -5,12 +5,7 @@
         }
     </style>
     <h2>Votações <span class="badge badge-pill badge-info">{S->countVotacao}</span>
-        <span class="adicionar_target"></span>
-        <!-- <span>
-            <a href class="adicionar_btn btn btn-sm btn-outline-primary ml-2" title="Nova votação">
-                <i class="fas fa-plus"></i>
-            </a>
-        </span> | --> |
+        <span class="adicionar_target"></span> |
         <a href="{main->self}/../eleitores">Eleitores</a>
     </h2>
     <div class="ml-2">
@@ -26,11 +21,9 @@
                 {V->descricao|nl2br}
             </div>
             <div class="form_target"></div>
-
         </div>
         <!-- END block_votacao -->
     </div>
-
 
     <div class="form_template hide">
         <form method="POST">
@@ -74,6 +67,7 @@
             </div>
         </form>
     </div>
+
     <div class="item_template hide">
         <a href="" class="editar_btn hide btn btn-sm btn-outline-warning mr-2" title="Editar">
             <i class="fas fa-edit"></i>
@@ -82,12 +76,12 @@
             <i class="fas fa-trash-alt"></i>
         </a>
     </div>
+
     <div class="adicionar_template hide">
         <a href class="adicionar_btn btn btn-sm btn-outline-primary ml-2" title="Adicionar">
             <i class="fas fa-plus"></i>
         </a>
     </div>
-
 
     <script>
         $(function () {
@@ -107,67 +101,6 @@
                 removeAction: 'removerVotacao',
                 addAction: 'adicionarVotacao'
             });
-
-            // votacoes.find('.clone_btn').click(function (e) {
-            //     e.preventDefault();
-            //     var clone = votacoes.find('.clone').html();
-            //     $(clone).insertAfter(thisItem($(this))).slideDown();
-            // });
-
-            // votacoes.find('.adicionar_btn').click(function (e) {
-            //     e.preventDefault();
-            //     $(this).hide();
-            //     var clone = votacoes.find('.form_template').html();
-
-            //     // mostrando
-            //     var tpl = votacoes.find('.adicionar_div').append(clone);
-            //     tpl.slideDown(300);
-
-            //     // prenchendo valores
-            //     tpl.find('input[name=id]').attr('value', '0');
-            //     tpl.find('input[name=nome]').focus();
-            //     tpl.find('button[name=acao]').attr('value', 'adicionarVotacao');
-            //     //tpl.find('input[name=nome]').attr('value', 'Nome');
-
-            //     // cancelar do form
-            //     tpl.find('.cancelar_btn').click(function (e) {
-            //         e.preventDefault();
-            //         tpl.slideUp(300, function () {
-            //             $(this).empty();
-            //             votacoes.find('.adicionar_btn').show();
-            //         });
-            //     });
-            // });
-
-
-
-
-            // para editar votação ----------------
-            // votacoes.find('.editar_btn').click(function (e) {
-            //     e.preventDefault();
-            //     votacoes.find('.form').slideUp(500);
-            //     votacoes.find('.descricao').slideDown(500);
-            //     if (thisItem($(this)).form.is(':visible')) {
-            //         thisItem($(this)).form.slideUp(500);
-            //         thisItem($(this)).descricao.slideDown(500);
-            //     } else {
-            //         thisItem($(this)).descricao.slideUp(500);
-            //         thisItem($(this)).form.slideDown(500);
-            //     }
-            // });
-
-            // votacoes.find('.cancelar_btn').click(function (e) {
-            //     e.preventDefault();
-
-            //     thisItem($(this)).form.slideUp(500);
-            //     thisItem($(this)).descricao.slideDown(500);
-            // });
-
-            // votacoes.find('.remover_btn').click(function () {
-            //     if (confirm('Tem certeza que quer remover?') == false) {
-            //         return false;
-            //     }
-            // });
 
             votacoes.find('.item').hover(
                 function () { $(this).find('a').show(); },
