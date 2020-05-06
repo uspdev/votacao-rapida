@@ -181,7 +181,10 @@ class Gerente
         $sessao->recepcao = R::findOne('token', "tipo = 'recepcao' and sessao_id = ?", [$sessao->id]);
 
         $sessao->sharedUsuarioList;
-        $sessao->ownVotacaoList;
+        // vamos buscar as alternativas também
+        foreach($sessao->ownVotacaoList as $v) {
+            $v->ownAlternativaList;
+        }
         $sessao->with('ORDER BY apelido')->ownTokenList;
         return $sessao;
     }

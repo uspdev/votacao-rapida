@@ -19,12 +19,12 @@
             <div>
                 <p>
                     As votações podem ser abertas ou fechadas. Na <b>votação aberta</b> o voto de cada eleitor
-                    é exibido no painel. Por padrão as alternativas cadastradas são "favorável", 
-                    "contrário" e "abstenção". Já na <b>votação fechada</b> é exibido somente a totalização dos 
+                    é exibido no painel. Por padrão as alternativas cadastradas são "favorável",
+                    "contrário" e "abstenção". Já na <b>votação fechada</b> é exibido somente a totalização dos
                     votos. Para cada tipo de votação, o eleitor usa um token diferente. Sempre é enviado
                     no email o token de votação aberta. Caso haja votação fechada, é enviado também um link
                     para obtenção do token de votação fechada.<br>
-                    Nas votações utilize o <b>nome</b> para dar destaque e a <b>descrição</b> para colocar 
+                    Nas votações utilize o <b>nome</b> para dar destaque e a <b>descrição</b> para colocar
                     quaisquer informações adicionais. A descrição aparecerá menor no painel e no apoio.
                 </p>
             </div>
@@ -35,9 +35,14 @@
                 {V->nome} <span class="badge {V->class}">{V->tipo}</span>
                 <span class="item_target" nome="{V->nome}" descricao="{V->descricao}" tipo="{V->tipo}"
                     id="{V->id}"></span>
+                <a href class="alternativas_btn hide btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i>
+                    Alternativas</a>
             </div>
             <div class="descricao small ml-3">
                 {V->descricao|nl2br}
+            </div>
+            <div class="descricao small ml-3">
+                {V->alternativas|nl2br}
             </div>
             <div class="form_target"></div>
         </div>
@@ -128,6 +133,11 @@
 
             votacoes.find('.ajuda_btn').click(function () {
                 votacoes.find('.ajuda').slideToggle();
+            });
+
+            votacoes.find('.alternativas_btn').click(function (e) {
+                e.preventDefault();
+                alert('A');
             });
         });
     </script>

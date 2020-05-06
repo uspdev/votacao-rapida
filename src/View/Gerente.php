@@ -135,7 +135,13 @@ class Gerente
             $tpl->addFile('votacoes', TPL . '/gerente/sessao_votacoes.html');
             foreach ($sessao->ownVotacao as $v) {
                 $v->class = ($v->tipo == 'aberta') ? 'badge-success' : 'badge-warning';
+                $v->alternativas = '';
+                foreach ($v->ownAlternativa as $a) {
+                    $v->alternativas .= $a->texto . ' | ';
+                }
+                $v->alternativas = substr($v->alternativas, 0, -2);
                 $tpl->V = $v;
+
                 $tpl->block('block_votacao');
             }
         }
