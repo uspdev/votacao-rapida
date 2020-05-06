@@ -33,16 +33,18 @@ class Email
     {
         $tpl = new Template(TPL . '/email/votacao.html');
 
+        // tem votacao fechada, então vamos gerar tickets
         $countFechada = $sessao->withCondition('tipo = ?', ['fechada'])->countOwn('votacao');
-        if ($countFechada) {
-            $ticket = R::dispense('ticket');
-            $ticket->sessao = $sessao;
-            $ticket->hash = generateRandomString(25);
-            // ao salvar $ticket salvamos também $sessao, 
-            // então não devemos modificar ele até salvar
-            R::store($ticket);
 
-            $sessao->link_fechado = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $ticket->hash;
+        // só vamos enviar o link fechado se houver votacao fechada e se já não tiver sido gerado
+        if ($countFechada) {
+            if (empty($token->ticket)) {
+                $tpl->block('block_fechada_sem');
+            } else {
+                $sessao->link_fechado = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->ticket;
+                $tpl->block('block_fechada_com');
+            }
+
             $tpl->block('block_fechada');
         }
         $sessao->link_direto = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;

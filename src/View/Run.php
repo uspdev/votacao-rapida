@@ -255,6 +255,7 @@ class Run
                     $tpl->block('resultado_resposta');
                 }
             }
+
             if (!empty($v->votos) && $v->tipo == 'Voto aberto') {
                 $i = 0;
                 if (count($v->votos) > 10) {
@@ -276,7 +277,7 @@ class Run
                 }
                 $tpl->block('block_coluna');
             }
-            $tpl->block('block_computados');
+
             $tpl->block('block_resultado');
         } elseif ($v->estado == 'Em exibição' || $v->estado == 'Em votação' || $v->estado == 'Em pausa') {
 
@@ -284,7 +285,6 @@ class Run
                 $tpl->block('block_em_votacao');
             }
             $tpl->block('block_computados');
-
 
             if (!empty($v->descricao)) {
                 $tpl->block('exibicao_descricao');
@@ -314,11 +314,91 @@ class Run
         $tpl->show();
     }
 
-    public static function ticket($hash, $ticket) {
-        $sessao = SELF::obterSessao($hash, $ticket);
-        print_r($sessao);
+    public static function hashTicket($hash, $ticket)
+    {
+        SS::atribuir('hash', $hash);
+        SS::atribuir('ticket', $ticket);
+        header('Location: ' . getenv('WWWROOT') . '/ticket');
+        exit;
     }
 
+    public function ticket()
+    {
+        $hash = SS::get('hash');
+        $ticket = SS::get('ticket');
+
+        // se limpou a session vamos mostrar uma mensagem
+        if (empty($hash) || empty($ticket)) {
+            $tpl = new Template('ticket_erro.html');
+            $tpl->show();
+            exit;
+        }
+
+        $sessao = Api::obterSessao($hash, $ticket);
+
+        $endpoint = '/run/' . $hash . '/' . $ticket;
+
+        // acoes post
+        if ($this->method == 'POST') {
+            $token = API::send($endpoint, $this->data->getData());
+            if (!empty($token)) {
+                SS::set('token_fechado', $token);
+            }
+            header('Location:' . $_SERVER['REDIRECT_URL']);
+            exit;
+        }
+
+        // acoes get
+        if (!empty($this->query->acao)) {
+            switch ($this->query->acao) {
+                case 'obterPdf':
+                    $data['acao'] = $this->query->acao;
+                    $token = SS::get('token_fechado');
+                    $data['token'] = $token->token;
+                    $ret = API::send($endpoint, $data);
+                    //print_r($token_base64);exit;
+                    $token_pdf = base64_decode($ret->pdf);
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: application/octet-stream');
+                    header('Content-Disposition: inline; filename="token_fechado.pdf"');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . strlen($token_pdf));
+                    echo $token_pdf;
+                    exit;
+                    break;
+
+                case 'finalizar':
+                    SS::destroy();
+                    header('Location:' . $_SERVER['REDIRECT_URL']);
+                    exit;
+                    break;
+            }
+        }
+
+        // a sessao está correta mas o ticket já foi utilizado
+        if (empty($sessao->token) && empty(SS::get('token_fechado'))) {
+            $tpl = new Template('ticket_erro.html');
+            $tpl->S = $sessao;
+            $tpl->block('block_sessao');
+            $tpl->show();
+            exit;
+        }
+
+        // tudo certo, vamos motrar as telas
+        $tpl = new Template('ticket_index.html');
+        $tpl->S = $sessao;
+        if ($token = SS::get('token_fechado')) {
+            // se já pegou o token vamos mostrar
+            $tpl->T = json_decode(json_encode($token));
+            $tpl->block('block_token');
+        } else {
+            // se nao pegou o token vamos pedir a confirmação
+            $tpl->block('block_confirm');
+        }
+        $tpl->show();
+    }
     protected static function getEstadoClass($estado)
     {
         switch ($estado) {

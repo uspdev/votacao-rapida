@@ -26,14 +26,12 @@ class Run
 
         // se o tamanho do token == 25, então é ticket
         if (strlen($token) == 25) {
-            $ticket = $token;
-            $sessao->withCondition('hash = ?', [$ticket])->ownTicketList;
-            return $sessao;
+            $sessao->token = R::findOne('token', 'sessao_id = ? and ticket = ?', [$sessao->id, $token]);
+            return SELF::ticket($sessao);
         }
 
-
-        // verifica se o token pertence à sessão
         $sessao->token = R::findOne('token', 'sessao_id = ? and token = ?', [$sessao->id, $token]);
+        // verifica se o token pertence à sessão
         if (empty($sessao->token)) {
             return ['status' => 'erro', 'msg' => 'Token inválido para essa sessão'];
         }
@@ -64,6 +62,32 @@ class Run
                 break;
         }
         return false;
+    }
+
+    protected static function ticket($sessao)
+    {
+        $method = \Flight::request()->method;
+        if ($method == 'POST') {
+            $data = \Flight::request()->data;
+            if ($data->acao == 'obterTokenFechado' && $data->agree == 'sim') {
+                $token_fechado = Token::adicionarTokenFechado($sessao);
+
+                // invalidando o ticket
+                $token = $sessao->token;
+                $token->ticket = '';
+                R::store($token);
+
+                return $token_fechado;
+            }
+            if ($data->acao == 'obterPdf') {
+                $token = R::findOne('token', 'sessao_id = ? and token = ?',[$sessao->id, $data->token]);
+                $ret['pdf'] = base64_encode(Token::pdfTokenFechado($sessao, $token));
+                return $ret;
+            }
+
+        } else {
+            return $sessao;
+        }
     }
 
     protected static function votacaoGet($sessao)

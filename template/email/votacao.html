@@ -21,16 +21,22 @@
                 <span style="color:gray;">Evento:</span> {S->nome}<br>
                 <span style="color:gray;">Quando:</span> {S->quando}<br>
                 <span style="color:gray;">Link de acesso:</span>
-                    <a href="{S->link_direto}">{S->link_direto|substr:0:25}..{S->link_direto|substr:-3}</a><br>
+                <a href="{S->link_direto}">{S->link_direto|substr:0:25}..{S->link_direto|substr:-3}</a><br>
                 <span style="color:gray;">Token de acesso (voto aberto):</span> {T->token}<br>
                 <span style="color:gray;">Nome de exibição:</span> {T->apelido}<br>
                 <br>
                 <span style="color:gray; vertical-align:top;">Qrcode</span> &nbsp;
                 <img style="padding-left:5px;" src="cid:qrcode.png" alt="qrcode">
-                <!-- BEGIN block_fechada -->
+                <!-- BEGIN block_fechada_com -->
                 <br><br>
-                <span style="color:gray;">Token de acesso (voto fechado): </span><a href="{S->link_fechado}">clique para obter</a>
-                <!-- END block_fechada -->
+                <span style="color:gray;">Token de acesso (voto fechado): </span>
+                <a href="{S->link_fechado}">clique para obter</a>
+                <!-- END block_fechada_com -->
+                <!-- BEGIN block_fechada_sem -->
+                <br><br>
+                <span style="color:gray;">Token de acesso (voto fechado): </span>
+                não é possível gerar novamente
+                <!-- END block_fechada_sem -->
             </p>
         </div>
         <p>
@@ -50,11 +56,13 @@
             Faça um teste de acesso com o <b>link de acesso</b> ou QRCode. Caso tenha algum problema,
             solicite suporte respondendo à esta mensagem.
         </p>
+        <!-- BEGIN block_fechada -->
         <p>
             <b>Votação fechada</b><br>
-            Para votação fechada o token não é enviado por email para garantir o sigilo do acesso. 
-            Para esse caso, há um link para obtenção do token. 
+            Para votação fechada o token não é enviado por email para garantir o sigilo do acesso.
+            Para esse caso, há um link para obtenção do token.
         </p>
+        <!-- END block_fechada -->
         <p>
             <b>IMPORTANTE</b>: Este email contém informações confidenciais direcionadas somente
             a este destinatário. A credencial é nominal e intransferível.

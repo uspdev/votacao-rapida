@@ -129,8 +129,8 @@ class Gerente
             $tpl->block('block_autorizacao');
         }
 
+        // votacoes
         if ($aba == 'votacoes' or $aba == '') {
-            // votacoes
             $tpl->addFile('votacoes', TPL . '/gerente/sessao_votacoes.html');
             foreach ($sessao->ownVotacao as $v) {
                 $tpl->V = $v;
@@ -138,18 +138,24 @@ class Gerente
             }
             $sessao->countVotacao = count($sessao->ownVotacao);
         }
+
+        // Eleitores
         if ($aba == 'eleitores') {
-            // Eleitores
             $tpl->addFile('eleitores', TPL . '/gerente/sessao_eleitores.html');
             $count = 0;
+            $count_f = 0;
             foreach ($sessao->ownToken as $token) {
                 if ($token->tipo == 'aberta') {
                     $tpl->T = $token;
                     $tpl->block('block_eleitor');
                     $count++;
                 }
+                if ($token->tipo == 'fechada') {
+                    $count_f++;
+                }
             }
             $sessao->countTokenAberto = $count;
+            $sessao->countTokenFechado = $count_f;
         }
         $tpl->show('userbar');
     }

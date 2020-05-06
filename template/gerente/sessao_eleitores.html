@@ -25,6 +25,10 @@
                 <i class="fas fa-mail-bulk"></i> <i class="fas fa-paper-plane"></i>
             </a>
 
+            <span class="badge badge-secondary">{S->countTokenFechado} tokens fechados</span>
+
+            <a href class="ajuda_btn btn btn-sm btn-outline-primary"><i class="fas fa-question-circle"></i> Ajuda</a>
+
             <form enctype="multipart/form-data" method="POST" class="importar_form"
                 style="width: 0px; height: 0px; overflow: hidden;">
                 <input type="hidden" name="acao" value="importarEleitores">
@@ -34,9 +38,21 @@
     </h2>
     <div class="ml-2">
         <div class="form_target add_form_target"></div>
+        <div class="ajuda hide alert alert-info">
+            <h3>Ajuda para eleitores</h3>
+            Cada eleitor é associado a um token de votação aberta e a um ticket de geração de token fechada.
+            A possibilidade de gerar token fechada só é enviada ao eleitor se houver pelo menos uma votação 
+            fechada cadastrada. Se for o caso, é enviado no email um link correspondente.
+            O token fechado poderá ser emitido uma única vez por eleitor e ao emitir ele é contabilizado
+            no menu acima.<br>
+            Portanto não envie email antes de criar pelo menos uma votação fechada, se for o caso.<br>
+            <br>
+            Os eleitores podem ser cadastrados individualmente ou em lote a partir de um arquivo texto.<br>
+            A lista de eleitores pode ser exportada também.
+        </div>
         <!-- BEGIN block_eleitor -->
         <div class="item" id="token_{T->id}">
-            {T->apelido} : {T->nome} : {T->email}
+            {T->apelido} : {T->nome} : {T->email} | {T->ticket}
             <span class="item_target" apelido="{T->apelido}" nome="{T->nome}" email="{T->email}" id="{T->id}"></span>
 
             <a href="{main->self}?acao=emailEleitor&id={T->id}" class="email_btn hide btn btn-sm btn-outline-primary"
@@ -68,7 +84,7 @@
                 <label class="col-sm-12">
                     <span class="text-secondary">E-mail</span>
                     <div>
-                        <input type="e-mail" name="email" style="width:100%">
+                        <input type="email" name="email" style="width:100%">
                     </div>
                 </label>
             </div>
@@ -100,6 +116,11 @@
         $(function () {
 
             var eleitores = $('#eleitores');
+
+            eleitores.find('.ajuda_btn').click(function(e){
+                e.preventDefault();
+                eleitores.find('.ajuda').slideToggle();
+            })
 
             eleitores.crud({
                 editAction: 'editarEleitor',

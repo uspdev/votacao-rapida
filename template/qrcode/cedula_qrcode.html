@@ -15,7 +15,8 @@
             <div class="bold size16">{S->nome}</div>
             <div class="space">VOTAÇÂO <span class="size16 bold">{T->tipo|strtoupper}</span></div>
 
-            <div class="">Use o QRCode ou acesse: <span class="bold size16">{S->link}</span></div>
+            <div class="space">Use o QRCode ou <a href="{qrcode}">este link direto</a>.</div>
+            <div class="">Link alternativo: <span class="bold size16"><a href="{qrcode}">{S->link}</a></span></div>
             <div class="tab space">token: <span class="bold size16">{T->token}</span></div>
 
             <!-- BEGIN block_nome -->

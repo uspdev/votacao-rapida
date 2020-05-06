@@ -51,6 +51,7 @@ class Api
 
         // get ou post
         if (!empty($postdata)) {
+            // post
             curl_setopt($ch, CURLOPT_POST, 1);
             if ($files) {
                 foreach ($files as $key => $file) {
@@ -62,6 +63,7 @@ class Api
                 curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postdata));
             }
         } else {
+            // get
             curl_setopt($ch, CURLOPT_POST, 0);
         }
 

@@ -1,0 +1,76 @@
+<h1>{S->nome}</h1>
+<p>Quando: {S->quando}</p>
+<hr>
+<div class="row">
+    <div class="col-md-8">
+        <!-- BEGIN block_confirm -->
+        <p>Caro <b>{S->token->apelido}</b>,</p>
+        <p>
+            Você está aqui pois recebeu em seu email um link
+            para obter o <b>token de votação fechada</b>.
+            Diferentemente do token de votação aberta que é nominal,
+            o token de votação fechada é impessoal e o voto é secreto.
+        </p>
+        <P>
+            <b class="text-danger">Importante</b>: Esse token só pode ser obtido <b class="text-danger">uma única
+                vez</b>.
+            Ao continuar, será gerado um arquivo PDF contendo o token fechado, os links
+            de acesso e o QRCode correspondentes. Você deve salvá-lo em local apropriado
+            para que não seja perdido.
+        </p>
+        <br>
+        <div style="text-align: center;">
+            <form method="POST">
+                <label>
+                    <input type="checkbox" name="agree" value="sim">
+                    Entendi, quero continuar com a emissão do token de votação fechada
+                </label><br><br>
+                <div>
+                    <button type="submit" class="btn btn-primary mr-3" name="acao" value="obterTokenFechado"
+                        disabled>Continuar</button>
+                    <!-- <input type="button" class="btn btn-warning ml-3" name="cancel" value="Cancelar"> -->
+                </div>
+            </form>
+        </div>
+        <br>
+        <br>
+        <br>
+        <!-- END block_confirm -->
+        <!-- BEGIN block_token -->
+        <h2>Token de acesso - votação fechada</h2>
+        <p>O token de acesso foi gerado com sucesso.
+            Guarde as informações abaixo com segurança para utilizar
+            na votação quando solicitado.
+        </p>
+        <div>
+            Token: <b>{T->token}</b>
+        </div>
+        <div>
+            Link de acesso direto:
+            <a href="{main->wwwroot}/{S->hash}/{T->token}">{main->wwwroot}/{S->hash}/{T->token}</a>
+        </div>
+        <div class="mt-3 text-center">
+            <a href="{main->Self}?acao=obterPdf" class="btn btn-success"><i class="fas fa-file-pdf"></i> Baixar em PDF</a>
+        </div>
+        <br>
+        <br>
+        <div class="text-center">
+            <p>Ao clicar em "fechar janela", não será possível retornar. Dessa forma
+                 garante-se que outra pessoa que utilizar esse computador não tenha acesso ao token.</p>
+            <a href="{main->Self}?acao=finalizar" class="btn btn-warning">Fechar janela</a>
+        </div>
+        <!-- END block_token -->
+
+    </div>
+    <script>
+        $(function () {
+            $('label').click(function () {
+                if ($('input[name=agree').is(':checked')) {
+                    $('button[type=submit]').attr('disabled', false);
+                } else {
+                    $('button[type=submit]').attr('disabled', true);
+                }
+            });
+        });
+    </script>
+</div>

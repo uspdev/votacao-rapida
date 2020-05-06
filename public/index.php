@@ -75,6 +75,11 @@ Flight::route('POST /votacao', function () {
     Run::votacaoPOST($data);
 });
 
+Flight::route('/ticket', function () {
+    $run = Factory::run(Flight::request());
+    $run->ticket();
+});
+
 Flight::route('GET /@hash:[A-Z]{20}', function ($hash) {
     Run::hashGet($hash);
 });
@@ -89,7 +94,9 @@ Flight::route('GET /@hash:[A-Z]{20}/@token:[A-Z]{6}', function ($hash, $token) {
 });
 
 Flight::route('GET /@hash:[A-Z]{20}/@ticket:[A-Z]{25}', function ($hash, $ticket) {
-    Run::ticket($hash, $ticket);
+    Run::hashTicket($hash, $ticket);
 });
+
+
 
 Flight::start();
