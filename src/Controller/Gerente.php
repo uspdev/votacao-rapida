@@ -78,10 +78,16 @@ class Gerente
                     $s = 0;
                     $r = 0;
                     $t = 0;
-                    while (($eleitor = fgetcsv($handle, 1000, ';')) !== false) {
-                        $res = Token::adicionarTokenAberto($sessao, ['apelido' => $eleitor[0], 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
-                        ($res) ? $s++ : $r++;
-                        $t++;
+                    while (($line = fgets($handle)) !== false) {
+                        if (!empty(trim($line))) {
+                            if (mb_detect_encoding($line, 'UTF-8, ISO-8859-1', true) != 'UTF-8') {
+                                $line = mb_convert_encoding($line, 'UTF-8', 'ISO-8859-1');
+                            }
+                            $eleitor = str_getcsv($line, ';');
+                            $res = Token::adicionarTokenAberto($sessao, ['apelido' => $eleitor[0], 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
+                            ($res) ? $s++ : $r++;
+                            $t++;
+                        }
                     }
                     fclose($handle);
                     unlink($arq['tmp_name']);
