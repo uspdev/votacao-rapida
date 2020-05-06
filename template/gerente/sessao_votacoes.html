@@ -4,18 +4,35 @@
             background-color: #ecedee;
         }
     </style>
-    <h2>Votações 
+    <h2>Votações
         <span class="badge badge-pill badge-info">{S->countVotacao}</span>
-        <span class="adicionar_target"></span> |
+        <span class="adicionar_target"></span>
+        <button class="ajuda_btn btn btn-sm btn-outline-primary"><i class="fas fa-question-circle"></i> Ajuda</button>
+        |
         <a href="{main->self}/../eleitores">Eleitores</a>
         <span class="badge badge-pill badge-info">{S->countTokenAberto}</span>
     </h2>
     <div class="ml-2">
         <div class="form_target add_form_target"></div>
+        <div class="ajuda hide alert alert-info">
+            <div class="h3 mt-2">Votações</div>
+            <div>
+                <p>
+                    As votações podem ser abertas ou fechadas. Na <b>votação aberta</b> o voto de cada eleitor
+                    é exibido no painel. Por padrão as alternativas cadastradas são "favorável", 
+                    "contrário" e "abstenção". Já na <b>votação fechada</b> é exibido somente a totalização dos 
+                    votos. Para cada tipo de votação, o eleitor usa um token diferente. Sempre é enviado
+                    no email o token de votação aberta. Caso haja votação fechada, é enviado também um link
+                    para obtenção do token de votação fechada.<br>
+                    Nas votações utilize o <b>nome</b> para dar destaque e a <b>descrição</b> para colocar 
+                    quaisquer informações adicionais. A descrição aparecerá menor no painel e no apoio.
+                </p>
+            </div>
+        </div>
         <!-- BEGIN block_votacao -->
         <div class="item my-2">
             <div class="nome">
-                {V->nome} ({V->tipo})
+                {V->nome} <span class="badge {V->class}">{V->tipo}</span>
                 <span class="item_target" nome="{V->nome}" descricao="{V->descricao}" tipo="{V->tipo}"
                     id="{V->id}"></span>
             </div>
@@ -108,6 +125,10 @@
                 function () { $(this).find('a').show(); },
                 function () { $(this).find('a').hide(); }
             );
+
+            votacoes.find('.ajuda_btn').click(function () {
+                votacoes.find('.ajuda').slideToggle();
+            });
         });
     </script>
 </div>

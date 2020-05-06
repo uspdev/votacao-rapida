@@ -134,6 +134,7 @@ class Gerente
         if ($aba == 'votacoes' or $aba == '') {
             $tpl->addFile('votacoes', TPL . '/gerente/sessao_votacoes.html');
             foreach ($sessao->ownVotacao as $v) {
+                $v->class = ($v->tipo == 'aberta') ? 'badge-success' : 'badge-warning';
                 $tpl->V = $v;
                 $tpl->block('block_votacao');
             }
