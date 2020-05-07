@@ -34,20 +34,22 @@
             <div class="nome">
                 {V->nome} <span class="badge {V->class}">{V->tipo}</span>
                 <span class="item_target" nome="{V->nome}" descricao="{V->descricao}" tipo="{V->tipo}"
-                    id="{V->id}"></span>
-                <!-- <a href class="alternativas_btn hide btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i>
-                    Alternativas</a> -->
+                    alternativas="{V->alternativas}" id="{V->id}"></span>
             </div>
             <div class="descricao small ml-3">
                 {V->descricao|nl2br}
             </div>
-            <div class="descricao small ml-3">
-                {V->alternativas|nl2br}
+            <div class="alternativas small ml-3">
+                {V->alternativas|nl2pipe}
             </div>
             <div class="form_target"></div>
         </div>
         <!-- END block_votacao -->
     </div>
+    <br>
+    <br>
+    <br>
+    <br>
 
     <div class="form_template hide">
         <form method="POST">
@@ -59,13 +61,27 @@
                     </div>
                 </label>
             </div>
-            <div>
-                <label class="col-form-label col-sm-12">
-                    <span class="text-secondary">Descrição</span>
+            <div class="row">
+                <div class="col-md-6">
                     <div>
-                        <textarea name="descricao" rows="4" style="width:100%"></textarea>
+                        <label class="col-form-label col-sm-12">
+                            <span class="text-secondary">Descrição</span>
+                            <div>
+                                <textarea name="descricao" rows="4" style="width:100%"></textarea>
+                            </div>
+                        </label>
                     </div>
-                </label>
+                </div>
+                <div class="col-md-6">
+                    <div>
+                        <label class="col-form-label col-sm-12">
+                            <span class="text-secondary">Alternativas</span>
+                            <div>
+                                <textarea name="alternativas" rows="4" style="width:100%"></textarea>
+                            </div>
+                        </label>
+                    </div>
+                </div>
             </div>
             <div>
                 <span class="text-secondary">Tipo</span>
@@ -111,19 +127,22 @@
         $(function () {
             var votacoes = $('#votacoes');
 
-            thisItem = function (el) {
-                var item = el.closest('.item');
-                var self = {};
-                item.form = item.find('.form');
-                item.descricao = item.find('.descricao');
-                item.cloned = item.find('.cloned');
-                return item;
-            }
-
-            votacoes.crud({
+            var crud = votacoes.crud({
                 editAction: 'editarVotacao',
                 removeAction: 'removerVotacao',
                 addAction: 'adicionarVotacao'
+            });
+
+            // vamos esconder algumas coisas quando estiver editando
+            votacoes.find('.item').on('click', function () {
+                setTimeout(function (item) {
+                    if (crud.edit() == true) {
+                        $(item).find('.descricao, .alternativas').slideUp();
+                    }
+                    else {
+                        $(item).find('.descricao, .alternativas').slideDown();
+                    }
+                }, 10, this);
             });
 
             votacoes.find('.item').hover(
@@ -133,11 +152,6 @@
 
             votacoes.find('.ajuda_btn').click(function () {
                 votacoes.find('.ajuda').slideToggle();
-            });
-
-            votacoes.find('.alternativas_btn').click(function (e) {
-                e.preventDefault();
-                alert('A');
             });
         });
     </script>

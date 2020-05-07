@@ -137,9 +137,9 @@ class Gerente
                 $v->class = ($v->tipo == 'aberta') ? 'badge-success' : 'badge-warning';
                 $v->alternativas = '';
                 foreach ($v->ownAlternativa as $a) {
-                    $v->alternativas .= $a->texto . ' | ';
+                    $v->alternativas .= $a->texto;
+                    if (next($v->ownAlternativa)) $v->alternativas .= "\n";
                 }
-                $v->alternativas = substr($v->alternativas, 0, -2);
                 $tpl->V = $v;
 
                 $tpl->block('block_votacao');
@@ -230,6 +230,7 @@ class Gerente
         $endpoint = '/gerente/sessao/' . $sessao->id . '?codpes=' . $user['codpes'];
 
         $data = $this->data->getData();
+        //echo '<pre>';print_r($data);exit;
 
         $ret = Api::send($endpoint, $data, $this->files);
         if ($this->ajax) {

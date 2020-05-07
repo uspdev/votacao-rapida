@@ -126,6 +126,18 @@ class Votacao
                 $votacao->$key = trim($val);
             }
         }
+        if (!empty($data->alternativas)) {
+            $votacao->ownAlternativaList = [];
+            $alternativas = explode(PHP_EOL, $data->alternativas);
+            foreach ($alternativas as $texto) {
+                if (!empty(trim($texto))) {
+                    $a = R::dispense('alternativa');
+                    $a->votacao = $votacao;
+                    $a->texto = trim($texto);
+                    R::store($a);
+                }
+            }
+        }
         R::store($votacao);
         return true;
     }
