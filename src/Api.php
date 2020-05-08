@@ -32,7 +32,7 @@ class Api
             if (!$files) {
                 $headers = [
                     'Content-Type: application/json',
-                    'user-agent:cli user agent'
+                    'user-agent:' . $_SERVER['HTTP_USER_AGENT'],
                 ];
             } else {
                 $headers = ['user-agent:' . $_SERVER['HTTP_USER_AGENT']];
