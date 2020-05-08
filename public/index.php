@@ -38,7 +38,8 @@ Flight::route('GET /demo', function () {
 });
 
 Flight::route('/gerente', function () {
-    Gerente::index();
+    $gerente = Factory::gerente(Flight::request());
+    $gerente->index();
 });
 
 Flight::route('/gerente/@id(/@aba)', function ($id, $aba) {
