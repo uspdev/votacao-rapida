@@ -10,6 +10,7 @@ namespace Uspdev\Votacao {
         {
             parent::__construct(TPL . '/main_template.html');
 
+            // vamos carregar algumas vairáveis de uso geral
             $main = new \Stdclass;
             $main->wwwroot = getenv('WWWROOT');
             $main->self = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -19,14 +20,12 @@ namespace Uspdev\Votacao {
             $subtitulo = $haystack[array_search(basename($main->wwwroot), $haystack) + 1];
             $main->titulo = ucfirst($subtitulo) . ' | Votação Rápida';
 
-            $this->main = $main;
-
             // vamos mostrar mensagem se necessário
             if ($msg = SS::getMsg()) {
-                $this->PM = json_decode(json_encode($msg));
+                $main->msg = json_decode(json_encode($msg));
                 $this->block('block_principal_msg');
             }
-
+            $this->main = $main;
             $this->addFile('corpo', TPL . '/' . $addFile);
         }
 
@@ -34,6 +33,7 @@ namespace Uspdev\Votacao {
         {
             // vamos renderizar o userbar: logado, deslogado e barra fina
             if ($bloco == 'userbar') {
+                $this->block('block_topo_img');
                 $this->topbar_class = 'top-bar-user';
                 if ($user = SS::get('user')) {
                     $this->user = json_decode(json_encode($user)); // transformando array em obj
@@ -41,7 +41,7 @@ namespace Uspdev\Votacao {
                 } else {
                     $this->block('block_user_out');
                 }
-                $this->block('block_topo_img');
+                $this->block('block_user_principal');
             } else {
                 $this->topbar_class = 'top-bar-no-user';
                 $this->block('block_no_user');

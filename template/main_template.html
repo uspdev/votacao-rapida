@@ -120,15 +120,17 @@
 
                 <!-- BEGIN block_user_principal -->
                 <div class="{topbar_class} pr-2">
-                    <div class="float-left pl-2"><a class="text-reset" href="{main->wwwroot}">Início</a></div>
+                    <div class="float-left pl-2"><a class="text-reset" href="{main->wwwroot}" title="Início">
+                            <i class="fas fa-home"></i> Votação Rápida</a>
+                    </div>
                     <div class="float-right">
                         <!-- BEGIN block_user_in -->
                         {user->nome} ({user->unidade}) |
-                        <a class="text-reset" href="logout/">Sair</a>
+                        <a class="text-reset" href="logout/"><i class="fas fa-sign-out-alt"></i> Sair</a>
                         <!-- END block_user_in -->
 
                         <!-- BEGIN block_user_out -->
-                        <a class="text-reset" href="login/">Entrar</a>
+                        <a class="text-reset" href="login/"><i class="fas fa-sign-in-alt"></i> Entrar</a>
                         <!-- END block_user_out -->
                     </div>
                 </div>
@@ -143,15 +145,16 @@
         <div id="block_principal_msg" class="row fixed-top">
             <div class="col-md-2"></div>
             <div class="col-md-8">
-                <div class="alert {PM->class} lead">
-                    {PM->msg}
+                <div class="alert {main->msg->class} lead">
+                    {main->msg->msg}
                 </div>
             </div>
             <div class="col-md-2"></div>
         </div>
         <script>
             $(function () {
-                $('#block_principal_msg').fadeTo(4000, 500).slideUp(500, function () {
+                var timeout = 5000; // mostra msg por 5s
+                $('#block_principal_msg').fadeTo(timeout, 500).slideUp(500, function () {
                     $(this).slideUp(500);
                 });
             });
