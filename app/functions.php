@@ -139,7 +139,3 @@ function renderCedula($sessao, $token)
 
     return $tpl->parse();
 }
-
-function nl2pipe($str) {
-    return str_replace("\n", ' | ', $str);
-}

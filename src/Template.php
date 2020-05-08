@@ -13,6 +13,12 @@ namespace Uspdev\Votacao {
             $main = new \Stdclass;
             $main->wwwroot = getenv('WWWROOT');
             $main->self = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            
+            // Vamos pegar o papel e colocar no titulo. (gerente, painel, apoio, etc)
+            $haystack = explode('/', $main->self);
+            $subtitulo = $haystack[array_search(basename($main->wwwroot), $haystack) + 1];
+            $main->titulo = $subtitulo . ' - Votação Rápida';
+
             $this->main = $main;
 
             // vamos mostrar mensagem se necessário
@@ -40,7 +46,6 @@ namespace Uspdev\Votacao {
                 $this->topbar_class = 'top-bar-no-user';
                 $this->block('block_no_user');
             }
-
             parent::show();
         }
 
@@ -63,5 +68,9 @@ namespace {
     function tpl_append($str, $pre, $pos = '')
     {
         return $pre . ' ' . $str . ' ' . $pos;
+    }
+
+    function nl2pipe($str) {
+        return str_replace("\n", ' | ', $str);
     }
 }
