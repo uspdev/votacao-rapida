@@ -17,7 +17,7 @@ namespace Uspdev\Votacao {
             // Vamos pegar o papel e colocar no titulo. (gerente, painel, apoio, etc)
             $haystack = explode('/', $main->self);
             $subtitulo = $haystack[array_search(basename($main->wwwroot), $haystack) + 1];
-            $main->titulo = $subtitulo . ' - Votação Rápida';
+            $main->titulo = ucfirst($subtitulo) . ' | Votação Rápida';
 
             $this->main = $main;
 
