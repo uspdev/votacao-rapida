@@ -56,7 +56,7 @@
             $(e.target).data('changed', true);
         });
 
-        this.on('submit', 'form', function () {
+        this.on('submit', '.form_template form', function () {
             if ($(this).find(':input[name=acao]').val() != opts.addAction) {
                 $(this).find(':input:not([type=hidden], [type=submit])').each(function () {
                     if ($(this).data('changed') == true) {
