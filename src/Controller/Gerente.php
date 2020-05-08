@@ -9,6 +9,7 @@ class Gerente
 {
     public function sessao($id)
     {
+        // a autenticação da api já foi tratada antes
         if (empty($this->query->codpes)) {
             return ['status' => 'erro', 'msg' => 'Sem usuário codpes'];
         }
@@ -19,9 +20,9 @@ class Gerente
             return ['status' => 'erro', 'msg' => 'Usuário inválido'];
         }
 
-        if ($id == 0) {
+        if ($id == '0') {
             // vamos criar nova sessão
-            $sessao = SELF::criarSessao($usuario);
+            return SELF::criarSessao($usuario);
         } else {
             // ou obter existente
             $sessao = $this->obterSessao($id, $usuario);
@@ -131,16 +132,6 @@ class Gerente
                     return ['status' => 'ok', 'data' => 'Eleitor atualizado com sucesso.'];
                     break;
 
-                case 'atualizarSessao':
-                    foreach ($this->data as $key => $val) {
-                        if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
-                            $sessao->$key = $val;
-                        }
-                    }
-                    R::store($sessao);
-                    return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
-                    break;
-
                 case 'editarVotacao':
                     $votacao = array_pop($sessao->withCondition('id = ?', [$this->data->id])->ownVotacao);
                     if ($votacao) {
@@ -168,6 +159,16 @@ class Gerente
                     }
                     break;
 
+                case 'atualizarSessao':
+                    foreach ($this->data as $key => $val) {
+                        if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
+                            $sessao->$key = $val;
+                        }
+                    }
+                    R::store($sessao);
+                    return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
+                    break;
+
                 case 'apagarSessao':
                     $ret = SELF::apagarSessao($sessao);
                     return ['status' => 'ok', 'data' => 'Sessão excluída com sucesso.'];
@@ -182,7 +183,7 @@ class Gerente
 
         $sessao->sharedUsuarioList;
         // vamos buscar as alternativas também
-        foreach($sessao->ownVotacaoList as $v) {
+        foreach ($sessao->ownVotacaoList as $v) {
             $v->ownAlternativaList;
         }
         $sessao->with('ORDER BY apelido')->ownTokenList;
@@ -211,25 +212,27 @@ class Gerente
         return true;
     }
 
-    protected static function criarSessao($usuario)
+    protected function criarSessao($usuario)
     {
-        $sessao = R::dispense('sessao');
-        $sessao->unidade = $usuario->unidade;
-        $sessao->ano = date('Y');
-        $sessao->nome = 'Nova sessão criada em ' . date('d/m/Y H:i:s');
-        $sessao->quando = date('d/m/Y');
-        $sessao->hash = generateRandomString(20);
-        $sessao->estado = 'Em elaboração';
-        $sessao->email = $usuario->email;
-        $sessao->logo = '';
-        $sessao->link = '';
-        $sessao->sharedUsuarioList[] = $usuario;
-        $id = R::store($sessao);
+        if ($this->data->acao == 'criarSessao') {
+            $sessao = R::dispense('sessao');
+            $sessao->unidade = $usuario->unidade;
+            $sessao->ano = date('Y');
+            $sessao->nome = $this->data->nome;
+            $sessao->quando = date('d/m/Y');
+            $sessao->hash = generateRandomString(20);
+            $sessao->estado = 'Em elaboração';
+            $sessao->email = $usuario->email;
+            $sessao->logo = '';
+            $sessao->link = '';
+            $sessao->sharedUsuarioList[] = $usuario;
+            $id = R::store($sessao);
 
-        //$sessao = R::load('sessao', $id);
-        Token::gerarTokensControle($sessao);
-
-        return $sessao;
+            //$sessao = R::load('sessao', $id);
+            Token::gerarTokensControle($sessao);
+            return ['status' => 'ok', 'data' => $id];
+            return $sessao;
+        }
     }
 
     protected static function obterSessao($sessao_id, $usuario)

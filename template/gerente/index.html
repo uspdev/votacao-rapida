@@ -1,9 +1,18 @@
 <h1>Votação rápida</h1>
 <!-- BEGIN block_user -->
-<div>
+<div id="sessoes">
     <h3>
-        <a href="gerente/0">Nova sessão de votação</a>
+        <a href="" class="criar_btn">Nova sessão de votação</a>
     </h3>
+    <div class="criar_div hide">
+        <form method="POST">
+            <label>
+                <input type="text" name="nome" class="form-control" placeholder="Digite o nome da sessão ..">
+            </label>
+            <input type="hidden" name="id" value="0">
+            <button type="submit" class="btn btn-primary" name="acao" value="criarSessao">Criar</button>
+        </form>
+    </div>
     <hr />
     <h2>Minhas sessões</h2>
 
@@ -14,6 +23,18 @@
         Sem sessões.
         <!-- FINALLY block_sessao -->
     </div>
+    <script>
+        $(function () {
+            var escopo = $('#sessoes');
+
+            escopo.find('.criar_btn').click(function (e) {
+                e.preventDefault();
+                escopo.find('.criar_div').slideToggle();
+                escopo.find('.criar_div input[name=nome]').focus();
+
+            });
+        });
+    </script>
 </div>
 <!-- END block_user -->
 <br>

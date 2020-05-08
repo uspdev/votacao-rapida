@@ -14,7 +14,9 @@ SS::start();
 // Rotas
 
 Flight::route('/', function () {
-    Gerente::index();
+    // devemos usar o factory para injetarmos _GET e _POST na classe
+    $gerente = Factory::gerente(Flight::request());
+    $gerente->index();
 });
 
 Flight::route('/session', function () {

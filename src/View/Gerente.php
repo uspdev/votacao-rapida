@@ -8,35 +8,8 @@ use Uspdev\Votacao\SessaoPHP as SS;
 use Uspdev\Senhaunica\Senhaunica;
 
 
-
 class Gerente
 {
-    // index
-    public static function index()
-    {
-        if (empty($user = SS::get('user'))) {
-            // se nao estiver logado
-            SELF::ajuda('');
-        }
-
-        $endpoint = '/gerente/listarSessoes?codpes=' . $user['codpes'];
-        $sessoes = Api::send($endpoint);
-
-        $tpl = new Template('gerente/index.html');
-
-        // listar as sessões desse usuário se houver
-        if (empty($sessoes->status)) {
-            foreach ($sessoes as $sessao) {
-                $tpl->S = $sessao;
-                $tpl->block('block_sessao');
-            }
-        }
-        $tpl->block('block_user');
-
-        $tpl->show('userbar');
-        exit;
-    }
-
     public function login($cod = '')
     {
         if ($cod) {
@@ -84,9 +57,49 @@ class Gerente
     {
         $tpl = new Template('ajuda.html');
         $tpl->msg = $msg;
-
         $tpl->show('userbar');
         exit;
+    }
+
+    // index
+    public function index()
+    {
+        if (empty($user = SS::get('user'))) {
+            // se nao estiver logado
+            SELF::ajuda('');
+        }
+
+        $endpoint = '/gerente/listarSessoes?codpes=' . $user['codpes'];
+        $sessoes = Api::send($endpoint);
+
+        if ($this->method == "POST" && $this->data->acao == 'criarSessao') {
+            $endpoint = '/gerente/sessao/0?codpes=' . $user['codpes'];
+            $data = $this->data->getData();
+            $ret = Api::send($endpoint, $data);
+
+            // se retornar erro vamos tratar
+            if ($ret->status == 'erro') {
+                SS::setMsg(['class' => 'alert-danger', 'msg' => $ret->data]);
+                header('Location:' . $_SERVER['REDIRECT_URL']);
+                exit;
+            }
+
+            // se não, vamos direcionar para a nova sessão criada
+            header('Location: gerente/' . $ret->data);
+            exit;
+        }
+
+        $tpl = new Template('gerente/index.html');
+
+        // vamos listar as sessões desse usuário se houver
+        if (empty($sessoes->status)) {
+            foreach ($sessoes as $sessao) {
+                $tpl->S = $sessao;
+                $tpl->block('block_sessao');
+            }
+        }
+        $tpl->block('block_user');
+        $tpl->show('userbar');
     }
 
     public function sessao($id, $aba)
@@ -94,21 +107,18 @@ class Gerente
         $user = SS::getUser();
         $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user['codpes'];
         $sessao = Api::send($endpoint);
-        // se id = 0 cria nova sessao. Nesse caso vamos recarregar
-        // para usar o id correto devolvido pela API
-        if ($id == 0) {
-            header('Location:' . $sessao->id);
-            exit;
-        }
 
+        // as acoes de post ficam separadas para melhorar a leitura do código
         if ($this->method == "POST") {
             $this->sessaoPostActions($sessao);
         }
 
+        // aqui vão as ações de get
         if (!empty($this->query->acao)) {
             $this->sessaoGetActions($sessao);
         }
 
+        // se nao for informado a aba, vamos usar votações por padrão
         if ($aba == '') {
             header('Location: ' . $_SERVER['REDIRECT_URL'] . '/votacoes');
             exit;
@@ -121,7 +131,7 @@ class Gerente
             Template::erro($sessao->msg);
         }
 
-        // autorizacao
+        // template de autorização
         $tpl->addFile('autorizacao', TPL . '/gerente/sessao_autorizacao.html');
         foreach ($sessao->sharedUsuario as $u) {
             $u->self = ($u->codpes == $user['codpes']) ? 'self' : '';
@@ -129,7 +139,7 @@ class Gerente
             $tpl->block('block_autorizacao');
         }
 
-        // votacoes
+        // template de votacoes
         $sessao->countVotacao = count($sessao->ownVotacao);
         if ($aba == 'votacoes' or $aba == '') {
             $tpl->addFile('votacoes', TPL . '/gerente/sessao_votacoes.html');
@@ -146,7 +156,7 @@ class Gerente
             }
         }
 
-        // Eleitores
+        // template de Eleitores
         $sessao->countTokenAberto = count(array_keys(array_column($sessao->ownToken, 'tipo'), 'aberta'));
         if ($aba == 'eleitores') {
             $sessao->countTokenFechado = count(array_keys(array_column($sessao->ownToken, 'tipo'), 'fechada'));
@@ -223,22 +233,21 @@ class Gerente
     protected function sessaoPostActions($sessao)
     {
         $user = SS::get('user');
-        // if (!$user) {
-        //     echo json_encode(['status' => 'erro', 'msg' => 'Necessário autenticar novamente']);
-        //     exit;
-        // }
-        $endpoint = '/gerente/sessao/' . $sessao->id . '?codpes=' . $user['codpes'];
+        if (!$user) {
+            $ret = ['status' => 'erro', 'data' => 'Necessário autenticar novamente'];
+        } else {
+            $endpoint = '/gerente/sessao/' . $sessao->id . '?codpes=' . $user['codpes'];
+            $data = $this->data->getData();
+            $ret = Api::send($endpoint, $data, $this->files);
+        }
 
-        $data = $this->data->getData();
-        //echo '<pre>';print_r($data);exit;
-
-        $ret = Api::send($endpoint, $data, $this->files);
         if ($this->ajax) {
             echo json_encode(['status' => $ret->status, 'msg' => $ret->data]);
         } else {
             $class = $ret->status == 'erro' ? 'alert-danger' : 'alert-success';
             SS::setMsg(['class' => $class, 'msg' => $ret->data]);
-            header('Location:' . $_SERVER['REDIRECT_URL']);
+            $redirect = (empty($_SERVER['REDIRECT_URL'])) ? '' : $_SERVER['REDIRECT_URL'];
+            header('Location:' . $redirect);
         }
         exit;
     }
