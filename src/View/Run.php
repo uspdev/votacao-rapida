@@ -256,6 +256,9 @@ class Run
                 }
             }
 
+            //vamos mostrar o total de votos computados
+            $tpl->block('block_computados');
+
             if (!empty($v->votos) && $v->tipo == 'Voto aberto') {
                 $i = 0;
                 if (count($v->votos) > 10) {
