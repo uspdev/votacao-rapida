@@ -5,6 +5,7 @@ namespace Uspdev\Votacao\Controller;
 use \RedBeanPHP\R as R;
 use Uspdev\Votacao\Model\Email;
 use Uspdev\Votacao\Model\Token;
+use Uspdev\Votacao\Model\Sessao;
 use Uspdev\Votacao\Model\Votacao;
 
 class Gerente
@@ -22,12 +23,12 @@ class Gerente
             return ['status' => 'erro', 'msg' => 'Usuário inválido'];
         }
 
-        if ($id == '0') {
-            // vamos criar nova sessão
-            return SELF::criarSessao($usuario);
+        if ($id == '0' && $this->data->acao == 'criarSessao') {
+            // vamos criar nova sessão com dados do post
+            return Sessao::criar($usuario, $this->data);
         } else {
             // ou obter existente
-            $sessao = $this->obterSessao($id, $usuario);
+            $sessao = Sessao::obterPorId($id, $usuario);
             if (!$sessao) {
                 return ['status' => 'erro', 'msg' => 'Sessão inexistente ou sem acesso'];
             }
@@ -122,7 +123,6 @@ class Gerente
                 case 'removerEleitor':
                     $id = $this->data->id;
                     R::exec('DELETE FROM token WHERE id = ?', [$id]);
-                    //$ret = SELF::apagarSessao($sessao);
                     return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
                     break;
 
@@ -162,17 +162,15 @@ class Gerente
                     break;
 
                 case 'atualizarSessao':
-                    foreach ($this->data as $key => $val) {
-                        if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
-                            $sessao->$key = $val;
-                        }
+                    if ($ret = Sessao::atualizar($sessao, $this->data)) {
+                        return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
+                    } else {
+                        return ['status' => 'erro', 'data' => $ret];
                     }
-                    R::store($sessao);
-                    return ['status' => 'ok', 'data' => 'Dados atualizados com sucesso.'];
                     break;
 
                 case 'apagarSessao':
-                    $ret = SELF::apagarSessao($sessao);
+                    $ret = Sessao::remover($sessao);
                     return ['status' => 'ok', 'data' => 'Sessão excluída com sucesso.'];
                     break;
             }
@@ -192,85 +190,17 @@ class Gerente
         return $sessao;
     }
 
-    protected static function apagarSessao($sessao)
-    {
-        // vamos limpar tokens
-        R::trashAll($sessao->ownTokenList);
-
-        $votacoes = $sessao->ownVotacaoList;
-        foreach ($votacoes as $votacao) {
-            // alternativas e respostas
-            R::trashAll($votacao->ownAlternativaList);
-            R::trashAll($votacao->ownRespostaList);
-        }
-        // votacoes
-        R::trashAll($votacoes);
-
-        // arquivos
-        exec('rm ' . ARQ . '/' . $sessao->hash . '*.pdf', $out, $ret);
-
-        // e finalmente a sessao
-        R::trash($sessao);
-        return true;
-    }
-
-    protected function criarSessao($usuario)
-    {
-        if ($this->data->acao == 'criarSessao') {
-            $sessao = R::dispense('sessao');
-            $sessao->unidade = $usuario->unidade;
-            $sessao->ano = date('Y');
-            $sessao->nome = $this->data->nome;
-            $sessao->quando = date('d/m/Y');
-            $sessao->hash = generateRandomString(20);
-            $sessao->estado = 'Em elaboração';
-            $sessao->email = $usuario->email;
-            $sessao->logo = '';
-            $sessao->link = '';
-            $sessao->sharedUsuarioList[] = $usuario;
-            $id = R::store($sessao);
-
-            //$sessao = R::load('sessao', $id);
-            Token::gerarTokensControle($sessao);
-            return ['status' => 'ok', 'data' => $id];
-            return $sessao;
-        }
-    }
-
-    protected static function obterSessao($sessao_id, $usuario)
-    {
-        if ($usuario->codpes == '1575309') {
-            $sessao = R::load('sessao', $sessao_id);
-        } else {
-            $sessoes = $usuario->withCondition('sessao.id = ?', [$sessao_id])->sharedSessaoList;
-            if (empty($sessoes)) {
-                return false;
-            }
-            $sessao = array_pop($sessoes);
-        }
-        return $sessao;
-    }
-
     public function listarSessoes()
     {
-        if (empty($this->query->codpes)) return 'sem codpes';
-
         SELF::db();
         $usuario = R::findOne('usuario', 'codpes = ?', [$this->query->codpes]);
-        if ($usuario->codpes == '1575309') {
-            $sessoes = R::findAll('sessao');
-        } else {
-            $sessoes = $usuario->sharedSessao;
-        }
-        if (!$sessoes) {
-            $sessoes = ['status' => 'ok', 'data' => 'Sem sessões para listar'];
-        }
-        return $sessoes;
+        return Sessao::listar($usuario);
     }
 
     public function listarTokens($hash)
     {
-        return Token::listarTokens($hash);
+        SELF::db();
+        return Token::listar($hash);
     }
 
     public function login()

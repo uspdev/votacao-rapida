@@ -94,7 +94,7 @@ class Token
         return true;
     }
 
-    public static function listarTokens($hash)
+    public static function listar($hash)
     {
         SELF::db();
         $sessao = R::findOne('sessao', 'hash = ?', [$hash]);

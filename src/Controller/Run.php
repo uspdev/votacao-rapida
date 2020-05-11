@@ -5,17 +5,18 @@ namespace Uspdev\Votacao\Controller;
 use \RedBeanPHP\R as R;
 use \Uspdev\Votacao\Model\Token;
 use \Uspdev\Votacao\Model\Votacao;
+use \Uspdev\Votacao\Model\Sessao;
 
 class Run
 {
     public static function run($hash, $token = '')
     {
-        $query = \Flight::request()->query;
-        $files = \Flight::request()->files;
+        //$query = \Flight::request()->query;
+        //$files = \Flight::request()->files;
         R::selectDatabase('votacao');
 
         // verifica o hash e carrega os dados da sessão
-        $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
+        $sessao = Sessao::obterPorHash($hash);
         if (empty($sessao)) {
             return ['status' => 'erro', 'msg' => 'Hash inválido'];
         }
@@ -86,7 +87,6 @@ class Run
                 $ret['pdf'] = base64_encode(Token::pdfTokenFechado($sessao, $token));
                 return $ret;
             }
-
         } else {
             return $sessao;
         }
@@ -95,7 +95,6 @@ class Run
     protected static function votacaoGet($sessao)
     {
         // primeiro vamos ver se tem alguma votação com estado 'Em votação'
-        //list($sessao->msg, $sessao->render_form);
         $ret = Votacao::obterEmVotacao($sessao);
         $sessao->msg = $ret['msg'];
         $sessao->render_form = $ret['votacao'];
@@ -313,18 +312,6 @@ class Run
         $sessao->em_tela = $painel;
         return SELF::limparSaida($sessao);
     }
-
-
-
-    // protected static function obterVotacaoNaoFechadaFinalizada($sessao)
-    // {
-    //     foreach ($sessao->ownVotacaoList as $votacao) {
-    //         if ($votacao->estado != 0 && $votacao->estado != 5) {
-    //             $votacao->alternativas = $votacao->ownAlternativaList;
-    //             return $votacao;
-    //         }
-    //     }
-    // }
 
     protected static function limparSaida($sessao)
     {
