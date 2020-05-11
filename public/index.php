@@ -18,10 +18,11 @@ Flight::route('/', function () {
     $gerente->index();
 });
 
-Flight::route('/session', function () {
-    echo '<pre>';
-    print_r($_SESSION);
-});
+//somente para testes
+// Flight::route('/session', function () {
+//     echo '<pre>';
+//     print_r($_SESSION);
+// });
 
 Flight::route('GET /login(/@cod)', function ($cod) {
     $gerente = Factory::gerente(Flight::request());
@@ -45,11 +46,6 @@ Flight::route('/gerente/@id(/@aba)', function ($id, $aba) {
     $gerente = Factory::gerente(Flight::request());
     $gerente->sessao($id, $aba);
 });
-
-// Flight::route('POST /gerente/@id', function ($id) {
-//     $gerente = Factory::gerente(Flight::request());
-//     $gerente->sessaoPost($id);
-// });
 
 Flight::route('GET /apoio', function () {
     Run::apoioGet();
@@ -98,7 +94,5 @@ Flight::route('GET /@hash:[A-Z]{20}/@token:[A-Z]{6}', function ($hash, $token) {
 Flight::route('GET /@hash:[A-Z]{20}/@ticket:[A-Z]{25}', function ($hash, $ticket) {
     Run::hashTicket($hash, $ticket);
 });
-
-
 
 Flight::start();
