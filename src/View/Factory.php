@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspdev\Votacao;
+namespace Uspdev\Votacao\View;
 
 use Uspdev\Votacao\View\Gerente;
 

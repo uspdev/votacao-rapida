@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspdev\Votacao\Controller;
+namespace Uspdev\Votacao\Model;
 
 use \RedBeanPHP\R as R;
 

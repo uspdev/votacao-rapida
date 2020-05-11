@@ -2,10 +2,7 @@
 
 namespace Uspdev\Votacao\View;
 
-use \Uspdev\Votacao\Template;
-use \Uspdev\Votacao\Api;
-use \Uspdev\Votacao\Form;
-use \Uspdev\Votacao\SessaoPhp as SS;
+use Uspdev\Votacao\View\SessaoPhp as SS;
 
 class Run
 {

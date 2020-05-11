@@ -1,7 +1,6 @@
 <?php
 
 use \RedBeanPHP\R as R;
-//use \Uspdev\Votacao\Api;
 
 function generateRandomString($length = 6)
 {

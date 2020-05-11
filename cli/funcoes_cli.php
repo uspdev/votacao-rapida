@@ -2,7 +2,7 @@
 
 use Uspdev\Webservice\Auth;
 use \RedBeanPHP\R as R;
-use \Uspdev\Votacao\Api;
+use \Uspdev\Votacao\View\Api;
 
 
 function salvarUsuarioApi()

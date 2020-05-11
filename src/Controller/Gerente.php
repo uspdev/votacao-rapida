@@ -3,7 +3,9 @@
 namespace Uspdev\Votacao\Controller;
 
 use \RedBeanPHP\R as R;
-use Uspdev\Votacao\Email;
+use Uspdev\Votacao\Model\Email;
+use Uspdev\Votacao\Model\Token;
+use Uspdev\Votacao\Model\Votacao;
 
 class Gerente
 {

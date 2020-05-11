@@ -3,6 +3,8 @@
 namespace Uspdev\Votacao\Controller;
 
 use \RedBeanPHP\R as R;
+use \Uspdev\Votacao\Model\Token;
+use \Uspdev\Votacao\Model\Votacao;
 
 class Run
 {

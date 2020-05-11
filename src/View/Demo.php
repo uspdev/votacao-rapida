@@ -2,9 +2,6 @@
 
 namespace Uspdev\Votacao\View;
 
-use Uspdev\Votacao\Template;
-use Uspdev\Votacao\Api;
-
 class Demo
 {
     const arq_votacao = ROOTDIR . '/test/demo-votacoes.php';
@@ -18,8 +15,8 @@ class Demo
 
             case 'votar':
                 require_once ROOTDIR . '/cli/funcoes_cli.php';
+                echo '<a href="demo/">Clique aqui para retornar</a><br><br>';
                 gerarVotosAleatorios(SELF::hash);
-                echo '<a href="demo/">Clique aqui para retornar</a>';
                 exit;
                 break;
 

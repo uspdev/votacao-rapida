@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspdev\Votacao;
+namespace Uspdev\Votacao\Model;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;

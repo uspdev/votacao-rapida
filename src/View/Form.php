@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspdev\Votacao;
+namespace Uspdev\Votacao\View;
 
 class Form
 {

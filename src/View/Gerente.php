@@ -2,9 +2,7 @@
 
 namespace Uspdev\Votacao\View;
 
-use Uspdev\Votacao\Api;
-use Uspdev\Votacao\Template;
-use Uspdev\Votacao\SessaoPHP as SS;
+use Uspdev\Votacao\View\SessaoPHP as SS;
 use Uspdev\Senhaunica\Senhaunica;
 
 

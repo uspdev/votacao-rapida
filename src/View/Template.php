@@ -1,8 +1,8 @@
 <?php
 
-namespace Uspdev\Votacao {
+namespace Uspdev\Votacao\View {
 
-    use Uspdev\Votacao\SessaoPhp as SS;
+    use Uspdev\Votacao\View\SessaoPhp as SS;
 
     class Template extends \raelgc\view\Template
     {

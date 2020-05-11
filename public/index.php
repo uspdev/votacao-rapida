@@ -2,8 +2,7 @@
 
 namespace Uspdev\Votacao\View;
 
-use Uspdev\Votacao\SessaoPhp as SS;
-use Uspdev\Votacao\Factory;
+use Uspdev\Votacao\View\SessaoPhp as SS;
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
