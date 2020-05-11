@@ -426,21 +426,15 @@ class Run
     protected static function obterSessao($hash, $token)
     {
         $sessao = Api::obterSessao($hash, $token);
-        if (!empty($sessao->status) && $sessao->status == 'erro') {
-            $_SESSION['msg'] = json_encode($sessao);
-            header('Location: ' . getenv('WWWROOT') . '/' . $hash);
-            exit;
-        }
-        return $sessao;
 
-        // tratamento de erro a implementar
+        // se a sessão não existir e vir erro fatal
         if (isset($sessao->status) && $sessao->status == 'erro') {
-            $tpl = new Template(ROOTDIR . '/template/erro.html');
+            $tpl = new Template('erro.html');
             $tpl->msg = $sessao->msg;
-            $tpl->block('block_msg');
             $tpl->show();
             exit;
         }
+        return $sessao;
     }
 
     // protected static function template($addFile)

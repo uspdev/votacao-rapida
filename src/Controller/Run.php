@@ -18,7 +18,7 @@ class Run
         // verifica o hash e carrega os dados da sessão
         $sessao = Sessao::obterPorHash($hash);
         if (empty($sessao)) {
-            return ['status' => 'erro', 'msg' => 'Hash inválido'];
+            return ['status' => 'erro', 'msg' => 'Esta sessão de votação não existe.'];
         }
 
         // se nao foi enviado token é porque vai digitar manualmente.
