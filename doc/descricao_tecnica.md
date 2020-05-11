@@ -21,15 +21,30 @@ A API é do tipo REST e comporta os endpoints responsáveis por toda a lógica e
 ### Endpoints
 
 ```
+GET /votacao/<hash de sessão de votação> (tam = 20)
+    Retorna sessão
+
+GET /votacao/<hash de ticket> (tam = 25)
+    Retorna sessão 
+
+POST /votacao/<hash de ticket> (tam = 25)
+    acao=obterTokenFechado
+    acao=obterPdf
+
 GET /votacao/<hash de sessão de votação>/<token> 
     -> se for token de votação
         se estiver fechado, mostra a lista de votações da sessão
         se estiver aberto, mostra os dados de uma votação
-    -> se for token de apresentação
+    -> se for token de painel
         mostra os dados da tela
     -> se for token de gerente
         mostra a lista e os controles
     OBS.: Ao invés de expor o id, as sessões de votação serão acessadas por meio de hash gerada na criação da sessão.
+
+POST /votacao/<hash de sessão de votação>/<token> 
+    (votacao) acao=8
+    (apoio) acao = 0,1,2,3,4,5,6,7,9,10
+
 ```
 
 ## FRONT web
