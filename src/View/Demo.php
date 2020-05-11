@@ -39,10 +39,8 @@ class Demo
         }
 
         $sessao = Api::obterSessao(SELF::hash, '');
-        //print_r($sessao);exit;
 
         $tpl = new Template('demo.html');
-        //$tpl->block('block_topo_img');
 
         $tokens = Api::send('/gerente/listarTokens/' . SELF::hash);
         $tpl->S = $sessao;
