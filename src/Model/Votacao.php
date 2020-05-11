@@ -102,19 +102,9 @@ class Votacao
             }
         }
         R::store($votacao);
-        if ($votacao->tipo == 'aberta') {
-            SELF::adicionarAlternativas($votacao, ['Favorável', 'Contrário', 'Abstenção']);
-        }
-        return true;
-    }
 
-    public static function adicionarAlternativas($votacao, $alternativas)
-    {
-        foreach ($alternativas as $a) {
-            $alternativa = R::dispense('alternativa');
-            $alternativa->texto = $a;
-            $alternativa->votacao = $votacao;
-            R::store($alternativa);
+        if (!empty($data->alternativas)) {
+            SELF::adicionarAlternativas($votacao, $data->alternativas);
         }
         return true;
     }
@@ -126,19 +116,26 @@ class Votacao
                 $votacao->$key = trim($val);
             }
         }
+        R::store($votacao);
+
         if (!empty($data->alternativas)) {
-            $votacao->ownAlternativaList = [];
-            $alternativas = explode(PHP_EOL, $data->alternativas);
-            foreach ($alternativas as $texto) {
-                if (!empty(trim($texto))) {
-                    $a = R::dispense('alternativa');
-                    $a->votacao = $votacao;
-                    $a->texto = trim($texto);
-                    R::store($a);
-                }
+            SELF::adicionarAlternativas($votacao, $data->alternativas);
+        }
+        return true;
+    }
+
+    public static function adicionarAlternativas($votacao, $alternativas_string)
+    {
+        $votacao->ownAlternativaList = []; //limpando as existentes primeiro
+        $alternativas = explode(PHP_EOL, $alternativas_string);
+        foreach ($alternativas as $texto) {
+            if (!empty(trim($texto))) {
+                $a = R::dispense('alternativa');
+                $a->votacao = $votacao;
+                $a->texto = trim($texto);
+                R::store($a);
             }
         }
-        R::store($votacao);
         return true;
     }
 
