@@ -94,9 +94,19 @@ class sessaoPhp
         }
     }
 
+    public static function isAdmin()
+    {
+        $user = SELF::get('user');
+        if (!empty($user['admin'])) {
+            return $user['admin'];
+        } else {
+            return false;
+        }
+    }
+
     public static function getNext()
     {
-        $ret = empty($_SESSION['next']) ? getenv('WWWROOT').'/gerente' : $_SESSION['next'];
+        $ret = empty($_SESSION['next']) ? getenv('WWWROOT') . '/gerente' : $_SESSION['next'];
         unset($_SESSION['next']);
         return $ret;
     }
@@ -109,7 +119,8 @@ class sessaoPhp
     }
 
     // msg é array
-    public static function setMsg($msg) {
+    public static function setMsg($msg)
+    {
         //$msg['class'];
         //$msg['msg'];
         return SELF::set('msg', $msg);
@@ -126,7 +137,8 @@ class sessaoPhp
         return true;
     }
 
-    public static function getDel($chave) {
+    public static function getDel($chave)
+    {
         $ret = empty($_SESSION[$chave]) ? '' : $_SESSION[$chave];
         unset($_SESSION[$chave]);
         return $ret;

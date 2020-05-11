@@ -19,14 +19,20 @@ Flight::route('/', function () {
 });
 
 //somente para testes
-// Flight::route('/session', function () {
-//     echo '<pre>';
-//     print_r($_SESSION);
-// });
+Flight::route('/session', function () {
+    if (SS::isAdmin()) {
+        echo '<pre>';
+        print_r($_SESSION);
+    } else {
+        Flight::notFound();
+    }
+});
 
 Flight::route('GET /login(/@cod)', function ($cod) {
     $gerente = Factory::gerente(Flight::request());
-    $gerente->login($cod);
+    if (!$gerente->login($cod)) {
+        Flight::notFound();
+    }
 });
 
 Flight::route('GET /logout', function () {
@@ -45,6 +51,14 @@ Flight::route('/gerente', function () {
 Flight::route('/gerente/@id(/@aba)', function ($id, $aba) {
     $gerente = Factory::gerente(Flight::request());
     $gerente->sessao($id, $aba);
+});
+
+Flight::route('/admin', function () {
+    if (SS::isAdmin()) {
+        Admin::home();
+    } else {
+        Flight::notFound();
+    }
 });
 
 Flight::route('GET /apoio', function () {

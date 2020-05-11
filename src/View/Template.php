@@ -10,11 +10,11 @@ namespace Uspdev\Votacao\View {
         {
             parent::__construct(TPL . '/main_template.html');
 
-            // vamos carregar algumas vairáveis de uso geral
+            // vamos carregar algumas variáveis de uso geral
             $main = new \Stdclass;
             $main->wwwroot = getenv('WWWROOT');
             $main->self = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-            
+
             // Vamos pegar o papel e colocar no titulo. (gerente, painel, apoio, etc)
             $haystack = explode('/', $main->self);
             $subtitulo = $haystack[array_search(basename($main->wwwroot), $haystack) + 1];
@@ -35,9 +35,12 @@ namespace Uspdev\Votacao\View {
             if ($bloco == 'userbar') {
                 $this->block('block_topo_img');
                 $this->topbar_class = 'top-bar-user';
-                if ($user = SS::get('user')) {
-                    $this->user = json_decode(json_encode($user)); // transformando array em obj
+                if ($user = json_decode(json_encode(SS::get('user')))) {
+                    $this->user = $user; // transformando array em obj
                     $this->block('block_user_in');
+                    if ($user->admin) {
+                        $this->block('block_admin');
+                    }
                 } else {
                     $this->block('block_user_out');
                 }
@@ -70,7 +73,8 @@ namespace {
         return $pre . ' ' . $str . ' ' . $pos;
     }
 
-    function nl2pipe($str) {
+    function nl2pipe($str)
+    {
         return str_replace("\n", ' | ', $str);
     }
 }

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="pt-br">
 
 <head>
     <meta charset="utf-8">
@@ -62,7 +63,7 @@
 
         .top-bar-user {
             width: 100%;
-            height: 36px;
+            height: 40px;
             background-image: url('media/bg-headtop.gif');
             margin-bottom: 5px;
             text-align: right;
@@ -119,11 +120,24 @@
                 <!-- END block_topo_img -->
 
                 <!-- BEGIN block_user_principal -->
-                <div class="{topbar_class} pr-2">
-                    <div class="float-left pl-2"><a class="text-reset" href="{main->wwwroot}" title="Início">
-                            <i class="fas fa-home"></i> Votação Rápida</a>
+                <nav class="navbar navbar-expand-lg navbar-dark bg-dark {topbar_class} pr-2 float-left pb-0">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                        data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="navbar-nav">
+                            <a class="nav-item nav-link active" href="#"><i class="fas fa-home"></i> Home</a>
+                            <a class="nav-item nav-link" href="#"><i class="fas fa-question-circle"></i> Ajuda</a>
+                        </div>
                     </div>
+
                     <div class="float-right">
+                        <!-- BEGIN block_admin -->
+                        <a class="text-reset" href="admin/" title="Configurações globais"><i class="fas fa-cogs"></i></a> |
+                        <!-- END block_admin -->
+
                         <!-- BEGIN block_user_in -->
                         {user->nome} ({user->unidade}) |
                         <a class="text-reset" href="logout/"><i class="fas fa-sign-out-alt"></i> Sair</a>
@@ -133,7 +147,7 @@
                         <a class="text-reset" href="login/"><i class="fas fa-sign-in-alt"></i> Entrar</a>
                         <!-- END block_user_out -->
                     </div>
-                </div>
+                </nav>
                 <!-- END block_user_principal -->
 
                 <!-- BEGIN block_no_user -->

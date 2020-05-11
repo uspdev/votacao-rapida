@@ -11,11 +11,15 @@ class Gerente
     public function login($cod = '')
     {
         if ($cod) {
-            $user['codpes'] = $cod;
-            $usr = Api::send('/gerente/login', $user);
-            SS::set('user', json_decode(json_encode($usr), true));
-            header('Location:' . SS::getNext());
-            exit;
+            if (SS::isAdmin()) {
+                $newUser['codpes'] = $cod;
+                $usr = Api::send('/gerente/login', $newUser);
+                SS::set('user', json_decode(json_encode($usr), true));
+                header('Location:' . SS::getNext());
+                exit;
+            } else {
+                return false;
+            }
         }
         $auth = new Senhaunica([
             'consumer_key' => getenv('CONSUMER_KEY'),

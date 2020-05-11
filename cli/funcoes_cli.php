@@ -80,6 +80,14 @@ function dadosDeControle()
     return 'Dados de controle inseridos/atualizados com sucesso';
 }
 
+function salvarAdmin($codpes)
+{
+    $usuario = R::findOrCreate('usuario', ['codpes' => $codpes,]);
+    $usuario->admin = true;
+    R::store($usuario);
+    return 'Usuário ' . $codpes . ' é admin';
+}
+
 function limparRespostas($hash)
 {
     $sessao = R::findOne('sessao', 'hash = ?', [$hash]);
