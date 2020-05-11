@@ -2,8 +2,6 @@
 
 namespace Uspdev\Votacao\View;
 
-use Uspdev\Votacao\View\Gerente;
-
 class Factory
 {
     public static function gerente($inject)
@@ -14,9 +12,10 @@ class Factory
         }
         return $obj;
     }
+    
     public static function run($inject)
     {
-        $obj = new \Uspdev\Votacao\View\Run();
+        $obj = new Run();
         foreach ($inject as $key => $val) {
             $obj->$key = $val;
         }

@@ -3,11 +3,11 @@
 namespace Uspdev\Votacao\View;
 
 use Uspdev\Votacao\View\SessaoPhp as SS;
+use \Flight;
 
 require_once __DIR__ . '/../app/bootstrap.php';
 
-use \Flight;
-
+// inicializando session
 SS::start();
 
 // Rotas
