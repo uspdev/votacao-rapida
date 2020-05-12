@@ -18,4 +18,50 @@
             </table>
         </div>
     </div>
+    <div class="col-md-6">
+        <h2>Estados</h2>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Cod</th>
+                    <th>Nome</th>
+                    <th>Ações</th>
+                    <th>Tabela</th>
+                </tr>
+            </thead>
+            <!-- BEGIN block_estado -->
+            <tr>
+                <td>{E->cod}</td>
+                <td> {E->nome}</td>
+                <td>{E->acoes} </td>
+                <td> {E->tabela}</td>
+            </tr>
+            <!-- END block_estado -->
+        </table>
+        <br>
+        <h2>Ações</h2>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Cod</th>
+                    <th>Nome</th>
+                    <th>Estado ini</th>
+                    <th>Estado fim</th>
+                    <th>Mensagem</th>
+                    <th>Escopo</th>
+                </tr>
+            </thead>
+            <!-- BEGIN block_acao -->
+            <tr>
+                <td>{A->cod}</td>
+                <td> {A->nome}</td>
+                <td>{A->estado_ini} </td>
+                <td>{A->estado} </td>
+                <td> {A->msg}</td>
+                <td> {A->escopo}</td>
+            </tr>
+            <!-- END block_acao -->
+
+        </table>
+    </div>
 </div>
