@@ -38,7 +38,7 @@ namespace Uspdev\Votacao\View {
                 if ($user = json_decode(json_encode(SS::get('user')))) {
                     $this->user = $user; // transformando array em obj
                     $this->block('block_user_in');
-                    if ($user->admin) {
+                    if (SS::isAdmin()) {
                         $this->block('block_admin');
                     }
                 } else {
