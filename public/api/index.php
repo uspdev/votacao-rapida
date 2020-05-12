@@ -17,6 +17,7 @@ WS::admin();
 
 # Aqui chamamos como http://servidor/controlador/metodo/parametro
 $classes['gerente'] = 'Uspdev\Votacao\Controller\Gerente';
+$classes['admin'] = 'Uspdev\Votacao\Controller\Admin';
 WS::classes($classes);
 
 $metodos['run'] = 'Uspdev\Votacao\Controller\Run::run';
