@@ -18,7 +18,7 @@ namespace Uspdev\Votacao\View {
             // Vamos pegar o papel e colocar no titulo. (gerente, painel, apoio, etc)
             $haystack = explode('/', $main->self);
             $subtitulo = $haystack[array_search(basename($main->wwwroot), $haystack) + 1];
-            if (in_array($subtitulo, ['gerente', 'apoio', 'painel', 'ajuda'])) {
+            if (in_array($subtitulo, ['gerente', 'apoio', 'painel', 'ajuda', 'votacao'])) {
                 $main->titulo = ucfirst($subtitulo) . ' | Votação Rápida';
             } else {
                 $main->titulo = 'Votação Rápida';
