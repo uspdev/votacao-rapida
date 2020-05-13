@@ -37,7 +37,6 @@ if ($amb == 'prod') {
     ini_set('display_errors', 0);
     ini_set('display_startup_errors', 0);
     putenv('USPDEV_CACHE_DISABLE=1');
-
 }
 
 # veja https://github.com/uspdev/ip-control
@@ -68,4 +67,9 @@ if (getenv('DB_TIPO') == 'sqlite') {
 
 R::selectDatabase('votacao');
 R::useFeatureSet('latest');
-R::freeze(false);
+if ($amb == 'dev') {
+    R::freeze(false);
+}
+if ($amb == 'prod') {
+    R::freeze(true);
+}
