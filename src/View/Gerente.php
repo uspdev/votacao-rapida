@@ -55,20 +55,13 @@ class Gerente
         exit;
     }
 
-    public static function ajuda($msg)
-    {
-        $tpl = new Template('ajuda.html');
-        $tpl->msg = $msg;
-        $tpl->show('userbar');
-        exit;
-    }
-
     // index
     public function index()
     {
         if (empty($user = SS::get('user'))) {
             // se nao estiver logado
-            SELF::ajuda('');
+            Ajuda::inicio();
+            exit;
         }
 
         $endpoint = '/gerente/listarSessoes?codpes=' . $user['codpes'];

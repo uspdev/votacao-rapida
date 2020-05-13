@@ -39,6 +39,10 @@ Flight::route('GET /logout', function () {
     Gerente::logout();
 });
 
+Flight::route('GET /ajuda', function () {
+    Ajuda::inicio();
+});
+
 Flight::route('GET /demo', function () {
     Demo::demo();
 });
