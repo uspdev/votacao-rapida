@@ -7,6 +7,7 @@ use Uspdev\Votacao\Model\Email;
 use Uspdev\Votacao\Model\Token;
 use Uspdev\Votacao\Model\Sessao;
 use Uspdev\Votacao\Model\Votacao;
+use Uspdev\Votacao\Model\Log;
 
 class Gerente
 {
@@ -210,10 +211,12 @@ class Gerente
         if (!$user = R::findOne('usuario', 'codpes = ?', [$userdata['codpes']])) {
             $user = R::dispense('usuario');
         };
+        Log::auth('user login', $userdata->getData());
+
         foreach ($userdata as $key => $val) {
             $user->$key = $val;
         }
-        $user->lastlogin = date('"Y-m-d H:i:s"');
+        $user->lastlogin = date('Y-m-d H:i:s');
         R::store($user);
         return $user;
     }
