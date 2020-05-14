@@ -169,7 +169,7 @@ class Votacao
         $resposta->token = $sessao->token->token;
         $resposta->apelido = $sessao->token->apelido;
         $resposta->datetime = date("Y-m-d H:i:s");
-        $resposta->dispositivo = \Flight::request()->user_agent;
+        $resposta->dispositivo = substr($data->user_agent, 0, 190);
         $resposta->signature = sha1(json_encode($resposta) . $sessao->hash);
         $resposta->last = 1;
         R::store($resposta);

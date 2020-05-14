@@ -83,7 +83,7 @@ class Run
                 return $token_fechado;
             }
             if ($data->acao == 'obterPdf') {
-                $token = R::findOne('token', 'sessao_id = ? and token = ?',[$sessao->id, $data->token]);
+                $token = R::findOne('token', 'sessao_id = ? and token = ?', [$sessao->id, $data->token]);
                 $ret['pdf'] = base64_encode(Token::pdfTokenFechado($sessao, $token));
                 return $ret;
             }
@@ -126,6 +126,7 @@ class Run
                     $votacao->id == $data->votacao_id &&
                     !empty($data->alternativa_id)
                 ) {
+                    $data->user_agent = \Flight::request()->user_agent;
                     $resposta = Votacao::computarVoto($sessao, $votacao, $data);
                     return ['status' => 'ok', 'data' => $resposta];
                 }
