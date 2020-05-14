@@ -29,17 +29,22 @@ class Gerente
         ]);
         $res = $auth->login();
 
-        // todo: ainda tem de ajustar os vinculos permitidos
-        $vinculo = $auth->obterVinculo('tipoVinculo', ['SERVIDOR', 'Estagiário']);
-        if ($vinculo) {
-            $user['codpes'] = $res['loginUsuario'];
-            $user['nome'] = $res['nomeUsuario'];
-            $user['email'] = $res['emailPrincipalUsuario'];
-            $user['unidade'] = $vinculo['siglaUnidade'];
+        $user['codpes'] = $res['loginUsuario'];
+        $user['nome'] = $res['nomeUsuario'];
+        $user['email'] = $res['emailPrincipalUsuario'];
 
+        // todo: ainda tem de ajustar os vinculos permitidos
+        $vinculo = $auth->obterVinculo('tipoVinculo', ['SERVIDOR']);
+        if ($vinculo) {
+            $user['unidade'] = $vinculo['siglaUnidade'];
             $usr = Api::send('/gerente/login', $user);
-            //print_r($usr);exit;
             SS::set('user', json_decode(json_encode($usr), true));
+        } else {
+            $user['vinculos'] = array_column($res['vinculo'], 'tipoVinculo');
+            $usr = Api::send('/gerente/nologin', $user);
+            SS::setMsg(['class'=>'alert-danger', 'msg'=>'Usuário sem acesso ao sistema "Votação Rápida"']);
+            header('Location: '. getenv('WWWROOT'));
+            exit;
         }
 
         header('Location:' . SS::getNext());

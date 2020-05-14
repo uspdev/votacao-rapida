@@ -204,6 +204,13 @@ class Gerente
         return Token::listar($hash);
     }
 
+    public function nologin()
+    {
+        $userdata = $this->data;
+        Log::auth('user denied', $userdata->getData());
+        return ['status' => 'ok', 'data' => 'Log registrado com sucesso'];
+    }
+
     public function login()
     {
         $userdata = $this->data;
