@@ -34,7 +34,7 @@ class Gerente
         $user['email'] = $res['emailPrincipalUsuario'];
 
         // todo: ainda tem de ajustar os vinculos permitidos
-        $vinculo = $auth->obterVinculo('tipoVinculo', ['SERVIDOR']);
+        $vinculo = $auth->obterVinculo('tipoVinculo', ['SERVIDOR', 'ESTAGIARIORH']);
         if ($vinculo) {
             $user['unidade'] = $vinculo['siglaUnidade'];
             $usr = Api::send('/gerente/login', $user);
