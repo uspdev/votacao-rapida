@@ -28,6 +28,8 @@ E suba a aplicação:
 
     php -S 0.0.0.0:8000 -t public/
 
+É esperado que seja cadastrada a seguinte url de rertono (callback): /login
+
 ## Mais informações
 
 [Descrição funcional](doc/descricao_funcional.md)
