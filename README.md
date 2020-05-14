@@ -20,14 +20,6 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 * cp .env.example .env
 * Ajuste o .env conforme necessário
 
-Para trabalhar com servidor interno do php, no seu .env use:
-
-    WWWROOT='http://127.0.0.1:8000'
-
-E suba a aplicação:
-
-    php -S 0.0.0.0:8000 -t public/
-
 É esperado que seja cadastrada a seguinte url de rertono (callback): /login
 
 ## Mais informações
