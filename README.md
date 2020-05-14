@@ -20,6 +20,8 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 * cp .env.example .env
 * Ajuste o .env conforme necessário
 
+É esperado que seja cadastrada a seguinte url de rertono (callback): /login
+
 ## Mais informações
 
 [Descrição funcional](doc/descricao_funcional.md)
