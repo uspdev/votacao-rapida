@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "3a4190db83ef4e9c488e1a5523bd40f3",
+    "content-hash": "5559a347776ffc261aa8dc4dac56cef6",
     "packages": [
         {
             "name": "bower-asset/bootstrap4",
@@ -566,16 +566,16 @@
         },
         {
             "name": "raelgc/template",
-            "version": "v2.2.4",
+            "version": "v2.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/raelgc/template.git",
-                "reference": "91b6699f9f18317e5bbf99aaf3abbefa75478e39"
+                "reference": "2a523ae5e62b74f9a901878bbc58a8401964ea58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/raelgc/template/zipball/91b6699f9f18317e5bbf99aaf3abbefa75478e39",
-                "reference": "91b6699f9f18317e5bbf99aaf3abbefa75478e39",
+                "url": "https://api.github.com/repos/raelgc/template/zipball/2a523ae5e62b74f9a901878bbc58a8401964ea58",
+                "reference": "2a523ae5e62b74f9a901878bbc58a8401964ea58",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2020-04-13T22:51:04+00:00"
+            "time": "2020-05-15T21:40:37+00:00"
         },
         {
             "name": "spipu/html2pdf",
