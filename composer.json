@@ -12,17 +12,18 @@
     "require": {
         "ext-curl": "*",
         "uspdev/webservice": "1.*",
+        "uspdev/senhaunica": "^1.1",
         "gabordemooij/redbean": "^5.4",
         "raelgc/template": "^2.2",
         "vlucas/phpdotenv": "^4.1",
         "spipu/html2pdf": "^5.2",
         "oomphinc/composer-installers-extender": "^1.1",
-        "bower-asset/bootstrap4": "^4.4",
-        "npm-asset/jquery": "3.4.*",
-        "uspdev/senhaunica": "^1.1",
-        "phpmailer/phpmailer": "^6.1",
-        "npm-asset/font-awesome": "^5.13",
-        "monolog/monolog": "^2.0"
+        "phpmailer/phpmailer": "6.1.*",
+        "monolog/monolog": "2.*",
+        "npm-asset/jquery": "3.5.*",
+        "npm-asset/font-awesome": "5.*",
+        "bower-asset/bootstrap4": "4.5.*",
+        "npm-asset/bootstrap-table": "^1.16"
     },
     "repositories": [
         {

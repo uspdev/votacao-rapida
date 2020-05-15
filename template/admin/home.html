@@ -1,24 +1,37 @@
 <h1>Painel de administração</h1>
 
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <div id="usuarios">
             <h2>Usuários</h2>
-            <table class="table table-sm">
-                <!-- BEGIN block_usuarios -->
-                <tr>
-                    <td>{U->codpes}</td>
-                    <td>{U->nome}</td>
-                    <td>{U->email}</td>
-                    <td>{U->unidade}</td>
-                    <td>{U->lastlogin}</td>
-                    <td>{U->admin}</td>
-                </tr>
-                <!-- END block_usuarios -->
+            <table class="table table-sm table-hover table-striped" data-toggle="table" data-search="true"
+            data-search-align="left" data-show-columns="true" data-show-toggle="true">
+                <thead>
+                    <tr>
+                        <th>codpes</th>
+                        <th>nome</th>
+                        <th>email</th>
+                        <th>unidade</th>
+                        <th>lastlogin</th>
+                        <th>admin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- BEGIN block_usuarios -->
+                    <tr>
+                        <td>{U->codpes}</td>
+                        <td>{U->nome}</td>
+                        <td>{U->email}</td>
+                        <td>{U->unidade}</td>
+                        <td>{U->lastlogin}</td>
+                        <td>{U->admin}</td>
+                    </tr>
+                    <!-- END block_usuarios -->
+                </tbody>
             </table>
         </div>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-12">
         <h2>Estados</h2>
         <table class="table table-sm">
             <thead>
@@ -67,10 +80,33 @@
 <div class="row">
     <div class="col-md-12">
         <h2>Logs</h2>
-        <div class="ml-2">
-            <!-- BEGIN block_log -->
-            {log->datetime}; {log->message}<br>
-            <!-- END block_log -->
-        </div>
+        <table class="table table-sm table-hover table-striped" data-toggle="table" data-search="true"
+            data-search-align="left" data-show-columns="true" data-show-toggle="true">
+            <thead>
+                <tr>
+                    <th>datetime</th>
+                    <th>mensagem</th>
+                    <th>contexto</th>
+                    <th>extra</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- BEGIN block_log -->
+                <tr>
+                    <td>{log->datetime}</td>
+                    <td>{log->message}</td>
+                    <td>{log->context|json_encode}</td>
+                    <td>{log->extra|json_encode}</td>
+                </tr>
+                <!-- END block_log -->
+            </tbody>
+        </table>
     </div>
 </div>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>

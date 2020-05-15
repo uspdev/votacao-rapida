@@ -9,18 +9,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <base href="{main->wwwroot}/">
 
-    <link href="assets/bootstrap4/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <script src="assets/jquery/dist/jquery.min.js"></script>
+
+    <link href="assets/bootstrap4/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="assets/bootstrap4/dist/js/bootstrap.bundle.min.js"></script>
 
     <link href="assets/font-awesome/css/all.min.css" rel="stylesheet">
 
-    <style>
-        body {
-            /* font-size:14px; */
-        }
+    <link href="assets/bootstrap-table/dist/bootstrap-table.min.css" rel="stylesheet">
+    <script src="assets/bootstrap-table/dist/bootstrap-table.min.js"></script>
+    <script src="assets/bootstrap-table/dist/locale/bootstrap-table-pt-BR.min.js"></script>
 
+    <style>
         h1,
         .h1 {
             font-size: 26px;
@@ -120,7 +120,7 @@
                 <!-- END block_topo_img -->
 
                 <!-- BEGIN block_user_principal -->
-                <nav class="navbar navbar-expand-lg navbar-dark bg-dark {topbar_class} pr-2 float-left pb-0">
+                <nav class="navbar navbar-expand-sm navbar-dark bg-dark {topbar_class} pr-2 float-left pb-0">
                     <button class="navbar-toggler" type="button" data-toggle="collapse"
                         data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
                         aria-label="Toggle navigation">
@@ -135,7 +135,8 @@
 
                     <div class="float-right">
                         <!-- BEGIN block_admin -->
-                        <a class="text-reset" href="admin/" title="Configurações globais"><i class="fas fa-cogs"></i></a> |
+                        <a class="text-reset" href="admin/" title="Configurações globais"><i
+                                class="fas fa-cogs"></i></a> |
                         <!-- END block_admin -->
 
                         <!-- BEGIN block_user_in -->
