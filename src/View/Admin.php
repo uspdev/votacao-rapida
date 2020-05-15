@@ -52,6 +52,13 @@ class Admin
             $tpl->block('block_acao');
         }
 
+        $logs = explode("\n",file_get_contents(LOCAL.'/log/info-'.date('Y-m-d').'.log'));
+        //print_r($logs);exit;
+        foreach ($logs as $log) {
+            $tpl->log = json_decode($log);
+            $tpl->block('block_log');
+        }
+
         $tpl->show('userbar');
     }
 }
