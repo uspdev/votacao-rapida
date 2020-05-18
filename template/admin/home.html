@@ -5,13 +5,14 @@
         <div id="usuarios">
             <h2>Usuários</h2>
             <table class="table table-sm table-hover table-striped" data-toggle="table" data-search="true"
-            data-search-align="left" data-show-columns="true" data-show-toggle="true">
+                data-search-align="left" data-show-columns="true" data-show-toggle="true"
+                data-show-search-clear-button="true">
                 <thead>
                     <tr>
-                        <th>codpes</th>
-                        <th>nome</th>
+                        <th data-field="codpes" data-sortable="true">codpes</th>
+                        <th data-field="nome" data-sortable="true">nome</th>
                         <th>email</th>
-                        <th>unidade</th>
+                        <th data-field="unidade" data-sortable="true">unidade</th>
                         <th>lastlogin</th>
                         <th>admin</th>
                     </tr>
@@ -31,6 +32,8 @@
             </table>
         </div>
     </div>
+</div>
+<div class="row">
     <div class="col-md-12">
         <h2>Estados</h2>
         <table class="table table-sm">
