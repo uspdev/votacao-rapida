@@ -3,6 +3,7 @@
 namespace Uspdev\Votacao\View;
 
 use \RedBeanPHP\R as R;
+use Uspdev\Votacao\Model\Log;
 
 class Admin
 {
@@ -52,8 +53,9 @@ class Admin
             $tpl->block('block_acao');
         }
 
-        $logs = explode("\n",file_get_contents(LOCAL.'/log/info-'.date('Y-m-d').'.log'));
-        //print_r($logs);exit;
+        // logs
+        $logs = Log::listar();
+
         foreach ($logs as $log) {
             $tpl->log = json_decode($log);
             $tpl->block('block_log');

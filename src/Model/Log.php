@@ -16,6 +16,22 @@ class Log
         $log->info($message, $data);
     }
 
+    public static function listar($numLogFiles = 5) {
+        $files = glob(LOCAL. '/log/*.log');
+        arsort($files, SORT_STRING);
+        $i = 0;
+        $logs = [];
+        foreach ($files as $file) {
+            $logs = array_merge($logs, file($file, FILE_SKIP_EMPTY_LINES | FILE_IGNORE_NEW_LINES));
+            if ($i < $numLogFiles) {
+                $i++;
+            } else {
+                break 1;
+            }
+        }
+        return $logs;
+    }
+
     private static function getLogger($channel_name)
     {
         if (!isset(self::$logger)) {
