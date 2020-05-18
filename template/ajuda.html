@@ -16,28 +16,63 @@
         Nas votações secretas o sistema gera uma cédula anônima e aleatória
         para cada eleitor garantindo assim o sigilo do voto.
     </p>
-    <h3>Roteiro de criação e utilização</h3>
+    <h2>Roteiro de criação e utilização</h2>
     <p>
         <a target="_roteiro"
             href="https://docs.google.com/document/d/e/2PACX-1vSucenzs0UU--gYJfuNp28lHaJgz7PY1SK5jfQJeh4VCaScBZ-fHwZ3cuNk8yhcqm6ujivdZqXLK6O4/pub">
-            Roteiro
+            Roteiro - google docs
         </a>
     </p>
-    <hr>
-    <h3>Vídeo demostrando a interface de gerente</h3>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/W_R3G0r14cE" frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <hr>
-    <h3>Vídeo demonstrando a interface do eleitor em smartphone</h3>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/inA0uViym4M" frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        <hr>
-    <h3>Vídeo demonstrando a interface do eleitor em desktop</h3>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/uU0DclHW2ek" frameborder="0"
-        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+
+    <h2>Vídeos</h2>
+
+    <p><a href data-toggle="modal" data-target="#videoModal" data-theVideo="https://www.youtube.com/embed/W_R3G0r14cE">
+            Demonstração da interface de gerente</a>
+    </p>
+    <p>
+        <a href data-toggle="modal" data-target="#videoModal" data-theVideo="https://www.youtube.com/embed/inA0uViym4M">
+            Demonstração da interface do eleitor em smartphone</a>
+    </p>
+    <p>
+        <a href data-toggle="modal" data-target="#videoModal" data-theVideo="https://www.youtube.com/embed/uU0DclHW2ek">
+            Demonstração da interface do eleitor em desktop</a>
+    </p>
 </div>
 
-<div>
+<!-- <div>
     <br>
     <a href="demo/">Painel de demostração</a>
+</div> -->
+
+<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div>
+                    <iframe width="100%" height="450" src="" frameborder="0"
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    $(function () {
+
+        var trigger = $("body").find('[data-toggle="modal"]');
+        trigger.click(function () {
+            var theModal = $(this).data("target"),
+                videoSRC = $(this).attr("data-theVideo"),
+                videoSRCauto = videoSRC + "?autoplay=1";
+            $(theModal + ' iframe').attr('src', videoSRCauto);
+        });
+
+        $('#videoModal').on('hidden.bs.modal', function (e) {
+            $('#videoModal iframe').attr('src', '');
+        });
+
+        // autoPlayYouTubeModal();
+    });
+</script>
