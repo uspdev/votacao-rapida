@@ -26,7 +26,14 @@ class Gerente
 
         if ($id == '0' && $this->data->acao == 'criarSessao') {
             // vamos criar nova sessão com dados do post
-            return Sessao::criar($usuario, $this->data);
+
+            $ns = Sessao::criar($usuario, $this->data);
+            Log::gerente('Criar sessão', [
+                'id' => $ns->id, 'hash' => $ns->hash,
+                'usuario-codpes' => $usuario->codpes, 'usuario-nome' => $usuario->nome
+            ]);
+
+            return ['status' => 'ok', 'data' => $ns->id];
         } else {
             // ou obter existente
             $sessao = Sessao::obterPorId($id, $usuario);
@@ -171,6 +178,11 @@ class Gerente
                     break;
 
                 case 'apagarSessao':
+                    Log::gerente('Remover sessão', [
+                        'id' => $sessao->id, 'hash' => $sessao->hash,
+                        'usuario-codpes' => $usuario->codpes, 'usuario-nome' => $usuario->nome,
+                    ]);
+
                     $ret = Sessao::remover($sessao);
                     return ['status' => 'ok', 'data' => 'Sessão excluída com sucesso.'];
                     break;

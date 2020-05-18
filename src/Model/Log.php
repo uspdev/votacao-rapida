@@ -16,6 +16,11 @@ class Log
         $log->info($message, $data);
     }
 
+    public static function gerente($message, $data = []) {
+        $log = SELF::getLogger('gerente');
+        $log->info($message, $data);
+    }
+
     public static function listar($numLogFiles = 5) {
         $files = glob(LOCAL. '/log/*.log');
         arsort($files, SORT_STRING);

@@ -54,7 +54,7 @@ class Sessao
         $id = R::store($sessao);
 
         Token::gerarTokensControle($sessao);
-        return ['status' => 'ok', 'data' => $id];
+        //return ['status' => 'ok', 'data' => $id];
         return $sessao;
     }
 
