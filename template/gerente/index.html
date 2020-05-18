@@ -1,44 +1,60 @@
 <h1>Votação rápida</h1>
 <!-- BEGIN block_user -->
 <div id="sessoes">
-    <h3>
-        <a href="" class="criar_btn">Nova sessão de votação</a>
-    </h3>
-    <div class="criar_div hide">
-        <form method="POST">
-            <label>
-                <input type="text" name="nome" class="form-control" placeholder="Digite o nome da sessão ..">
-            </label>
-            <input type="hidden" name="id" value="0">
-            <button type="submit" class="btn btn-primary" name="acao" value="criarSessao">Criar</button>
-        </form>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>
+                <a href="" class="criar_btn">Nova sessão de votação</a>
+            </h3>
+            <div class="criar_div hide">
+                <form method="POST">
+                    <label>
+                        <input type="text" name="nome" class="form-control" placeholder="Digite o nome da sessão ..">
+                    </label>
+                    <input type="hidden" name="id" value="0">
+                    <button type="submit" class="btn btn-primary" name="acao" value="criarSessao">Criar</button>
+                </form>
+            </div>
+            <script>
+                $(function () {
+                    var escopo = $('#sessoes');
+                    escopo.find('.criar_btn').click(function (e) {
+                        e.preventDefault();
+                        escopo.find('.criar_div').slideToggle();
+                        escopo.find('.criar_div input[name=nome]').focus();
+                    });
+                });
+            </script>
+        </div>
     </div>
     <hr />
-    <h2>Minhas sessões</h2>
-
-    <div class="ml-3">
-        <!-- BEGIN block_sessao -->
-        <a href="gerente/{S->id}">{S->nome} ({S->unidade})</a> | {S->estado}<br>
-        <!-- END block_sessao -->
-        Sem sessões.
-        <!-- FINALLY block_sessao -->
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Minhas sessões</h2>
+            <table class="table table-sm table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Quando</th>
+                        <th>Unidade</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- BEGIN block_sessao -->
+                    <tr>
+                        <td><a href="gerente/{S->id}">{S->nome}</a> </td>
+                        <td> {S->quando}</td>
+                        <td> {S->unidade}</td>
+                        <td> {S->estado}</td>
+                    </tr>
+                    <!-- END block_sessao -->
+                </tbody>
+            </table>
+            <!-- BEGIN block_sem_sessao -->
+            Sem sessões para exibir.
+            <!-- END block_sem_sessao -->
+        </div>
     </div>
-    <script>
-        $(function () {
-            var escopo = $('#sessoes');
-
-            escopo.find('.criar_btn').click(function (e) {
-                e.preventDefault();
-                escopo.find('.criar_div').slideToggle();
-                escopo.find('.criar_div input[name=nome]').focus();
-
-            });
-        });
-    </script>
 </div>
 <!-- END block_user -->
-<br>
-<hr>
-<div>
-    <a href="demo/">Painel de demostração</a>
-</div>
