@@ -566,16 +566,16 @@
         },
         {
             "name": "raelgc/template",
-            "version": "v2.2.6",
+            "version": "v2.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/raelgc/template.git",
-                "reference": "2a523ae5e62b74f9a901878bbc58a8401964ea58"
+                "reference": "43ed1d3c0752f56474399cf75a515b0b8b4d08d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/raelgc/template/zipball/2a523ae5e62b74f9a901878bbc58a8401964ea58",
-                "reference": "2a523ae5e62b74f9a901878bbc58a8401964ea58",
+                "url": "https://api.github.com/repos/raelgc/template/zipball/43ed1d3c0752f56474399cf75a515b0b8b4d08d0",
+                "reference": "43ed1d3c0752f56474399cf75a515b0b8b4d08d0",
                 "shasum": ""
             },
             "require": {
@@ -602,7 +602,7 @@
             "keywords": [
                 "template"
             ],
-            "time": "2020-05-15T21:40:37+00:00"
+            "time": "2020-05-16T00:18:17+00:00"
         },
         {
             "name": "spipu/html2pdf",
