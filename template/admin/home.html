@@ -99,7 +99,7 @@
                 <tr>
                     <td>{log->datetime}</td>
                     <td>{log->message}</td>
-                    <td>{log->context|json_encode}</td>
+                    <td>{log->context|json_encode:256}</td>
                     <td>{log->extra|json_encode}</td>
                 </tr>
                 <!-- END block_log -->
