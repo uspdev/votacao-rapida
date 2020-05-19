@@ -108,6 +108,8 @@ class Gerente
         $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user['codpes'];
         $sessao = Api::send($endpoint);
 
+        //echo '<pre>';print_r($sessao);exit;
+
         // as acoes de post ficam separadas para melhorar a leitura do código
         if ($this->method == "POST") {
             $this->sessaoPostActions($sessao);
