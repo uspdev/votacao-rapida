@@ -126,7 +126,7 @@ class Votacao
 
     public static function adicionarAlternativas($votacao, $alternativas_string)
     {
-        $votacao->ownAlternativaList = []; //limpando as existentes primeiro
+        R::trashALl($votacao->ownAlternativaList); //limpando as existentes primeiro
         $alternativas = explode(PHP_EOL, $alternativas_string);
         foreach ($alternativas as $texto) {
             if (!empty(trim($texto))) {
