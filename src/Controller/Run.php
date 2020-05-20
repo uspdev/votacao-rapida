@@ -124,7 +124,8 @@ class Run
                 //vamos ver se o voto veio para votação correta
                 if (
                     $votacao->id == $data->votacao_id &&
-                    !empty($data->alternativa_id)
+                    !empty($data->alternativa_id) &&
+                    in_array($data->alternativa_id, array_column($votacao->ownAlternativaList, 'id'))
                 ) {
                     $data->user_agent = \Flight::request()->user_agent;
                     $resposta = Votacao::computarVoto($sessao, $votacao, $data);
