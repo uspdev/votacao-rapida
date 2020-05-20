@@ -265,7 +265,7 @@ class Run
                 }
                 // ordenando por apelido
                 usort($v->votos, function ($a, $b) {
-                    return strcmp($a->apelido, $b->apelido);
+                    return strcmp(strtoupper($a->apelido), strtoupper($b->apelido));
                 });
                 foreach ($v->votos as $voto) {
                     $tpl->voto = $voto;
