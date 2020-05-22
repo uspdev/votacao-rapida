@@ -54,15 +54,21 @@
 
         this.on('change', ':input', function (e) {
             $(e.target).data('changed', true);
+            console.log($(e.target).data('changed'));
         });
 
-        this.on('submit', '.form_template form', function () {
+        this.on('submit', 'form', function (e) {
+            console.log(this);
+            //e.preventDefault();
             if ($(this).find(':input[name=acao]').val() != opts.addAction) {
                 $(this).find(':input:not([type=hidden], [type=submit])').each(function () {
                     if ($(this).data('changed') == true) {
                         $(this).prop('disabled', false);
+                        console.log('enabled ', $(this));
+
                     } else {
                         $(this).prop('disabled', true);
+                        console.log('disabled ', $(this));
                     }
                 });
             }
