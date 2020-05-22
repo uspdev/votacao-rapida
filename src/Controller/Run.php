@@ -191,6 +191,7 @@ class Run
                 Votacao::limparVotosExistentes($votacao);
 
                 $votacao->estado = $acao->estado;
+                $votacao->data_ini = date('Y-m-d H:i:s');
                 R::store($votacao);
                 return ['msg' => $acao->msg];
                 break;
@@ -203,6 +204,13 @@ class Run
 
             case '4': //Mostrar resultado
                 $votacao->estado = $acao->estado;
+                if (empty($votacao->data_fim)) {
+                    $votacao->data_fim = date('Y-m-d H:i:s');
+
+                    // vamos exportar para um arquivo externo somente da primeira vez
+                    Votacao::exportar($sessao, $votacao);
+                }
+
                 R::store($votacao);
                 return ['msg' => $acao->msg];
                 break;
@@ -222,17 +230,14 @@ class Run
                 Votacao::limparVotosExistentes($votacao);
 
                 $votacao->estado = $acao->estado;
+                $votacao->data_ini = date('Y-m-d H:i:s');
                 R::store($votacao);
                 return ['msg' => $acao->msg];
                 break;
 
             case '7': // finalizar
                 $votacao->estado = $acao->estado;
-                $votacao->data_fim = date("Y-m-d H:i:s");
                 R::store($votacao);
-
-                // vamos exportar para um arquivo externo
-                Votacao::exportar($sessao, $votacao);
 
                 return ['msg' => $acao->msg];
                 break;

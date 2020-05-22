@@ -111,17 +111,27 @@ class Votacao
 
     public static function atualizar($votacao, $data)
     {
-        foreach ($data as $key => $val) {
-            if (in_array($key, ['nome', 'descricao', 'tipo'])) {
-                $votacao->$key = trim($val);
+        // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
+        // vamos verificar as respostas também
+        if (empty($votacao->data_ini) and !empty($votacao->ownRespostaList)) {
+            // se não tiver sido votado, vamos editar
+            foreach ($data as $key => $val) {
+                // vamos aceitar do $data somente os campos autorizados
+                if (in_array($key, ['nome', 'descricao', 'tipo'])) {
+                    $votacao->$key = trim($val);
+                }
             }
-        }
-        R::store($votacao);
+            R::store($votacao);
 
-        if (!empty($data->alternativas)) {
-            SELF::adicionarAlternativas($votacao, $data->alternativas);
+            // vamos mexer nas algternativas somente se for enviado
+            if (!empty($data->alternativas)) {
+                SELF::adicionarAlternativas($votacao, $data->alternativas);
+            }
+            return true;
+        } else {
+            // se ja tiver sido votado não faremos nada
+            return false;
         }
-        return true;
     }
 
     public static function adicionarAlternativas($votacao, $alternativas_string)
@@ -142,11 +152,19 @@ class Votacao
 
     public static function remover($id)
     {
-        // tem de remover as alternativas e respostas
         $votacao = R::load('votacao', $id);
-        R::trashALl($votacao->ownAlternativaList);
-        R::trashAll($votacao->ownRespostaList);
-        R::trash($votacao);
+        // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
+        // vamos verificar as respostas também
+        if (empty($votacao->data_ini) and !empty($votacao->ownRespostaList)) {
+            // se nao foi votado removemos as alternativas 
+            R::trashALl($votacao->ownAlternativaList);
+            // R::trashAll($votacao->ownRespostaList);
+            R::trash($votacao);
+            return true;
+        } else {
+            // se já foi votado não fazemos nada
+            return false;
+        }
     }
 
     public static function limparVotosExistentes($votacao)

@@ -42,8 +42,8 @@ class Gerente
         } else {
             $user['vinculos'] = array_column($res['vinculo'], 'tipoVinculo');
             $usr = Api::send('/gerente/nologin', $user);
-            SS::setMsg(['class'=>'alert-danger', 'msg'=>'Usuário sem acesso ao sistema "Votação Rápida"']);
-            header('Location: '. getenv('WWWROOT'));
+            SS::setMsg(['class' => 'alert-danger', 'msg' => 'Usuário sem acesso ao sistema "Votação Rápida"']);
+            header('Location: ' . getenv('WWWROOT'));
             exit;
         }
 
@@ -108,7 +108,8 @@ class Gerente
         $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user['codpes'];
         $sessao = Api::send($endpoint);
 
-        //echo '<pre>';print_r($sessao);exit;
+        //mostra a sessao (debug)
+        //echo '<pre>';print_r($sessao);exit; 
 
         // as acoes de post ficam separadas para melhorar a leitura do código
         if ($this->method == "POST") {
@@ -150,6 +151,10 @@ class Gerente
                 $v->alternativas = '';
                 foreach ($v->ownAlternativa as $a) {
                     $v->alternativas .= $a->texto;
+                    if (!empty($v->data_fim)) {
+                        // se finalizou vamos mostrar a totalização nas alternativas
+                        $v->alternativas .= ' (' . $a->votos . ')';
+                    }
                     if (next($v->ownAlternativa)) $v->alternativas .= "\n";
                 }
                 $tpl->V = $v;
@@ -234,6 +239,8 @@ class Gerente
 
     protected function sessaoPostActions($sessao)
     {
+        // mostrar o post antes de submeter (debug)
+        //echo '<pre>';print_r($this->data->getData());exit;
         $user = SS::get('user');
         if (!$user) {
             $ret = ['status' => 'erro', 'data' => 'Necessário autenticar novamente'];

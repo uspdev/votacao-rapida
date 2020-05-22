@@ -148,7 +148,7 @@ class Gerente
                         if ($ret = Votacao::atualizar($votacao, $this->data)) {
                             return ['status' => 'ok', 'data' => 'Votação atualizada com sucesso.'];
                         } else {
-                            return ['status' => 'erro', 'data' => $ret];
+                            return ['status' => 'erro', 'data' => 'Impossível editar uma votação que já foi votada'];
                         }
                     }
                     return ['status' => 'erro', 'data' => 'Votação id=' . $this->data->id . ' não encontrada.'];
@@ -165,7 +165,7 @@ class Gerente
                     if ($ret = Votacao::remover($this->data->id)) {
                         return ['status' => 'ok', 'data' => 'Votação removida com sucesso.'];
                     } else {
-                        return ['status' => 'erro', 'data' => $ret];
+                        return ['status' => 'erro', 'data' => 'Impossível remover uma votação que já foi votada'];
                     }
                     break;
 
@@ -197,7 +197,12 @@ class Gerente
         $sessao->sharedUsuarioList;
         // vamos buscar as alternativas também
         foreach ($sessao->ownVotacaoList as $v) {
-            $v->ownAlternativaList;
+            foreach ($v->ownAlternativaList as $a) {
+                $q = 'SELECT count(id) as total
+                FROM resposta
+                WHERE alternativa_id = ? AND last = 1';
+            $a->votos = R::getCell($q, [$a->id]);
+            };
         }
         $sessao->with('ORDER BY apelido')->ownTokenList;
         return $sessao;

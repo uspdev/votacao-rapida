@@ -32,7 +32,8 @@
         <!-- BEGIN block_votacao -->
         <div class="item my-2">
             <div class="nome">
-                {V->nome} <span class="badge {V->class}">{V->tipo}</span>
+                {V->nome} <span class="badge {V->class}">{V->tipo}</span> 
+                {V->data_ini|show_if:<span class="badge badge-info">Votado</span>}
                 <span class="item_target" nome="{V->nome}" descricao="{V->descricao}" tipo="{V->tipo}"
                     alternativas="{V->alternativas}" id="{V->id}"></span>
             </div>
