@@ -5,6 +5,7 @@
   * limitado a edição e remoção de votações que já tenham sido votada;
   * publicado a totalização das votações para o gerente
   * registrando datas (e horário) de início e fim da votação para fins de relatório e controle;
+  * ajustado js para não submeter campos do form que não tenham sido alerados
 
 * 20/05/2020
   * Apresentação para a comunidade USP com convite no GIACAD, TI-USP e USPDEV, via google meet
