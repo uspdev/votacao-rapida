@@ -31,6 +31,8 @@ Mesmo em dev, não utilize o servidor interno do PHP pois ele é monotarefa e o 
 
 ## Mais informações
 
+[Changelog](doc/changelog.md)
+
 [Descrição funcional](doc/descricao_funcional.md)
 
 [Descrição técnica](doc/descricao_tecnica.md)
