@@ -96,7 +96,7 @@ class Gerente
                                 $line = mb_convert_encoding($line, 'UTF-8', 'ISO-8859-1');
                             }
                             $eleitor = str_getcsv($line, ';');
-                            $res = Token::adicionarTokenAberto($sessao, ['apelido' => $eleitor[0], 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
+                            $res = Token::adicionarTokenAberto($sessao, ['apelido' => substr($eleitor[0],0, 20), 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
                             ($res) ? $s++ : $r++;
                             $t++;
                         }
