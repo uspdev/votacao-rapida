@@ -61,7 +61,7 @@
             console.log(this);
             //e.preventDefault();
             if ($(this).find(':input[name=acao]').val() != opts.addAction) {
-                $(this).find(':input:not([type=hidden], [type=submit])').each(function () {
+                $(this).find(':input:not([type=hidden], [type=submit], [type=file])').each(function () {
                     if ($(this).data('changed') == true) {
                         $(this).prop('disabled', false);
                         console.log('enabled ', $(this));
