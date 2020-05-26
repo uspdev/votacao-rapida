@@ -3,6 +3,7 @@ require_once __DIR__ . '/../vendor/autoload.php';
 require_once __DIR__ . '/functions.php';
 
 use \RedBeanPHP\R as R;
+use Uspdev\Votacao\Model\Migrationlogger;
 
 # Constantes do Sistema
 define('ROOTDIR', realpath(__DIR__ . '/..'));
@@ -73,3 +74,10 @@ if ($amb == 'dev') {
 if ($amb == 'prod') {
     R::freeze(true);
 }
+
+$ml = new Migrationlogger(sprintf(ROOTDIR.'/sql/migration_%s.sql', date('Y-m-d')));
+
+R::getDatabaseAdapter()
+    ->getDatabase()
+    ->setLogger($ml)
+    ->setEnableLogging(TRUE);
