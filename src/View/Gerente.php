@@ -72,6 +72,9 @@ class Gerente
         $endpoint = '/gerente/listarSessoes?codpes=' . $user['codpes'];
         $sessoes = Api::send($endpoint);
 
+        // debug
+        //echo '<pre>';print_r($sessoes);exit;
+
         if ($this->method == "POST" && $this->data->acao == 'criarSessao') {
             $endpoint = '/gerente/sessao/0?codpes=' . $user['codpes'];
             $data = $this->data->getData();

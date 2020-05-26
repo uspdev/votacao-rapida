@@ -20,6 +20,10 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 * composer install
 * cp .env.example .env
 * Ajuste o .env conforme necessário
+* Utilize AMBIENTE='dev' para criar as tabelas on the fly
+* Rode `php cli\atualizar_estrutura.php`
+* Rode `php cli\salvarAdmin.php` para cadastrar-se como admin
+* Ajuste a permissão da pasta local e todo o conteúdo para que o apache possa escrever nele. Outra opção é usar o módulo mpm-itk do apache para que ele rode no mesmo usuário da aplicação (http://mpm-itk.sesse.net/)
 
 É esperado que seja cadastrada a seguinte url de rertono (callback): /login
 
