@@ -70,14 +70,11 @@ R::selectDatabase('votacao');
 R::useFeatureSet('latest');
 if ($amb == 'dev') {
     R::freeze(false);
+    // vamos monitorar mudanças no BD
+    $ml = new Migrationlogger(sprintf(ROOTDIR . '/sql/migration_%s.sql', date('Y-m-d')));
+    R::getDatabaseAdapter()->getDatabase()->setLogger($ml)->setEnableLogging(TRUE);
 }
 if ($amb == 'prod') {
+    // em produção a estrutura do BD está congelada
     R::freeze(true);
 }
-
-$ml = new Migrationlogger(sprintf(ROOTDIR.'/sql/migration_%s.sql', date('Y-m-d')));
-
-R::getDatabaseAdapter()
-    ->getDatabase()
-    ->setLogger($ml)
-    ->setEnableLogging(TRUE);
