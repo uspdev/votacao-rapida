@@ -9,7 +9,7 @@ class Sessao
 
     public static function listar($usuario)
     {
-        if ($usuario->codpes == '1575309') {
+        if ($usuario->admin == 1) {
             $sessoes = R::findAll('sessao');
         } else {
             $sessoes = $usuario->sharedSessao;

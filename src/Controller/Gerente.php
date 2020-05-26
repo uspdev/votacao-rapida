@@ -212,6 +212,9 @@ class Gerente
     {
         SELF::db();
         $usuario = R::findOne('usuario', 'codpes = ?', [$this->query->codpes]);
+        if (!$usuario) {
+            return ['status' => 'erro', 'msg' => 'Usuário inválido'];
+        }
         return Sessao::listar($usuario);
     }
 
