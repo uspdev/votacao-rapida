@@ -113,7 +113,7 @@ class Votacao
     {
         // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
         // vamos verificar as respostas também
-        if (empty($votacao->data_ini) and !empty($votacao->ownRespostaList)) {
+        if (empty($votacao->data_ini) and empty($votacao->ownRespostaList)) {
             // se não tiver sido votado, vamos editar
             foreach ($data as $key => $val) {
                 // vamos aceitar do $data somente os campos autorizados
