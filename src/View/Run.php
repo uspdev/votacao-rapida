@@ -316,8 +316,12 @@ class Run
 
     public static function hashTicket($hash, $ticket)
     {
-        SS::atribuir('hash', $hash);
-        SS::atribuir('ticket', $ticket);
+        SS::set('hash', $hash);
+        // se o novo ticket for diferente do existente (ou se não houver existente)
+        if ($ticket != SS::get('ticket')) {
+            SS::set('ticket', $ticket);
+            SS::unset('token_fechado');
+        }
         header('Location: ' . getenv('WWWROOT') . '/ticket');
         exit;
     }
@@ -335,6 +339,14 @@ class Run
         }
 
         $sessao = Api::obterSessao($hash, $ticket);
+        // a sessao está correta mas o ticket já foi utilizado
+        if (empty($sessao->token) && empty(SS::get('token_fechado'))) {
+            $tpl = new Template('ticket_erro.html');
+            $tpl->S = $sessao;
+            $tpl->block('block_sessao');
+            $tpl->show();
+            exit;
+        }
 
         $endpoint = '/run/' . $hash . '/' . $ticket;
 
@@ -377,15 +389,6 @@ class Run
             }
         }
 
-        // a sessao está correta mas o ticket já foi utilizado
-        if (empty($sessao->token) && empty(SS::get('token_fechado'))) {
-            $tpl = new Template('ticket_erro.html');
-            $tpl->S = $sessao;
-            $tpl->block('block_sessao');
-            $tpl->show();
-            exit;
-        }
-
         // tudo certo, vamos motrar as telas
         $tpl = new Template('ticket_index.html');
         $tpl->S = $sessao;
@@ -399,6 +402,7 @@ class Run
         }
         $tpl->show();
     }
+    
     protected static function getEstadoClass($estado)
     {
         switch ($estado) {

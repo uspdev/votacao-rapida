@@ -2,6 +2,7 @@
 
 * 27/05/2020
   * corrigindo texto do apoio (#60)
+  * corrigindo obtenção de token fechado(#59)
 
 * 26/05/2020
   * implementando classe para migration (#57)

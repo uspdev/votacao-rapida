@@ -137,6 +137,12 @@ class sessaoPhp
         return true;
     }
 
+    public static function unset($chave)
+    {
+        unset($_SESSION[$chave]);
+        return true;
+    }
+
     public static function getDel($chave)
     {
         $ret = empty($_SESSION[$chave]) ? '' : $_SESSION[$chave];
