@@ -57,3 +57,12 @@ A tela inicial deve ter o login único e um form para entrada de token. Se o usu
 Pode ser um app que carrega uma página web.
 Deve ter um leitor de qrcode embutido.
 A ser usado somente na votação como gerente ou eleitor. A parte de gerenciamento deverá ser no site FRONT.
+
+## Principais Bibliotecas
+
+* api: [uspdev/webservice](https://github.com/uspdev/webservice)
+* rotas: [flight](http://flightphp.com)
+* orm: [redbean](http://redbeanphp.com)
+* template: [raelgc/template](https://github.com/raelgc/template)
+* layout: [bootstrap4](https://getbootstrap.com), [bootstrap-table](https://bootstrap-table.com/), [jquery](https://jquery.com), [font awesome](https://fontawesome.com)
+  
