@@ -1,5 +1,10 @@
 # Changelog
 
+* 26/05/2020
+  * implementando classe para migration (#57)
+  * cli-lista de sessões usando api
+  * corrigido bug no usuário da api (#52)
+  * limitando o tamanho do apelido (#56)
 
 * 22/05/2020
   * limitado a edição e remoção de votações que já tenham sido votada;
