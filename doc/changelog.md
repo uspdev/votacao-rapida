@@ -1,5 +1,8 @@
 # Changelog
 
+* 27/05/2020
+  * corrigindo texto do apoio (#60)
+
 * 26/05/2020
   * implementando classe para migration (#57)
   * cli-lista de sessões usando api
