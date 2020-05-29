@@ -207,16 +207,16 @@ class Email
                 if ($envio == true) {
                     $email->enviado = date('Y-m-d H:i:s');
                     $context = [
-                        'assunto' => $arr['assunto'],
                         'sessao_id' => $email->sessao_id,
+                        'assunto' => $arr['assunto'],
                     ];
                     Log::email('enviado - ' . $arr['destinatario'], $context);
                     R::store($email);
                 } else {
                     $context = [
+                        'sessao_id' => $email->sessao_id,
                         'assunto' => $arr['assunto'],
                         'erro' => $envio,
-                        'sessao_id' => $email->sessao_id,
                     ];
                     Log::email('erro - ' . $arr['destinatario'], $context);
                 }
