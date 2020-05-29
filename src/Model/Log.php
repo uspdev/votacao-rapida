@@ -10,15 +10,21 @@ class Log
 {
     private static $logger;
 
-    public static function auth($message, $data = [])
+    public static function email($message, $context = [])
     {
-        $log = SELF::getLogger('auth');
-        $log->info($message, $data);
+        $log = SELF::getLogger('email');
+        $log->info($message, $context);
     }
 
-    public static function gerente($message, $data = []) {
-        $log = SELF::getLogger('gerente');
-        $log->info($message, $data);
+    public static function auth($message, $context = [])
+    {
+        $log = SELF::getLogger('auth');
+        $log->info($message, $context);
+    }
+
+    public static function sessao($message, $context = []) {
+        $log = SELF::getLogger('sessao');
+        $log->info($message, $context);
     }
 
     public static function listar($numLogFiles = 5) {

@@ -1,6 +1,8 @@
 # Changelog
+
 * 29/05/2020
   * envio de email ao finalizar uma votação (#64)
+  * log de envio de email(#51)
 
 * 27/05/2020
   * corrigindo texto do apoio (#60)

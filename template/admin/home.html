@@ -42,18 +42,22 @@
             <thead>
                 <tr>
                     <th data-field="datetime" data-sortable="true">datetime</th>
+                    <th data-field="level" data-sortable="true">level</th>
+                    <th data-field="canal" data-sortable="true">canal</th>
                     <th data-field="mensagem" data-sortable="true">mensagem</th>
                     <th>contexto</th>
-                    <th>extra</th>
+                    <!-- <th>extra</th> -->
                 </tr>
             </thead>
             <tbody>
                 <!-- BEGIN block_log -->
                 <tr>
                     <td>{log->datetime}</td>
+                    <td>{log->level_name}</td>
+                    <td>{log->channel}</td>
                     <td>{log->message}</td>
                     <td>{log->context|json_encode:256}</td>
-                    <td>{log->extra|json_encode}</td>
+                    <!-- <td>{log->extra|json_encode}</td> -->
                 </tr>
                 <!-- END block_log -->
             </tbody>

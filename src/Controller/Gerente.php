@@ -28,8 +28,8 @@ class Gerente
             // vamos criar nova sessão com dados do post
 
             $ns = Sessao::criar($usuario, $this->data);
-            Log::gerente('Criar sessão', [
-                'id' => $ns->id, 'hash' => $ns->hash,
+            Log::sessao('Criar sessão', [
+                'sessao_id' => $ns->id, 'hash' => $ns->hash,
                 'usuario-codpes' => $usuario->codpes, 'usuario-nome' => $usuario->nome
             ]);
 
@@ -178,8 +178,8 @@ class Gerente
                     break;
 
                 case 'apagarSessao':
-                    Log::gerente('Remover sessão', [
-                        'id' => $sessao->id, 'hash' => $sessao->hash,
+                    Log::sessao('Remover sessão', [
+                        'sessao_id' => $sessao->id, 'hash' => $sessao->hash,
                         'usuario-codpes' => $usuario->codpes, 'usuario-nome' => $usuario->nome,
                     ]);
 

@@ -201,11 +201,26 @@ class Email
                 $email_arr = $email->export();
                 unset($email_arr['id']);
                 unset($email_arr['sessao_id']);
-                $arr = array_map('unserialize', $email_arr);
 
-                SELF::send($arr);
-                $email->enviado = date('Y-m-d H:i:s');
-                R::store($email);
+                $arr = array_map('unserialize', $email_arr);
+                $envio = SELF::send($arr);
+                if ($envio == true) {
+                    $email->enviado = date('Y-m-d H:i:s');
+                    $context = [
+                        'assunto' => $arr['assunto'],
+                        'sessao_id' => $email->sessao_id,
+                    ];
+                    Log::email('enviado - ' . $arr['destinatario'], $context);
+                    R::store($email);
+                } else {
+                    $context = [
+                        'assunto' => $arr['assunto'],
+                        'erro' => $envio,
+                        'sessao_id' => $email->sessao_id,
+                    ];
+                    Log::email('erro - ' . $arr['destinatario'], $context);
+                }
+
                 $count++;
             }
             return $count;
@@ -248,13 +263,12 @@ class Email
         //$mail->Body = $arr['corpo']; 
         $mail->msgHTML($arr['corpo']);
         //$mail->AltBody = $arr['alt']; //PlainText, para caso quem receber o email não aceite o corpo HTML
-        $mail->send();
-        return true;
+
         if (!$mail->send()) {
             return $mail->ErrorInfo;
         } else {
             return true;
-        };
+        }
     }
 
     protected static function qrCodePngData($url)
