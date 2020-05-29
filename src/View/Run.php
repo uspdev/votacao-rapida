@@ -264,9 +264,9 @@ class Run
                     $dividir = count($v->votos) - 1;
                 }
                 // ordenando por apelido
-                usort($v->votos, function ($a, $b) {
-                    return strcmp(strtoupper($a->apelido), strtoupper($b->apelido));
-                });
+                // usort($v->votos, function ($a, $b) {
+                //     return strcmp(strtoupper($a->apelido), strtoupper($b->apelido));
+                // });
                 foreach ($v->votos as $voto) {
                     $tpl->voto = $voto;
                     $tpl->block('resultado_voto');

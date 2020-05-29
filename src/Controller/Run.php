@@ -206,9 +206,8 @@ class Run
                 $votacao->estado = $acao->estado;
                 if (empty($votacao->data_fim)) {
                     $votacao->data_fim = date('Y-m-d H:i:s');
-
                     // vamos exportar para um arquivo externo somente da primeira vez
-                    Votacao::exportar($sessao, $votacao);
+                    Votacao::exportar($votacao);
                 }
 
                 R::store($votacao);
@@ -281,19 +280,8 @@ class Run
                     break;
                 case '4': // resultado
                     // mostra o resultado
-                    $votacao->respostas = Votacao::listarRespostas($votacao);
-
-                    //vamos obter os votos
-                    //$votos = R::findAll('resposta', 'votacao_id = ? and last = 1', [$votacao->id]);
-                    $votos = R::getAll(
-                        'SELECT r.*, a.texto as alternativa
-                         FROM resposta as r, alternativa as a
-                         WHERE r.alternativa_id = a.id AND r.votacao_id = ? AND r.last = 1
-                         ORDER BY r.nome ASC',
-                        [$votacao->id]
-                    );
-                    $votacao->votos = $votos;
-
+                    $votacao->respostas = Votacao::listarAlternativa($votacao);
+                    $votacao->votos = Votacao::listarResposta($votacao);
                     $painel = $votacao;
                     break;
             }
@@ -308,10 +296,7 @@ class Run
 
         // vamos obter o total de votos computados
         // precisa para 2,3 e 4
-        $painel->computados = R::getCell(
-            'SELECT count(id) FROM resposta WHERE votacao_id = ? and last = 1',
-            [$painel->id]
-        );
+        $painel->computados = Votacao::contarResposta($painel);
 
         // vamos colocar o nome do estado
         $painel->estado = R::getCell('SELECT nome FROM estado WHERE cod = ' . $painel->estado);

@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="pt-br">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div style="width:840px;">
+        <img style="background-repeat: repeat-x; height: 20px; width:100%; margin:0px; padding:0px; border: 0px"
+            src="cid:headtop.png" alt="cabecalho" />
+
+        <h3 style="margin:3px 0px 0px 4px;">
+            Votação rápida - Relatório de votação
+        </h3>
+
+        <div style="padding-top: 12px;">
+            <span style="color:gray; padding-left: 12px;">Sessão:</span> {S->nome}<br>
+            <span style="color:gray; padding-left: 12px;">Quando:</span> {S->quando}<br>
+            <span style="color:gray; padding-left: 12px;">Estado:</span> {S->estado}<br>
+            <span style="color:gray; padding-left: 12px;">Hash:</span> {S->hash}<br>
+            <span style="color:gray; padding-left: 12px;">Link:</span> {S->link_ori}<br>
+        </div>
+
+        <div style="padding-top: 12px;">
+            <span style="padding-left: 4px; font-weight:bold;">Dados da votação</span><br>
+            <span style="color:gray; padding-left: 12px">Nome:</span> {V->nome}<br>
+            <span style="color:gray; padding-left: 12px">Descrição:</span>
+            <table style="padding-left: 20px">
+                <tr>
+                    <td>{V->descricao|nl2br}</td>
+                </tr>
+            </table>
+            <span style="color:gray; padding-left: 12px">Tipo:</span> {V->tipo}<br>
+            <span style="color:gray; padding-left: 12px">Início:</span> {V->data_ini}<br>
+            <span style="color:gray; padding-left: 12px">Fim:</span> {V->data_fim}<br>
+            <span style="color:gray; padding-left: 12px">Duração:</span> {V->duracao}<br>
+        </div>
+
+        <div style="padding-top: 12px;">
+            <span style="padding-left: 4px; font-weight:bold;">Resumo</span><br>
+            <span style="color:gray; padding-left: 12px">Votos computados:</span> {V->num_resposta} votos<br>
+            <span style="color:gray; padding-left: 12px">Votos considerados:</span> {V->num_resposta_valida} votos<br>
+            <!-- BEGIN block_alternativa -->
+            <span style="color:gray; padding-left: 12px">{A->texto}:</span> {A->num_resposta} votos<br>
+            <!-- END block_alternativa -->
+        </div>
+
+        <div style="padding-top: 12px;">
+            <span style="padding-left: 4px; font-weight:bold;">
+                Votos individuais (a alternativa *destacada* é a que foi considerada)
+            </span><br>
+            <!-- BEGIN block_resposta_aberta -->
+            <span style="padding-left: 12px">{R->i}; {R->apelido}; {R->token}; {R->alternativa}</span><br>
+            <!-- END block_resposta_aberta -->
+            <!-- BEGIN block_resposta_secreta -->
+            <span style="padding-left: 12px">{R->i}; {R->token}; {R->alternativa}</span><br>
+            <!-- END block_resposta_secreta -->
+        </div>
+        <div style="padding-top: 12px;">
+
+            <!-- BEGIN block_eleitor -->
+            <span style="padding-left: 4px; font-weight:bold;">Eleitores habilitados</span><br>
+            <!-- BEGIN block_eleitor_fechado -->
+            <span style="padding-left: 12px">{E->i}; {E->apelido}; {E->token}</span><br>
+            <!-- END block_eleitor_fechado -->
+            <!-- END block_eleitor -->
+
+        </div>
+        <p>
+            IMPORTANTE: Relatório de votação emitido no momento da exibição do resultado no painel.
+            Este email foi enviado para {S->email} em {now} e contém informações confidenciais direcionadas
+            somente a este destinatário.
+        </p>
+    </div>
+</body>
+
+</html>

@@ -96,7 +96,7 @@ class Gerente
                                 $line = mb_convert_encoding($line, 'UTF-8', 'ISO-8859-1');
                             }
                             $eleitor = str_getcsv($line, ';');
-                            $res = Token::adicionarTokenAberto($sessao, ['apelido' => substr($eleitor[0],0, 20), 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
+                            $res = Token::adicionarTokenAberto($sessao, ['apelido' => substr($eleitor[0], 0, 20), 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
                             ($res) ? $s++ : $r++;
                             $t++;
                         }
@@ -197,13 +197,18 @@ class Gerente
         $sessao->sharedUsuarioList;
         // vamos buscar as alternativas também
         foreach ($sessao->ownVotacaoList as $v) {
+            // e respostas se houver
             foreach ($v->ownAlternativaList as $a) {
                 $q = 'SELECT count(id) as total
                 FROM resposta
                 WHERE alternativa_id = ? AND last = 1';
-            $a->votos = R::getCell($q, [$a->id]);
+                $a->votos = R::getCell($q, [$a->id]);
             };
+
+            // vamos obter o total de votos computados
+            $v->computados = Votacao::contarResposta($v);
         }
+
         $sessao->with('ORDER BY apelido')->ownTokenList;
         return $sessao;
     }
@@ -216,6 +221,18 @@ class Gerente
             return ['status' => 'erro', 'msg' => 'Usuário inválido'];
         }
         return Sessao::listar($usuario);
+    }
+
+    public function listarResposta($votacao_id) {
+        SELF::db();
+        $votacao = R::load('votacao', $votacao_id);
+        return Votacao::listarResposta($votacao);
+    }
+
+    public function exportarVotacao($votacao_id) {
+        SELF::db();
+        $votacao = R::load('votacao', $votacao_id);
+        return Votacao::exportar($votacao);
     }
 
     public function listarTokens($hash)

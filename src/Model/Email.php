@@ -100,6 +100,88 @@ class Email
         return true;
     }
 
+    public static function sendExportarVotacao($export)
+    {
+        $votacao = json_decode(json_encode($export));
+        $tpl = new Template(TPL . '/email/exportarVotacao.html');
+        $sessao = $votacao->sessao;
+        $sessao->link_ori = getenv('WWWROOT') . '/gerente/' . $sessao->id;
+        $tpl->S = $sessao;
+        $tpl->now = date('d/m/Y H:i:s');
+
+        // vamos calcular a duração da votação
+        $diff = strtotime($votacao->data_fim) - strtotime($votacao->data_ini);
+        if ($diff >= 60) {
+            $m = abs(floor($diff / 60));
+            $s = $diff - ($m * 60);
+            $str = $m . 'm:' . $s . 's';
+        } else {
+            $str = $diff . 's';
+        }
+        $votacao->duracao = $str;
+
+        $tpl->V = $votacao;
+
+        // vamos mostrar as alternativas e resumo
+        foreach ($votacao->ownAlternativa as $a) {
+            $tpl->A = $a;
+            $tpl->block('block_alternativa');
+        }
+
+        // vamos mostrar as respostas individuais
+        $i = 1;
+        $alt = '';
+        $respostas = $votacao->ownResposta;
+        foreach ($respostas as $r) {
+            // vamos juntar os votos computados da mesma pessoa e realçar a alternativa final
+            $alt .= ($r->last == 1) ? "*$r->alternativa*:" : "$r->alternativa:";
+            $next = next($respostas);
+            if ($votacao->tipo == 'aberta') {
+                if (!isset($next->apelido) || ($next->apelido != $r->apelido)) {
+                    $r->alternativa = substr($alt, 0, -1);
+                    $r->i = $i;
+                    $tpl->R = $r;
+                    $tpl->block('block_resposta_aberta');
+                    $alt = '';
+                    $i++;
+                }
+            } else {
+                if (!isset($next->token) || ($next->token != $r->token)) {
+                    $r->alternativa = substr($alt, 0, -1);
+                    $r->i = $i;
+                    $tpl->R = $r;
+                    $tpl->block('block_resposta_secreta');
+                    $alt = '';
+                    $i++;
+                }
+            }
+        }
+
+        // vamos mostrar os eleitores habilitados
+        if ($votacao->tipo == 'fechada') {
+            $i = 1;
+            foreach ($votacao->ownEleitorFechado as $e) {
+                $e->i = $i;
+                $tpl->E = $e;
+                $tpl->block('block_eleitor_fechado');
+                $i++;
+            }
+        }
+        $corpo = $tpl->parse();
+        SELF::adicionarFila($sessao, [
+            'destinatario' => $sessao->email,
+            'assunto' => 'Relatório de votação: ' . substr($votacao->nome, 0, 30) . '.. - ' . $sessao->nome,
+            'corpo' => $corpo,
+            'alt' => $corpo,
+            'responder_para' => $sessao->email,
+            'embedded' => [
+                ['nome' => 'headtop.png', 'data' => base64_encode(file_get_contents(TPL . '/email/headtop.png'))],
+            ],
+        ]);
+        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        return true;
+    }
+
     public static function adicionarFila($sessao, $arr)
     {
         $email = R::dispense('email');

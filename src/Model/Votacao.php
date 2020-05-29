@@ -6,18 +6,24 @@ use \RedBeanPHP\R as R;
 
 class Votacao
 {
-    public static function listarRespostas($votacao)
+    // obtem as alternativas de uma votação
+    public static function listarAlternativa($votacao)
     {
-        $r = [];
-        foreach ($votacao->ownAlternativaList as $alternativa) {
-            $alt['texto'] = $alternativa->texto;
-            $q = 'SELECT count(id) as total
-                FROM resposta
-                WHERE alternativa_id = ? AND votacao_id = ? AND last = 1';
-            $alt['votos'] = R::getCell($q, [$alternativa->id, $votacao->id]);
-            $r[] = $alt;
-        }
-        return $r;
+        $res = [];
+        // foreach ($votacao->ownAlternativaList as $alternativa) {
+        //     $alt['texto'] = $alternativa->texto;
+        //     $q = 'SELECT count(id) as total
+        //         FROM resposta
+        //         WHERE alternativa_id = ? AND votacao_id = ? AND last = 1';
+        //     $alt['votos'] = R::getCell($q, [$alternativa->id, $votacao->id]);
+        //     $res[] = $alt;
+        // }
+        foreach ($votacao->ownAlternativaList as $a) {
+            $a2 = clone $a;
+            $a2->num_resposta = $a->withCondition('last = 1')->countOwn('resposta');
+            $res[] = $a2;
+        };
+        return $res;
     }
 
     public static function obterEmVotacao($sessao)
@@ -37,23 +43,49 @@ class Votacao
         return ['msg' => 'Aguarde a próxima votação', 'votacao' => null];
     }
 
-    public static function exportar($sessao, $votacao)
+    public static function exportar($votacao)
     {
+        $sessao = clone $votacao->sessao;
+        $export = clone $votacao;
+        $export->ownAlternativa = SELF::listarAlternativa($votacao);
+        $export->num_resposta_valida = $votacao->withCondition('last = 1')->countOwn('resposta');
+        $export->num_resposta = $votacao->countOwn('resposta');
+        $export->ownResposta = SELF::listarResposta($votacao, true);
+        $export->ownEleitorFechado = $sessao->withCondition('ticket = ? ORDER BY apelido ASC', [''])->ownTokenList;
         $arq = ARQ . '/' . $sessao->hash . '-' . 'votacao_' . $votacao->id . '-resultado.json';
-        $save = $sessao->export();
-        $v = $votacao->export();
-        $v['alternativas'] = [];
+        file_put_contents($arq, json_encode($export, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+        
+        Email::sendExportarVotacao($export);
+        return $export;
+    }
 
-        // não queremos exportar descendentes, por isso o foreach
-        foreach ($votacao->ownAlternativaList as $alternativa) {
-            $v['alternativas'][] = $alternativa->export();
+    // dada uma votação obtem as respostas (votos) válidas registradas,
+    // ou seja, ignora os votos repetidos
+    public static function listarResposta($votacao, $todos = false)
+    {
+        if ($todos) {
+            $sql_todos = '';
+        } else {
+            $sql_todos = ' AND r.last = 1 ';
         }
-        $v['respostas'] = R::exportAll($votacao->ownRespostaList);
-        $v['total_respostas'] = count($v['respostas']);
-        $save['votacao'] = $v;
+        return R::convertToBeans(
+            'resposta',
+            R::getAll(
+                'SELECT r.*, a.texto as alternativa
+                FROM resposta as r, alternativa as a
+                WHERE r.alternativa_id = a.id AND r.votacao_id = ? ' . $sql_todos . '
+                ORDER BY r.apelido ASC, r.token ASC, r.last ASC',
+                [$votacao->id]
+            )
+        );
+    }
 
-        $save['tokens'] = R::exportAll($sessao->ownTokenList);
-        file_put_contents($arq, json_encode($save, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+    public static function contarResposta($votacao)
+    {
+        return R::getCell(
+            'SELECT count(id) FROM resposta WHERE votacao_id = ? and last = 1',
+            [$votacao->id]
+        );
     }
 
     public static function novoInstantaneo($texto)
