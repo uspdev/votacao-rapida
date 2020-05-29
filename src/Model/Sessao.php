@@ -83,7 +83,7 @@ class Sessao
     public static function atualizar($sessao, $data)
     {
         foreach ($data as $key => $val) {
-            if (in_array($key, ['nome', 'unidade', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
+            if (in_array($key, ['nome', 'ano', 'estado', 'logo', 'link', 'email', 'quando'])) {
                 $sessao->$key = $val;
             }
         }
