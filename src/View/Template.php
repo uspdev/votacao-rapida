@@ -53,6 +53,10 @@ namespace Uspdev\Votacao\View {
                 $this->topbar_class = 'top-bar-no-user';
                 $this->block('block_no_user');
             }
+            // vamos colocar uma tarja se estiver em dev ou teste
+            if (getenv('AMBIENTE') == 'dev') {
+                $this->block('block_dev');
+            }
             parent::show();
         }
 
