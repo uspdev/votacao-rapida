@@ -123,33 +123,19 @@ class Gerente
                     }
 
                     if (Token::adicionarTokenAberto($sessao, $eleitor)) {
-                        Log::sessao(
-                            'sucesso ' . $acao,
-                            ['sessao_id' => $sessao->id, 'apelido' => $eleitor['apelido'], 'nome' => $eleitor['nome'], 'email' => $eleitor['email']]
-                        );
                         return ['status' => 'ok', 'data' => 'Eleitor inserido com sucesso.'];
                     } else {
-                        Log::sessao(
-                            'erro ' . $acao,
-                            ['sessao_id' => $sessao->id, 'msg' => 'Eleitor já existe', 'apelido' => $eleitor['apelido'], 'nome' => $eleitor['nome'], 'email' => $eleitor['email']]
-                        );
                         return ['status' => 'erro', 'data' => 'Eleitor já existe'];
                     }
                     break;
 
                 case 'removerEleitor':
-                    $id = $this->data->id;
-                    $token = array_pop($sessao->withCondition('id = ?', [$id])->ownTokenList);
-                    if ($token) {
-                        Log::sessao('sucesso ' . $acao, ['sessao_id' => $sessao->id, 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]);
-                        R::trash($token);
+                    if (Token::removerTokenAberto($sessao, $this->data->id)) {
                         return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
                     } else {
                         // aqui só deve acontecer se usuário injetar $id inexistente
-                        Log::sessao('erro ' . $acao, ['sessao_id' => $sessao->id, 'msg' => 'Eleitor não existe nessa sessão', 'token_id' => $id]);
                         return ['status' => 'erro', 'data' => 'Eleitor não existe nessa sessão'];
                     }
-
                     break;
 
                 case 'editarEleitor':

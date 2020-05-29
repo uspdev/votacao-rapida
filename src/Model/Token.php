@@ -50,6 +50,10 @@ class Token
 
         // se já existir não cadastramos nada
         if (R::find('token', 'sessao_id = ? and (apelido = ? or nome = ? or email = ?)', [$sessao->id, $e['apelido'], $e['nome'], $e['email']])) {
+            Log::sessao(
+                'erro AdicionarEleitor',
+                ['sessao_id' => $sessao->id, 'msg' => 'Eleitor já existe', 'apelido' => $eleitor['apelido'], 'nome' => $eleitor['nome'], 'email' => $eleitor['email']]
+            );
             return false;
         }
 
@@ -69,7 +73,24 @@ class Token
             }
             //echo 'gerou repetido! ', $newToken,PHP_EOL;exit;
         }
+        Log::sessao(
+            'sucesso AdicionarEleitor',
+            ['sessao_id' => $sessao->id, 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]
+        );
         return $token;
+    }
+
+    public static function removerTokenAberto($sessao, $id)
+    {
+        $token = array_pop($sessao->withCondition('id = ?', [$id])->ownTokenList);
+        if ($token) {
+            Log::sessao('sucesso removerEleitor', ['sessao_id' => $sessao->id, 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]);
+            R::trash($token);
+            return true;
+        } else {
+            Log::sessao('erro removerEleitor', ['sessao_id' => $sessao->id, 'msg' => 'Eleitor não existe nessa sessão', 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]);
+            return false;
+        }
     }
 
     protected static function gerarTokens($sessao, $tipos)
