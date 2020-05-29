@@ -1,7 +1,7 @@
 # Changelog
 
 * 29/05/2020
-  * envio de email ao finalizar uma votação (#64)
+  * envio de email ao finalizar uma votação ( #64 )
   * log de envio de email(#51)
   * log de adicionar/remover eleitor (#62)
   * desabilitando edicao de unidade (#65)
