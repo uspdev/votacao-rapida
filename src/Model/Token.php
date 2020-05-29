@@ -48,10 +48,12 @@ class Token
         $e = array_map('trim', $eleitor);
         //$eleitor = array_intersect_key($eleitor, array_flip(['apelido', 'nome', 'email']));
 
+        // se já existir não cadastramos nada
         if (R::find('token', 'sessao_id = ? and (apelido = ? or nome = ? or email = ?)', [$sessao->id, $e['apelido'], $e['nome'], $e['email']])) {
-            return false; // já existe 
+            return false;
         }
 
+        // vamos inserir verificando se o token não é repetido
         while ($newToken = generateRandomString(6)) {
             $token = R::find('token', 'sessao_id = ? and token = ?', [$sessao->id, $newToken]);
             if (!$token) {

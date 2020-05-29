@@ -43,7 +43,8 @@ class Gerente
         }
 
         if ($this->method == 'POST') {
-            switch ($this->data->acao) {
+            $acao = $this->data->acao;
+            switch ($acao) {
                 case 'addUser':
                     $novo_usuario = R::findOrCreate('usuario', [
                         'codpes' => $this->data->codpes,
@@ -122,16 +123,33 @@ class Gerente
                     }
 
                     if (Token::adicionarTokenAberto($sessao, $eleitor)) {
+                        Log::sessao(
+                            'sucesso ' . $acao,
+                            ['sessao_id' => $sessao->id, 'apelido' => $eleitor['apelido'], 'nome' => $eleitor['nome'], 'email' => $eleitor['email']]
+                        );
                         return ['status' => 'ok', 'data' => 'Eleitor inserido com sucesso.'];
                     } else {
+                        Log::sessao(
+                            'erro ' . $acao,
+                            ['sessao_id' => $sessao->id, 'msg' => 'Eleitor já existe', 'apelido' => $eleitor['apelido'], 'nome' => $eleitor['nome'], 'email' => $eleitor['email']]
+                        );
                         return ['status' => 'erro', 'data' => 'Eleitor já existe'];
                     }
                     break;
 
                 case 'removerEleitor':
                     $id = $this->data->id;
-                    R::exec('DELETE FROM token WHERE id = ?', [$id]);
-                    return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
+                    $token = array_pop($sessao->withCondition('id = ?', [$id])->ownTokenList);
+                    if ($token) {
+                        Log::sessao('sucesso ' . $acao, ['sessao_id' => $sessao->id, 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]);
+                        R::trash($token);
+                        return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
+                    } else {
+                        // aqui só deve acontecer se usuário injetar $id inexistente
+                        Log::sessao('erro ' . $acao, ['sessao_id' => $sessao->id, 'msg' => 'Eleitor não existe nessa sessão', 'token_id' => $id]);
+                        return ['status' => 'erro', 'data' => 'Eleitor não existe nessa sessão'];
+                    }
+
                     break;
 
                 case 'editarEleitor':
@@ -223,13 +241,15 @@ class Gerente
         return Sessao::listar($usuario);
     }
 
-    public function listarResposta($votacao_id) {
+    public function listarResposta($votacao_id)
+    {
         SELF::db();
         $votacao = R::load('votacao', $votacao_id);
         return Votacao::listarResposta($votacao);
     }
 
-    public function exportarVotacao($votacao_id) {
+    public function exportarVotacao($votacao_id)
+    {
         SELF::db();
         $votacao = R::load('votacao', $votacao_id);
         return Votacao::exportar($votacao);
