@@ -69,7 +69,7 @@ class Gerente
             exit;
         }
 
-        $endpoint = '/gerente/listarSessoes?codpes=' . $user['codpes'];
+        $endpoint = '/gerente/listarSessao?codpes=' . $user['codpes'];
         $sessoes = Api::send($endpoint);
 
         // debug

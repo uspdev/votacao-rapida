@@ -7,13 +7,14 @@ use \RedBeanPHP\R as R;
 class Sessao
 {
 
-    public static function listar($usuario)
+    public static function listar($usuario, $admin = false)
     {
-        if ($usuario->admin == 1) {
+        if ($admin) {
             $sessoes = R::findAll('sessao');
         } else {
             $sessoes = $usuario->sharedSessao;
         }
+
         if (!$sessoes) {
             $sessoes = ['status' => 'ok', 'data' => 'Sem sessões para listar'];
         }

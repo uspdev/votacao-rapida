@@ -1,9 +1,11 @@
 /vendor/
-/sandbox/
+/public/assets/
 
 /local/*
 !/local/.gitkeep
 
+.phpunit*
+
 .env
 
-/public/assets/
+/sandbox/

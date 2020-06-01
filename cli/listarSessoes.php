@@ -10,7 +10,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 
 use Uspdev\Votacao\View\Api;
 
-$endpoint = '/gerente/listarSessoes?codpes=' . $argv[1];
+$endpoint = '/admin/listarSessao?codpes=' . $argv[1];
 echo 'GET ', API . $endpoint;
 $sessoes = Api::send($endpoint);
 

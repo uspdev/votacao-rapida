@@ -7,24 +7,26 @@ use Uspdev\Votacao\Model\Email;
 use Uspdev\Votacao\Model\Token;
 use Uspdev\Votacao\Model\Sessao;
 use Uspdev\Votacao\Model\Votacao;
+use Uspdev\Votacao\Model\Usuario;
 use Uspdev\Votacao\Model\Log;
 
 class Gerente
 {
+    public function __construct()
+    {
+        R::selectDatabase('votacao');
+    }
+
     public function sessao($id)
     {
         // a autenticação da api já foi tratada antes
         if (empty($this->query->codpes)) {
             return ['status' => 'erro', 'msg' => 'Sem usuário codpes'];
         }
-        SELF::db();
 
-        $usuario = R::findOne('usuario', 'codpes = ?', [$this->query->codpes]);
-        if (!$usuario) {
-            return ['status' => 'erro', 'msg' => 'Usuário inválido'];
-        }
+        $usuario = Usuario::obter($this->query->codpes);
 
-        if ($id == '0' && $this->data->acao == 'criarSessao') {
+        if ($id == '0' && !empty($this->data->acao)  && $this->data->acao == 'criarSessao') {
             // vamos criar nova sessão com dados do post
 
             $ns = Sessao::criar($usuario, $this->data);
@@ -217,39 +219,35 @@ class Gerente
         return $sessao;
     }
 
-    public function listarSessoes()
+    public function listarSessao()
     {
-        SELF::db();
-        $usuario = R::findOne('usuario', 'codpes = ?', [$this->query->codpes]);
-        if (!$usuario) {
-            return ['status' => 'erro', 'msg' => 'Usuário inválido'];
-        }
+        $usuario = Usuario::obter($this->query->codpes);
         return Sessao::listar($usuario);
     }
 
     public function listarResposta($votacao_id)
     {
-        SELF::db();
         $votacao = R::load('votacao', $votacao_id);
         return Votacao::listarResposta($votacao);
     }
 
     public function exportarVotacao($votacao_id)
     {
-        SELF::db();
         $votacao = R::load('votacao', $votacao_id);
         return Votacao::exportar($votacao);
     }
 
     public function listarTokens($hash)
     {
-        SELF::db();
         return Token::listar($hash);
     }
 
     public function nologin()
     {
         $userdata = $this->data;
+        if (empty($userdata['codpes'])) {
+            return ['status' => 'erro', 'data' => 'Faltando dados do usuario'];
+        }
         Log::auth('user denied', $userdata->getData());
         return ['status' => 'ok', 'data' => 'Log registrado com sucesso'];
     }
@@ -257,7 +255,10 @@ class Gerente
     public function login()
     {
         $userdata = $this->data;
-        SELF::db();
+        if (empty($userdata['codpes'])) {
+            return ['status' => 'erro', 'data' => 'Faltando dados do usuario'];
+        }
+        //SELF::db();
         if (!$user = R::findOne('usuario', 'codpes = ?', [$userdata['codpes']])) {
             $user = R::dispense('usuario');
         };
@@ -269,10 +270,5 @@ class Gerente
         $user->lastlogin = date('Y-m-d H:i:s');
         R::store($user);
         return $user;
-    }
-
-    protected static function db()
-    {
-        R::selectDatabase('votacao');
     }
 }

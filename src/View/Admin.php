@@ -4,18 +4,27 @@ namespace Uspdev\Votacao\View;
 
 use \RedBeanPHP\R as R;
 use Uspdev\Votacao\Model\Log;
+use Uspdev\Votacao\View\sessaoPhp as SS;
 
 class Admin
 {
     public static function home()
     {
-        $endpoint = '/admin/listarUsuarios';
+        $endpoint = '/admin/listarUsuario?codpes='.SS::getUser()['codpes'];
         $usuarios = Api::send($endpoint);
-        //echo '<pre>';print_r($users);exit;
+        //echo '<pre>';print_r($usuarios);exit;
         $tpl = new Template('admin/home.html');
         foreach ($usuarios as $u) {
             $tpl->U = $u;
             $tpl->block('block_usuarios');
+        }
+
+        // logs
+        $logs = Log::listar();
+
+        foreach ($logs as $log) {
+            $tpl->log = json_decode($log);
+            $tpl->block('block_log');
         }
 
         // vamos mostrar as relações entre estados e ações
@@ -51,14 +60,6 @@ class Admin
             }
             $tpl->A = $a;
             $tpl->block('block_acao');
-        }
-
-        // logs
-        $logs = Log::listar();
-
-        foreach ($logs as $log) {
-            $tpl->log = json_decode($log);
-            $tpl->block('block_log');
         }
 
         $tpl->show('userbar');

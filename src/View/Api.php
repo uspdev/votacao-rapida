@@ -75,7 +75,7 @@ class Api
         $verboseLog = stream_get_contents($verbose);
         $obj = json_decode($ret);
         if (!is_object($obj)) {
-            echo '<pre>';
+            echo '<pre>', PHP_EOL;
             echo 'Erro no retorno da API: ', PHP_EOL;
             echo 'endpoint = ', API, $endpoint, PHP_EOL;
             echo 'postdata = ', json_encode($postdata), PHP_EOL;

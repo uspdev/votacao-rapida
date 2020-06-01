@@ -26,6 +26,9 @@
         "bower-asset/bootstrap4": "4.5.*",
         "npm-asset/bootstrap-table": "^1.16"
     },
+    "require-dev": {
+        "phpunit/phpunit": "^8"
+    },
     "repositories": [
         {
             "type": "composer",
@@ -44,11 +47,11 @@
             ]
         }
     },
-    "autoload" : {
-		"psr-4" : {
-			"Uspdev\\Votacao\\" : "src"
-		}
-	},
+    "autoload": {
+        "psr-4": {
+            "Uspdev\\Votacao\\": "src"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
