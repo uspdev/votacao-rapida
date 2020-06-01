@@ -13,6 +13,7 @@
         "ext-curl": "*",
         "uspdev/webservice": "1.*",
         "uspdev/senhaunica": "^1.1",
+        "mikecao/flight": "^1.3",
         "gabordemooij/redbean": "^5.4",
         "raelgc/template": "^2.2",
         "vlucas/phpdotenv": "^4.1",
