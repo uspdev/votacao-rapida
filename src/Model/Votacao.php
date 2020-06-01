@@ -51,7 +51,7 @@ class Votacao
         $export->num_resposta_valida = $votacao->withCondition('last = 1')->countOwn('resposta');
         $export->num_resposta = $votacao->countOwn('resposta');
         $export->ownResposta = SELF::listarResposta($votacao, true);
-        $export->ownEleitorFechado = $sessao->withCondition('ticket = ? ORDER BY apelido ASC', [''])->ownTokenList;
+        $export->eleitor_fechado = $sessao->withCondition('ticket = ? ORDER BY apelido ASC', [''])->ownTokenList;
         $arq = ARQ . '/' . $sessao->hash . '-' . 'votacao_' . $votacao->id . '-resultado.json';
         file_put_contents($arq, json_encode($export, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
         

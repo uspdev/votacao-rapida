@@ -160,7 +160,7 @@ class Email
         // vamos mostrar os eleitores habilitados
         if ($votacao->tipo == 'fechada') {
             $i = 1;
-            foreach ($votacao->ownEleitorFechado as $e) {
+            foreach ($votacao->eleitor_fechado as $e) {
                 $e->i = $i;
                 $tpl->E = $e;
                 $tpl->block('block_eleitor_fechado');
