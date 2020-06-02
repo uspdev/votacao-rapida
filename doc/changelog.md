@@ -1,5 +1,8 @@
 # Changelog
 
+* 02/6/2020
+  * Separando listagem de admin (#66)
+
 * 01/06/2020
   * começando com unit test (#67)
 

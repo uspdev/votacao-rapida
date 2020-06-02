@@ -1,6 +1,7 @@
 <h1>Votação rápida</h1>
-<!-- BEGIN block_user -->
 <div id="sessoes">
+
+    <!-- BEGIN block_user -->
     <div class="row">
         <div class="col-md-12">
             <h3>
@@ -56,5 +57,47 @@
             <!-- END block_sem_sessao -->
         </div>
     </div>
+    <!-- END block_user -->
+
+    <!-- BEGIN block_admin -->
+    <br>
+    <script src="assets/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+    <div class="row">
+        <div class="col-md-12">
+            <h2 class="text-danger">Todas as sessões (admin)</h2>
+            <table class="table table-sm table-hover table-striped" 
+                data-toggle="table"
+                data-filter-control="true"
+                >
+                <thead>
+                    <tr>
+                        <th>id</th>
+                        <th data-field="nome" data-filter-control="input">Nome</th>
+                        <th data-field="quando" data-filter-control="input">Quando</th>
+                        <th data-field="unidade" data-filter-control="select">Unidade</th>
+                        <th data-field="estado" data-filter-control="input">Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- BEGIN block_sessao_admin -->
+                    <tr>
+                        <td>{SA->id}</td>
+                        <td><a href="gerente/{S->id}">{SA->nome}</a></td>
+                        <td> {SA->quando}</td>
+                        <td> {SA->unidade}</td>
+                        <td> {SA->estado}</td>
+                    </tr>
+                    <!-- END block_sessao_admin -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- END block_admin -->
 </div>
-<!-- END block_user -->
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>

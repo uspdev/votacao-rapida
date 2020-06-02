@@ -43,7 +43,7 @@ namespace Uspdev\Votacao\View {
                     $this->user = $user; // transformando array em obj
                     $this->block('block_user_in');
                     if (SS::isAdmin()) {
-                        $this->block('block_admin');
+                        $this->block('blockmain_admin');
                     }
                 } else {
                     $this->block('block_user_out');

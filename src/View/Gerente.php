@@ -92,6 +92,10 @@ class Gerente
             exit;
         }
 
+        $endpoint = '/admin/listarSessao?codpes=' . $user['codpes'];
+        $sessoes_admin = Api::send($endpoint);
+        //echo '<pre>';print_r($sessoes_admin);exit;
+
         $tpl = new Template('gerente/index.html');
 
         // vamos listar as sessões desse usuário se houver
@@ -101,6 +105,15 @@ class Gerente
                 $tpl->block('block_sessao');
             }
         }
+
+        // vamos listar as sessoes de admin se houver
+        if (empty($sessoes->status)) {
+            foreach ($sessoes_admin as $sessao) {
+                $tpl->SA = $sessao;
+                $tpl->block('block_sessao_admin');
+            }
+        }
+
         $tpl->block('block_user');
         $tpl->show('userbar');
     }
