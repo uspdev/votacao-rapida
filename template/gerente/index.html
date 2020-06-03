@@ -44,7 +44,7 @@
                 <tbody>
                     <!-- BEGIN block_sessao -->
                     <tr>
-                        <td><a href="gerente/{S->id}">{S->nome}</a> </td>
+                        <td><a href="gerente/{S->id}">{S->nome|tpl_showifnot:-- sessão sem nome --}</a></td>
                         <td> {S->quando}</td>
                         <td> {S->unidade}</td>
                         <td> {S->estado}</td>
@@ -81,7 +81,7 @@
                 <tbody>
                     <!-- BEGIN block_sessao_admin -->
                     <tr>
-                        <td>{SA->id}</td>
+                        <td><a href="gerente/{SA->id}">{SA->id}</a></td>
                         <td><a href="gerente/{SA->id}">{SA->nome}</a></td>
                         <td> {SA->quando}</td>
                         <td> {SA->unidade}</td>

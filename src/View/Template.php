@@ -76,6 +76,11 @@ namespace {
         return $str ? $cond : '';
     }
 
+    function tpl_showifnot($str, $cond)
+    {
+        return !$str ? $cond : $str;
+    }
+
     function tpl_append($str, $pre, $pos = '')
     {
         return $pre . ' ' . $str . ' ' . $pos;
