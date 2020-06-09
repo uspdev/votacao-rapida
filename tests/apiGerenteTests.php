@@ -8,12 +8,12 @@ use Uspdev\Votacao\View\Api;
 class apiGerenteTests extends TestCase
 {
 
-    // primeiro criar nova sessão
-    public function testCriarNovaSessao()
-    {
-        // passando id = 0 no endpoit de obterSessao
-        return true;
-    }
+    // // primeiro criar nova sessão
+    // public function testCriarNovaSessao()
+    // {
+    //     // passando id = 0 no endpoit de obterSessao
+    //     return true;
+    // }
 
     // primeiro vamos testar listagem para depois testar 
     // obter pois obter usa listagem
@@ -64,19 +64,126 @@ class apiGerenteTests extends TestCase
         $this->assertStringContainsString($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 
-    public function testSessaoPostActions()
+    public function testAdicionarEleitorSucesso(): void
     {
-        // varias actions de post para serem testadas
-        return true;
+        $user = '1575309'; // para listar sessoes
+        $endpoint = '/gerente/listarSessao?codpes=' . $user;
+        $sessoes = Api::send($endpoint);
+        $sessao = end($sessoes);
+        $id = $sessao->id;
+
+        $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user;
+        $data = [
+            'acao' => 'adicionarEleitor',
+            'apelido' => 'unit_test',
+            'nome' => 'Unit test',
+            'email' => 'kawabata+unit-test@usp.br'
+        ];
+        $sessao = Api::send($endpoint, $data);
+
+        $expected = '{"status":"ok","data":"Eleitor inserido com sucesso."}';
+        $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 
-    public function testExportarVotacaoSucesso() {
-        // para exportar em email a votação
-        return true;
+    public function testAdicionarEleitorJaExiste(): void
+    {
+        $user = '1575309'; // para listar sessoes
+        $endpoint = '/gerente/listarSessao?codpes=' . $user;
+        $sessoes = Api::send($endpoint);
+        $sessao = end($sessoes);
+        $id = $sessao->id;
+
+        $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user;
+        $data = [
+            'acao' => 'adicionarEleitor',
+            'apelido' => 'unit_test',
+            'nome' => 'Unit test',
+            'email' => 'kawabata+unit-test@usp.br'
+        ];
+        $sessao = Api::send($endpoint, $data);
+
+        $expected = '{"status":"erro","data":"Eleitor já existe"}';
+        $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 
-    public function testListarTokens() {
+    public function testRemoverEleitorNaoExiste1(): void
+    {
+        $user = '1575309'; // para listar sessoes
+        $endpoint = '/gerente/listarSessao?codpes=' . $user;
+        $sessoes = Api::send($endpoint);
+        $sessao = end($sessoes);
+        $id = $sessao->id;
+
+        $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user;
+        $data = [
+            'acao' => 'removerEleitor',
+            'apelido' => 'unit_test',
+            'nome' => 'Unit test',
+            'email' => 'kawabata+unit-test@usp.br'
+        ];
+        $sessao = Api::send($endpoint, $data);
+
+        $expected = '{"status":"erro","data":"Eleitor não existe nessa sessão"}';
+        $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
+    }
+
+    public function testRemoverEleitorSucesso(): void
+    {
+        $user = '1575309'; // para listar sessoes
+        $endpoint = '/gerente/listarSessao?codpes=' . $user;
+        $sessoes = Api::send($endpoint);
+        $sessao = end($sessoes);
+        $id = $sessao->id;
+
+        // vamos procurar o eleitor inserido antes para poder remover
+        $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user;
+        $sessao = Api::send($endpoint);
+        $eleitor = '';
+        foreach ($sessao->ownToken as $e) {
+             if ($e->apelido == 'unit_test') {
+                 $eleitor = $e;
+                break;
+            }
+        }
+
+        $data = json_decode(json_encode($eleitor), true);
+        $data['acao'] = 'removerEleitor';
+        $sessao = Api::send($endpoint, $data);
+
+        $expected = '{"status":"ok","data":"Eleitor excluído com sucesso."}';
+        $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
+    }
+
+    // public function testSessaoPostActions()
+    // {
+    //     // varias actions de post para serem testadas
+    //     return true;
+    // }
+
+    // public function testExportarVotacaoSucesso()
+    // {
+    //     // para exportar em email a votação
+    //     return true;
+    // }
+
+    public function testListarTokens()
+    {
         // usado no demo para obter os tokens e publicá-los na página
+
+        $user = '1575309'; // para listar sessoes
+        $endpoint = '/gerente/listarSessao?codpes=' . $user;
+        $sessoes = Api::send($endpoint);
+        $sessao = end($sessoes);
+        $hash = $sessao->hash;
+
+        $user = '1575309'; // para listar sessoes
+        $endpoint = '/gerente/listarTokens/'.$hash.'?codpes=' . $user;
+        $tokens = Api::send($endpoint);
+
+        // testou empty mas poderia testar algo melhor pois retorna a lista de tokens
+        // ou vazio possivelmente
+        $this->assertNotEmpty(json_encode($tokens, JSON_UNESCAPED_UNICODE));
+        
     }
 
     // testes de logins
@@ -89,7 +196,7 @@ class apiGerenteTests extends TestCase
         $this->assertEquals($expected, json_encode($msg, JSON_UNESCAPED_UNICODE));
     }
 
-    public function testNologincomDados(): void
+    public function testNologinComDados(): void
     {
         $endpoint = '/gerente/noLogin';
         $data = ['codpes' => '111'];

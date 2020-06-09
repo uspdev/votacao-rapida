@@ -132,6 +132,9 @@ class Gerente
                     break;
 
                 case 'removerEleitor':
+                    if (empty($this->data->id)) {
+                        return ['status' => 'erro', 'data' => 'Eleitor não existe nessa sessão'];
+                    }
                     if (Token::removerTokenAberto($sessao, $this->data->id)) {
                         return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
                     } else {
