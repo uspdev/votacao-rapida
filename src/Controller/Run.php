@@ -171,7 +171,7 @@ class Run
         }
 
         // vmos carregar a votação
-        $votacao = R::load('votacao', $data->votacao_id);
+        $votacao = Votacao::obter($data->votacao_id);
 
         switch (intval($data['acao'])) {
             case '0': // mostrar na tela
@@ -281,7 +281,7 @@ class Run
                 case '4': // resultado
                     // mostra o resultado
                     $votacao->respostas = Votacao::listarAlternativa($votacao);
-                    $votacao->votos = Votacao::listarResposta($votacao);
+                    $votacao->votos = Votacao::listarResposta($votacao->id);
                     $painel = $votacao;
                     break;
             }

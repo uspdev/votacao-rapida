@@ -225,18 +225,20 @@ class Gerente
         return Sessao::listar($usuario);
     }
 
-    public function listarResposta($votacao_id)
-    {
-        $votacao = R::load('votacao', $votacao_id);
-        return Votacao::listarResposta($votacao);
-    }
+    // public function listarResposta($votacao_id)
+    // {
+    //     $votacao = R::load('votacao', $votacao_id);
+    //     return Votacao::listarResposta($votacao);
+    // }
 
+    // usado somente para testes pois é chamado internamente
     public function exportarVotacao($votacao_id)
     {
         $votacao = R::load('votacao', $votacao_id);
         return Votacao::exportar($votacao);
     }
 
+    // usado no demo somente
     public function listarTokens($hash)
     {
         return Token::listar($hash);

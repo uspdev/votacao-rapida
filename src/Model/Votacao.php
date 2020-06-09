@@ -50,18 +50,18 @@ class Votacao
         $export->ownAlternativa = SELF::listarAlternativa($votacao);
         $export->num_resposta_valida = $votacao->withCondition('last = 1')->countOwn('resposta');
         $export->num_resposta = $votacao->countOwn('resposta');
-        $export->ownResposta = SELF::listarResposta($votacao, true);
+        $export->ownResposta = SELF::listarResposta($votacao->id, true);
         $export->eleitor_fechado = $sessao->withCondition('ticket = ? ORDER BY apelido ASC', [''])->ownTokenList;
         $arq = ARQ . '/' . $sessao->hash . '-' . 'votacao_' . $votacao->id . '-resultado.json';
         file_put_contents($arq, json_encode($export, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
-        
+
         Email::sendExportarVotacao($export);
         return $export;
     }
 
     // dada uma votação obtem as respostas (votos) válidas registradas,
     // ou seja, ignora os votos repetidos
-    public static function listarResposta($votacao, $todos = false)
+    public static function listarResposta($votacao_id, $todos = false)
     {
         if ($todos) {
             $sql_todos = '';
@@ -75,7 +75,7 @@ class Votacao
                 FROM resposta as r, alternativa as a
                 WHERE r.alternativa_id = a.id AND r.votacao_id = ? ' . $sql_todos . '
                 ORDER BY r.apelido ASC, r.token ASC, r.last ASC',
-                [$votacao->id]
+                [$votacao_id]
             )
         );
     }
@@ -119,6 +119,11 @@ class Votacao
         $votacao = R::dispense($data);
         $id = R::store($votacao);
         return R::load('votacao', $id);
+    }
+
+    public static function obter($votacao_id)
+    {
+        return R::load('votacao', $votacao_id);
     }
 
     public static function adicionar($sessao, $data)
