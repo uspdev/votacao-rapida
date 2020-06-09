@@ -7,6 +7,16 @@ use Uspdev\Votacao\View\Api;
 
 class apiGerenteTests extends TestCase
 {
+
+    // primeiro criar nova sessão
+    public function testCriarNovaSessao()
+    {
+        // passando id = 0 no endpoit de obterSessao
+        return true;
+    }
+
+    // primeiro vamos testar listagem para depois testar 
+    // obter pois obter usa listagem
     public function testListarSessaoUsuarioInvalido(): void
     {
         $user = '1122'; //invalido
@@ -16,7 +26,7 @@ class apiGerenteTests extends TestCase
         $this->assertEquals($expected, json_encode($sessoes, JSON_UNESCAPED_UNICODE));
     }
 
-    public function testListarSessaoOk(): void
+    public function testListarSessaoSucesso(): void
     {
         $user = '1575309'; //ok
         $endpoint = '/gerente/listarSessao?codpes=' . $user;
@@ -24,11 +34,12 @@ class apiGerenteTests extends TestCase
         $this->assertGreaterThan(0, count((array) $sessoes));
     }
 
-    public function testObterSessaoOk(): void
+    public function testObterSessaoSucesso(): void
     {
-        $user = '1575309'; //ok
+        $user = '1575309';
         $endpoint = '/gerente/listarSessao?codpes=' . $user;
         $sessoes = Api::send($endpoint);
+        // vamos pegar a ultima sessão da lista
         $sessao = end($sessoes);
         $id = $sessao->id;
         $endpoint = '/gerente/sessao/' . $id . '?codpes=' . $user;
@@ -53,6 +64,22 @@ class apiGerenteTests extends TestCase
         $this->assertStringContainsString($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 
+    public function testSessaoPostActions()
+    {
+        // varias actions de post para serem testadas
+        return true;
+    }
+
+    public function testExportarVotacaoSucesso() {
+        // para exportar em email a votação
+        return true;
+    }
+
+    public function testListarTokens() {
+        // usado no demo para obter os tokens e publicá-los na página
+    }
+
+    // testes de logins
     public function testNologin(): void
     {
         $endpoint = '/gerente/noLogin';
@@ -65,7 +92,7 @@ class apiGerenteTests extends TestCase
     public function testNologincomDados(): void
     {
         $endpoint = '/gerente/noLogin';
-        $data = ['codpes'=>'111'];
+        $data = ['codpes' => '111'];
         $msg = Api::send($endpoint, $data);
 
         $expected = '{"status":"ok","data":"Log registrado com sucesso"}';
@@ -84,13 +111,10 @@ class apiGerenteTests extends TestCase
     public function testLoginComDados(): void
     {
         $endpoint = '/gerente/login';
-        $data = ['codpes'=>'111'];
+        $data = ['codpes' => '111'];
         $msg = Api::send($endpoint, $data);
 
         $expected = '"lastlogin":';
         $this->assertStringContainsString($expected, json_encode($msg, JSON_UNESCAPED_UNICODE));
     }
-
-
-
 }
