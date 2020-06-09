@@ -6,6 +6,12 @@ use \RedBeanPHP\R as R;
 
 class Usuario
 {
+/**
+ * Obtém dados do usuário
+ *
+ * @param int $codpes
+ * @return bean usuario | array mensagem de erro
+ */
     public static function obter($codpes)
     {
         $usuario = R::findOne('usuario', 'codpes = ?', [$codpes]);
