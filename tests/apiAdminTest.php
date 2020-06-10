@@ -5,7 +5,7 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use Uspdev\Votacao\View\Api;
 
-class apiAdminTests extends TestCase
+class apiAdminTest extends TestCase
 {
     public function testListarSessaoUsuarioInvalido(): void
     {

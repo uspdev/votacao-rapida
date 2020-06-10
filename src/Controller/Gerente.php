@@ -171,6 +171,9 @@ class Gerente
                     break;
 
                 case 'removerVotacao':
+                    if (empty($this->data->id)) {
+                        return ['status' => 'erro', 'data' => 'Dados de votação mal formados'];
+                    }
                     if ($ret = Votacao::remover($this->data->id)) {
                         return ['status' => 'ok', 'data' => 'Votação removida com sucesso.'];
                     } else {
