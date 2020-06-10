@@ -3,3 +3,6 @@
 # Este update é para ser rodado no servidor de produção sempre que for atualizar o git
 git pull
 composer install --no-ansi --no-dev --no-interaction --no-plugins --no-progress --no-scripts --no-suggest --optimize-autoloader
+
+
+# cloc --vcs=git // para contar linhas de código
