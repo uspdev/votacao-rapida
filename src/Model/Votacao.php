@@ -192,7 +192,7 @@ class Votacao
         $votacao = R::load('votacao', $id);
         // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
         // vamos verificar as respostas também
-        if (empty($votacao->data_ini) and !empty($votacao->ownRespostaList)) {
+        if (empty($votacao->data_ini) and empty($votacao->ownRespostaList)) {
             // se nao foi votado removemos as alternativas 
             R::trashALl($votacao->ownAlternativaList);
             // R::trashAll($votacao->ownRespostaList);
