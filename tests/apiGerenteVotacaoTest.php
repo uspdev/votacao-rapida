@@ -55,6 +55,21 @@ class apiGerenteVotacaoTest extends TestCase
         $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 
+    public function testEditarVotacaoSucesso()
+    {
+        $sessao = $this->obterSessao();
+        $votacao = $this->obterVotacao($sessao);
+
+        $endpoint = '/gerente/sessao/' . $votacao->sessao_id . '?codpes=' . $this->user();
+        $data = json_decode(json_encode($votacao), true);
+        $data['descricao'] = 'Descrição alterada no unit test';
+        $data['acao'] = 'editarVotacao';
+        $sessao = Api::send($endpoint, $data);
+
+        $expected = '{"status":"ok","data":"Votação atualizada com sucesso."}';
+        $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
+    }
+
     public function testRemoverVotacaoSucesso()
     {
         $sessao = $this->obterSessao();
@@ -81,7 +96,7 @@ class apiGerenteVotacaoTest extends TestCase
         ];
         $sessao = Api::send($endpoint, $data);
 
-        $expected = '{"status":"erro","data":"Dados de votação mal formados"}';
+        $expected = '{"status":"erro","data":"Dados de remover votação mal formados"}';
         $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 }

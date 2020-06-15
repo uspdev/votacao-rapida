@@ -146,7 +146,7 @@ class Votacao
         return true;
     }
 
-    public static function atualizar($votacao, $data)
+    public static function editar($votacao, $data)
     {
         // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
         // vamos verificar as respostas também

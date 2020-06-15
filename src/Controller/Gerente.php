@@ -152,9 +152,12 @@ class Gerente
                     break;
 
                 case 'editarVotacao':
+                    if (empty($this->data->id)) {
+                        return ['status' => 'erro', 'data' => 'Dados de editar votação mal formados'];
+                    }
                     $votacao = array_pop($sessao->withCondition('id = ?', [$this->data->id])->ownVotacao);
                     if ($votacao) {
-                        if ($ret = Votacao::atualizar($votacao, $this->data)) {
+                        if ($ret = Votacao::editar($votacao, $this->data)) {
                             return ['status' => 'ok', 'data' => 'Votação atualizada com sucesso.'];
                         } else {
                             return ['status' => 'erro', 'data' => 'Impossível editar uma votação que já foi votada'];
@@ -172,7 +175,7 @@ class Gerente
 
                 case 'removerVotacao':
                     if (empty($this->data->id)) {
-                        return ['status' => 'erro', 'data' => 'Dados de votação mal formados'];
+                        return ['status' => 'erro', 'data' => 'Dados de remover votação mal formados'];
                     }
                     if ($ret = Votacao::remover($this->data->id)) {
                         return ['status' => 'ok', 'data' => 'Votação removida com sucesso.'];
