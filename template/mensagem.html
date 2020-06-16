@@ -1,0 +1,46 @@
+<h1>Avisos</h1>
+
+<!-- BEGIN block_msg -->
+<h2>
+    {M->titulo}
+</h2>
+<p class="text-muted ml-2">Publicado em: {M->data}</p>
+<div class="ml-2">
+    {M->corpo}
+</div>
+<hr>
+<div>
+    <!-- BEGIN block_msg_anterior -->
+    <a href="mensagem/{M->prev_id}"><i class="fas fa-chevron-left"></i> Mensagem anterior</a>
+    <!-- END block_msg_anterior -->
+
+    <!-- BEGIN block_msg_proximo -->
+    <a href="mensagem/{M->next_id}" class="ml-5"> Próxima mensagem <i class="fas fa-chevron-right"></i></a>
+    <!-- END block_msg_proximo -->
+</div>
+
+<!-- END block_msg -->
+<br>
+<br>
+<h2>Histórico de mensagens</h2>
+<table class="table table-sm table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Assunto</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- BEGIN block_msgs -->
+        <tr>
+            <td class="{M->class}">{M->data}</td>
+            <td><a href="mensagem/{M->id}" class="{M->class}">{M->titulo}</a></td>
+        </tr>
+        <!-- END block_msgs -->
+    </tbody>
+</table>
+
+<br>
+<br>
+<br>
+<br>

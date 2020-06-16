@@ -43,6 +43,10 @@ Flight::route('GET /ajuda', function () {
     Ajuda::inicio();
 });
 
+Flight::route('GET /mensagem(/@id:[0-9]+)', function ($id) {
+    Mensagem::mostrar($id);
+});
+
 Flight::route('GET /demo', function () {
     Demo::demo();
 });
