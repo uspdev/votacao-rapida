@@ -5,9 +5,9 @@ namespace Uspdev\Votacao\View;
 use Uspdev\Votacao\View\sessaoPhp as SS;
 use League\CommonMark\CommonMarkConverter;
 
-class Mensagem
+class Aviso
 {
-    const arq = ROOTDIR . '/doc/mensagens/index.csv';
+    const arq = ROOTDIR . '/doc/aviso/index.csv';
 
     public static function mostrar($id)
     {
@@ -19,7 +19,7 @@ class Mensagem
         $id = empty((int) $id) ? $last_id : $id;
         $id = ($id > $last_id) ? $last_id : $id;
 
-        $tpl = new Template('mensagem.html');
+        $tpl = new Template('aviso.html');
 
         $currmsg = SELF::obter($id, $msgs);
         $currmsg->prev_id && $tpl->block('block_msg_anterior');
@@ -33,6 +33,11 @@ class Mensagem
             $tpl->block('block_msgs');
         }
         $tpl->show('userbar');
+    }
+
+    public static function obterUltimoId() {
+        $msgs = SELF::listar();
+        return $msgs[0]->id;
     }
 
     protected static function listar()
@@ -65,7 +70,7 @@ class Mensagem
             if ($msg->id == $id) {
                 // convertendo de MD para HTML
                 $conv = new CommonMarkConverter();
-                $msg->corpo = $conv->convertToHtml(file_get_contents(ROOTDIR . '/doc/mensagens/' . $msg->arq));
+                $msg->corpo = $conv->convertToHtml(file_get_contents(ROOTDIR . '/doc/aviso/' . $msg->arq));
 
                 // não é a mais antiga, vamos popular os dados da msg anterior
                 $msg->prev_id = ($id == 1) ?  0 : $id - 1;

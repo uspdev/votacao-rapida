@@ -44,7 +44,7 @@ Flight::route('GET /ajuda', function () {
 });
 
 Flight::route('GET /mensagem(/@id:[0-9]+)', function ($id) {
-    Mensagem::mostrar($id);
+    Aviso::mostrar($id);
 });
 
 Flight::route('GET /demo', function () {
