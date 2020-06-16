@@ -1,25 +1,45 @@
 <h1>Avisos</h1>
 
-<!-- BEGIN block_msg -->
 <h2>
-    {M->titulo}
+    {C->titulo}
 </h2>
-<p class="text-muted ml-2">Publicado em: {M->data}</p>
+<p class="text-muted ml-2">Publicado em: {C->data}</p>
 <div class="ml-2">
-    {M->corpo}
+    {C->corpo}
 </div>
 <hr>
 <div>
     <!-- BEGIN block_msg_anterior -->
-    <a href="mensagem/{M->prev_id}"><i class="fas fa-chevron-left"></i> Mensagem anterior</a>
+    <a href="aviso/{C->prev_id}"><i class="fas fa-chevron-left"></i> Mensagem mais antiga</a>
     <!-- END block_msg_anterior -->
 
     <!-- BEGIN block_msg_proximo -->
-    <a href="mensagem/{M->next_id}" class="ml-5"> Próxima mensagem <i class="fas fa-chevron-right"></i></a>
+    <a href="aviso/{C->next_id}" class="ml-5"> Mensagem mais recente <i class="fas fa-chevron-right"></i></a>
     <!-- END block_msg_proximo -->
 </div>
 
-<!-- END block_msg -->
+<!-- BEGIN block_form -->
+<div>
+    <form id="aviso_form" action="" method="POST">
+        <input type="checkbox" name="lidas" value="all"> Marcar todas como lidas
+        <input type="hidden" name="acao" value="resetarAviso">
+        <input type="hidden" name="ultimo_aviso" value="{ultimo_aviso}">
+        <input class="btn btn-primary btn-sm" type="submit" name="ok" value="ok" disabled>
+    </form>
+    <script>
+        $(function () {
+            $('#aviso_form :input[name="lidas"]').change(function () {
+                if ($(this).is(':checked')) {
+                    $(':input[type="submit"]').prop('disabled', false);
+                } else {
+                    $(':input[type="submit"]').prop('disabled', true);
+                }
+            });
+        });
+    </script>
+</div>
+<!-- END block_form -->
+
 <br>
 <br>
 <h2>Histórico de mensagens</h2>
@@ -34,7 +54,7 @@
         <!-- BEGIN block_msgs -->
         <tr>
             <td class="{M->class}">{M->data}</td>
-            <td><a href="mensagem/{M->id}" class="{M->class}">{M->titulo}</a></td>
+            <td><a href="aviso/{M->id}" class="{M->class}">{M->titulo}</a></td>
         </tr>
         <!-- END block_msgs -->
     </tbody>

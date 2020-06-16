@@ -228,6 +228,27 @@ class Gerente
         return $sessao;
     }
 
+    public function user()
+    {
+        // a autenticação da api já foi tratada antes
+        if (empty($this->query->codpes)) {
+            return ['status' => 'erro', 'msg' => 'Sem usuário codpes'];
+        }
+
+        $usuario = Usuario::obter($this->query->codpes);
+
+        if ($this->method == 'POST') {
+            $acao = $this->data->acao;
+            switch ($acao) {
+                case 'resetarAviso':
+                    $usuario->ultimoAviso = (int) $this->data->ultimo_aviso;
+                    R::store($usuario);
+                    return ['status' => 'ok', 'data' => 'Avisos arquivados com sucesso.'];
+                    break;
+            }
+        }
+    }
+
     public function listarSessao()
     {
         $usuario = Usuario::obter($this->query->codpes);

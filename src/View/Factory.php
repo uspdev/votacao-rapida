@@ -12,6 +12,15 @@ class Factory
         }
         return $obj;
     }
+
+    public static function aviso($inject)
+    {
+        $obj = new Aviso();
+        foreach ($inject as $key => $val) {
+            $obj->$key = $val;
+        }
+        return $obj;
+    }
     
     public static function run($inject)
     {

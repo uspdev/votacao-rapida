@@ -29,6 +29,14 @@ namespace Uspdev\Votacao\View {
                 $main->msg = json_decode(json_encode($msg));
                 $this->block('block_principal_msg');
             }
+
+            //vamos obter avisos
+            $main->avisos = SS::get('avisos');
+            if ($main->avisos > 0) {
+                $this->block('block_main_aviso_sim');
+            } else  {
+                $this->block('block_main_aviso_nao');
+            }
             $this->main = $main;
             $this->addFile('corpo', TPL . '/' . $addFile);
         }

@@ -9,9 +9,23 @@ class Aviso
 {
     const arq = ROOTDIR . '/doc/aviso/index.csv';
 
-    public static function mostrar($id)
+    public  function mostrar($id)
     {
-        SS::getUser();
+        $user = SS::getUser();
+
+        if ($this->method == 'POST') {
+            if ($this->data->acao == 'resetarAviso') {
+                $endpoint = '/gerente/user?codpes=' . $user['codpes'];
+                $data = $this->data->getData();
+                $ret = Api::send($endpoint, $data);
+                if ($ret->data = 'ok') {
+                    SS::set('avisos', 0);
+                }
+            }
+            header('Location:');
+            exit;
+        }
+
         $msgs = SELF::listar();
         $last_id = $msgs[0]->id;
 
@@ -24,8 +38,12 @@ class Aviso
         $currmsg = SELF::obter($id, $msgs);
         $currmsg->prev_id && $tpl->block('block_msg_anterior');
         $currmsg->next_id && $tpl->block('block_msg_proximo');
-        $tpl->M = $currmsg;
-        $tpl->block('block_msg');
+        $tpl->C = $currmsg;
+
+        if (SS::get('avisos') > 0) {
+            $tpl->ultimo_aviso = $last_id;
+            $tpl->block('block_form');
+        }
 
         foreach ($msgs as $msg) {
             $msg->class = ($msg->id == $currmsg->id) ? 'font-weight-bold' : '';

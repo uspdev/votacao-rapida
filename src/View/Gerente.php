@@ -15,6 +15,7 @@ class Gerente
                 $newUser['codpes'] = $cod;
                 $usr = Api::send('/gerente/login', $newUser);
                 SS::set('user', json_decode(json_encode($usr), true));
+                SS::set('avisos', Aviso::obterUltimoId() - (int) $usr->ultimo_aviso);
                 header('Location:' . SS::getNext());
                 exit;
             } else {
@@ -39,6 +40,7 @@ class Gerente
             $user['unidade'] = $vinculo['siglaUnidade'];
             $usr = Api::send('/gerente/login', $user);
             SS::set('user', json_decode(json_encode($usr), true));
+            SS::set('avisos', Aviso::obterUltimoId() - (int) $usr->ultimo_aviso);
         } else {
             $user['vinculos'] = array_column($res['vinculo'], 'tipoVinculo');
             $usr = Api::send('/gerente/nologin', $user);

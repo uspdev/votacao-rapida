@@ -43,8 +43,9 @@ Flight::route('GET /ajuda', function () {
     Ajuda::inicio();
 });
 
-Flight::route('GET /mensagem(/@id:[0-9]+)', function ($id) {
-    Aviso::mostrar($id);
+Flight::route('GET|POST /aviso(/@id:[0-9]+)', function ($id) {
+    $aviso = Factory::aviso(Flight::request());
+    $aviso->mostrar($id);
 });
 
 Flight::route('GET /demo', function () {
