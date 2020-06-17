@@ -1,5 +1,9 @@
 # Changelog
 
+* 15/06/2020
+  * Sistema de avisos (#73)
+  * [Aviso 001](aviso/001.md)
+
 * 02/6/2020
   * Separando listagem de admin (#66)
 
