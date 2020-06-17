@@ -84,6 +84,11 @@ function salvarAdmin($codpes)
 {
     $usuario = R::findOrCreate('usuario', ['codpes' => $codpes,]);
     $usuario->admin = true;
+    $usuario->nome = 'admin';
+    $usuario->email = 'admin@local.com';
+    $usuario->unidade = 'EESC';
+    $usuario->lastlogin = date('Y-m-d H:i:s');
+    $usuario->ultimo_aviso = 0;
     R::store($usuario);
     return 'Usuário ' . $codpes . ' é admin';
 }

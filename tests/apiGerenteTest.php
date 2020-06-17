@@ -8,12 +8,17 @@ use Uspdev\Votacao\View\Api;
 class apiGerenteTest extends TestCase
 {
 
-    // // primeiro criar nova sessão
-    // public function testCriarNovaSessao()
-    // {
-    //     // passando id = 0 no endpoit de obterSessao
-    //     return true;
-    // }
+    // primeiro criar nova sessão
+    public function testCriarNovaSessao()
+    {
+        $user = '1575309'; //ok
+        $endpoint = '/gerente/sessao/0?codpes=' . $user;
+        $data = ['acao'=>'criarSessao', 'nome'=>'Sessao unit test'];
+        $sessoes = Api::send($endpoint, $data);
+        $expected = '{"status":"ok","data":';
+        $this->assertStringContainsString($expected, json_encode($sessoes, JSON_UNESCAPED_UNICODE));
+        return true;
+    }
 
     // primeiro vamos testar listagem para depois testar 
     // obter pois obter usa listagem

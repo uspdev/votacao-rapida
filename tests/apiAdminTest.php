@@ -38,7 +38,7 @@ class apiAdminTest extends TestCase
         $user = '1575309'; //sem acesso
         $endpoint = '/admin/listarUsuario?codpes=' . $user;
         $sessoes = Api::send($endpoint);
-        $this->assertGreaterThan(2, count((array) $sessoes));
+        $this->assertGreaterThan(1, count((array) $sessoes));
     }
 
     public function testRotaInexistente(): void
