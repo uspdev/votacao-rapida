@@ -62,9 +62,9 @@ Flight::route('/gerente/@id(/@aba)', function ($id, $aba) {
     $gerente->sessao($id, $aba);
 });
 
-Flight::route('/admin', function () {
+Flight::route('/admin(/@aba)', function ($aba) {
     if (SS::isAdmin()) {
-        Admin::home();
+        Admin::home($aba);
     } else {
         Flight::notFound();
     }

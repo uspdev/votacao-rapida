@@ -1,12 +1,20 @@
-<h1>Painel de administração</h1>
+<h1>
+    Painel de administração |
+    <span class="small">
+    <a href="{main->self}/../log">Logs</a> |
+    <a href="{main->self}/../usuario">Usuários</a> |
+    <a href="{main->self}/../controle">Controle</a>
+</span>
+</h1>
 
+<!-- BEGIN block_usuario -->
 <div class="row">
     <div class="col-md-12">
         <div id="usuarios">
             <h2>Usuários</h2>
             <table class="table table-sm table-hover table-striped" data-toggle="table" data-search="true"
                 data-search-align="left" data-show-columns="true" data-show-toggle="true" data-sort-name="lastlogin"
-                data-sort-order="desc" data-height="500">
+                data-sort-order="desc">
                 <thead>
                     <tr>
                         <th data-field="codpes" data-sortable="true">codpes</th>
@@ -18,7 +26,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- BEGIN block_usuarios -->
+                    <!-- BEGIN block_usuario_list -->
                     <tr>
                         <td>{U->codpes}</td>
                         <td>{U->nome}</td>
@@ -27,30 +35,32 @@
                         <td>{U->lastlogin}</td>
                         <td>{U->admin}</td>
                     </tr>
-                    <!-- END block_usuarios -->
+                    <!-- END block_usuario_list -->
                 </tbody>
             </table>
         </div>
     </div>
 </div>
+<!-- END block_usuario -->
+
+<!-- BEGIN block_log -->
 <div class="row">
+    <script src="assets/bootstrap-table/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
     <div class="col-md-12">
         <h2>Logs</h2>
-        <table class="table table-sm table-hover table-striped" data-toggle="table" data-search="true"
-            data-search-align="left" data-show-columns="true" data-show-toggle="true" data-sort-name="datetime"
-            data-sort-order="desc" data-height="500">
+        <table class="table table-sm table-hover table-striped" data-toggle="table" data-filter-control="true">
             <thead>
                 <tr>
-                    <th data-field="datetime" data-sortable="true">datetime</th>
-                    <th data-field="level" data-sortable="true">level</th>
-                    <th data-field="canal" data-sortable="true">canal</th>
-                    <th data-field="mensagem" data-sortable="true">mensagem</th>
-                    <th>contexto</th>
-                    <!-- <th>extra</th> -->
+                    <th data-field="datetime" data-filter-control="input">datetime</th>
+                    <th data-field="level">level</th>
+                    <th data-field="canal" data-filter-control="select">canal</th>
+                    <th data-field="mensagem" data-filter-control="input">mensagem</th>
+                    <th data-field="contexto" data-filter-control="input">contexto</th>
+                    <!--- <th>extra</th> --->
                 </tr>
             </thead>
             <tbody>
-                <!-- BEGIN block_log -->
+                <!-- BEGIN block_log_list -->
                 <tr>
                     <td>{log->datetime}</td>
                     <td>{log->level_name}</td>
@@ -59,12 +69,16 @@
                     <td>{log->context|json_encode:256}</td>
                     <!-- <td>{log->extra|json_encode}</td> -->
                 </tr>
-                <!-- END block_log -->
+                <!-- END block_log_list -->
             </tbody>
         </table>
     </div>
 </div>
-<br>
+<!-- END block_log -->
+
+
+<!-- BEGIN block_controle -->
+
 <div class="row">
     <div class="col-md-12">
         <h2>Estados</h2>
@@ -112,6 +126,8 @@
         </table>
     </div>
 </div>
+<!-- END block_controle -->
+
 <br>
 <br>
 <br>
