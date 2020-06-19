@@ -32,11 +32,7 @@ namespace Uspdev\Votacao\View {
 
             //vamos obter avisos
             $main->avisos = SS::get('avisos');
-            if ($main->avisos > 0) {
-                $this->block('block_main_aviso_sim');
-            } else  {
-                $this->block('block_main_aviso_nao');
-            }
+
             $this->main = $main;
             $this->addFile('corpo', TPL . '/' . $addFile);
         }
@@ -56,6 +52,14 @@ namespace Uspdev\Votacao\View {
                 } else {
                     $this->block('block_user_out');
                 }
+
+                // a exibição do bloco de avisos está aqui
+                if ($this->main->avisos > 0) {
+                    $this->block('block_main_aviso_sim');
+                } else {
+                    $this->block('block_main_aviso_nao');
+                }
+
                 $this->block('block_user_principal');
             } else {
                 $this->topbar_class = 'top-bar-no-user';
