@@ -32,10 +32,10 @@
         <!-- BEGIN block_votacao -->
         <div class="item my-2">
             <div class="nome">
-                {V->nome} <span class="badge {V->class}">{V->tipo}</span> 
+                {V->nome} <span class="badge {V->class}">{V->tipo}</span>
                 {V->data_ini|show_if:<span class="badge badge-info">Votado</span>}
                 <span class="item_target" nome="{V->nome}" descricao="{V->descricao}" tipo="{V->tipo}"
-                    alternativas="{V->alternativas}" id="{V->id}"></span>
+                    alternativas="{V->alternativas}" id="{V->id}" ordem="{V->ordem}"></span>
             </div>
             <div class="descricao small ml-3">
                 {V->descricao|nl2br}
@@ -54,13 +54,14 @@
 
     <div class="form_template hide">
         <form method="POST">
-            <div>
-                <label class="col-sm-12">
+            <div class="row">
+                <div class="col-md-12 ml-3" <label>
                     <span class="text-secondary">Nome</span>
                     <div>
                         <input type="text" name="nome" style="width:100%">
                     </div>
-                </label>
+                    </label>
+                </div>
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -84,18 +85,28 @@
                     </div>
                 </div>
             </div>
-            <div>
-                <span class="text-secondary">Tipo</span>
-                <div class="form-check form-check-inline">
-                    <label class="col-form-label col-sm-12">
-                        <span>Aberta</span>
-                        <input type="radio" name="tipo" value="aberta" checked>
-                    </label>
+            <div class="row">
+                <div class="col-md-12 ml-3">
+                    <span class="text-secondary">Tipo</span>
+                    <div class="form-check form-check-inline">
+                        <label class="col-form-label">
+                            <span>Aberta</span>
+                            <input type="radio" name="tipo" value="aberta" checked>
+                        </label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <label class="col-form-label">
+                            <span>Fechada</span>
+                            <input type="radio" name="tipo" value="fechada">
+                        </label>
+                    </div>
                 </div>
-                <div class="form-check form-check-inline">
-                    <label class="col-form-label col-sm-12">
-                        <span>Fechada</span>
-                        <input type="radio" name="tipo" value="fechada">
+            </div>
+            <div class="row">
+                <div class="col-md-12 ml-3">
+                    <label class="col-form-label">
+                        <span class="text-secondary">Ordem</span>
+                        <input type="number" name="ordem" class="" size="3">
                     </label>
                 </div>
             </div>
