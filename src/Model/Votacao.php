@@ -89,37 +89,14 @@ class Votacao
         );
     }
 
-    public static function novoInstantaneo($texto)
+    public static function novoInstantaneo($sessao, $texto)
     {
-        $data = [
-            '_type' => 'votacao',
-            'estado' => 0, // sempre inicia fechado
-            'nome' => $texto,
-            'descricao' => '',
-            'tipo' => 'aberta',
-            'input_type' => 'checkbox',
-            'input_count' => '1',
-            'data_ini' => '',
-            'data_fim' => '',
-            'ownAlternativaList' => [
-                [
-                    '_type' => 'alternativa',
-                    'texto' => 'Favorável',
-                ],
-                [
-                    '_type' => 'alternativa',
-                    'texto' => 'Contrário',
-                ],
-                [
-                    '_type' => 'alternativa',
-                    'texto' => 'Abstenção',
-                ],
-            ]
-        ];
+        $data['nome'] = $texto;
+        $data['descricao'] = '';
+        $data['tipo'] = 'aberta';
+        $data['alternativas'] = 'Favorável' . PHP_EOL . 'Contrário' . PHP_EOL . 'Abstenção';
 
-        $votacao = R::dispense($data);
-        $id = R::store($votacao);
-        return R::load('votacao', $id);
+        return SELF::adicionar($sessao, (object) $data);
     }
 
     public static function obter($votacao_id)
@@ -129,14 +106,14 @@ class Votacao
 
     public static function adicionar($sessao, $data)
     {
-        $ordem = (empty($data['ordem'])) ? 0 : $data['ordem'];
-        if ($data->ordem < 0) {
+        $ordem = (empty($data->ordem)) ? 0 : $data->ordem;
+        if ($ordem < 0) {
             Log::votacao(
                 'erro adicionar votacao',
                 [
                     'sessao_id' => $sessao->id,
                     'usr_msg' => 'Ordem inválida para adicionar votação',
-                    'data' => $data->getData()
+                    'data' => $data
                 ]
             );
             return ['status' => 'erro', 'data' => 'Ordem inválida para adicionar votação'];
@@ -187,7 +164,9 @@ class Votacao
             // se não tiver sido votado, vamos editar
             R::begin();
             try {
-                $votacao->ordem = SELF::atualizarOrdem($votacao, $data->ordem);
+                if (!empty($data->ordem)) {
+                    $votacao->ordem = SELF::atualizarOrdem($votacao, $data->ordem);
+                }
                 foreach ($data as $key => $val) {
                     // vamos aceitar do $data somente os campos autorizados
                     if (in_array($key, ['nome', 'descricao', 'tipo'])) {
