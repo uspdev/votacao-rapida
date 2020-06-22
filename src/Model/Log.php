@@ -27,6 +27,16 @@ class Log
         $log->info($message, $context);
     }
 
+    public static function votacao($message, $context = []) {
+        $log = SELF::getLogger('votacao');
+        $log->info($message, $context);
+    }
+
+    public static function db($message, $context = []) {
+        $log = SELF::getLogger('db');
+        $log->info($message, $context);
+    }
+
     public static function listar($numLogFiles = 5) {
         $files = glob(LOCAL. '/log/*.log');
         arsort($files, SORT_STRING);

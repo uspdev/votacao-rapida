@@ -1,6 +1,10 @@
 # Changelog
 
-* 15/06/2020
+* 22/06/2020
+  * Implementado ordenação das votações (#71)
+  * Corrigido exibição de menu de lista de sessões para não admins
+
+* /1/5/06/2020
   * Sistema de avisos (#73)
   * [Aviso 001](aviso/001.md)
 

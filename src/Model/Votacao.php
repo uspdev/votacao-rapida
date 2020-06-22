@@ -43,6 +43,7 @@ class Votacao
         return ['msg' => 'Aguarde a próxima votação', 'votacao' => null];
     }
 
+    // exportar gera um arquivo no filesystem e envia um relatório por email
     public static function exportar($votacao)
     {
         $sessao = clone $votacao->sessao;
@@ -88,37 +89,14 @@ class Votacao
         );
     }
 
-    public static function novoInstantaneo($texto)
+    public static function novoInstantaneo($sessao, $texto)
     {
-        $data = [
-            '_type' => 'votacao',
-            'estado' => 0, // sempre inicia fechado
-            'nome' => $texto,
-            'descricao' => '',
-            'tipo' => 'aberta',
-            'input_type' => 'checkbox',
-            'input_count' => '1',
-            'data_ini' => '',
-            'data_fim' => '',
-            'ownAlternativaList' => [
-                [
-                    '_type' => 'alternativa',
-                    'texto' => 'Favorável',
-                ],
-                [
-                    '_type' => 'alternativa',
-                    'texto' => 'Contrário',
-                ],
-                [
-                    '_type' => 'alternativa',
-                    'texto' => 'Abstenção',
-                ],
-            ]
-        ];
+        $data['nome'] = $texto;
+        $data['descricao'] = '';
+        $data['tipo'] = 'aberta';
+        $data['alternativas'] = 'Favorável' . PHP_EOL . 'Contrário' . PHP_EOL . 'Abstenção';
 
-        $votacao = R::dispense($data);
-        $id = R::store($votacao);
-        return R::load('votacao', $id);
+        return SELF::adicionar($sessao, (object) $data);
     }
 
     public static function obter($votacao_id)
@@ -128,22 +106,54 @@ class Votacao
 
     public static function adicionar($sessao, $data)
     {
-        $votacao = R::dispense('votacao');
-        $votacao->sessao = $sessao;
-        $votacao->estado = 0;
-        $votacao->input_type = 'checkbox';
-        $votacao->input_count = '1';
-        foreach ($data as $key => $val) {
-            if (in_array($key, ['nome', 'descricao', 'tipo'])) {
-                $votacao->$key = trim($val);
-            }
+        $ordem = (empty($data->ordem)) ? 0 : $data->ordem;
+        if ($ordem < 0) {
+            Log::votacao(
+                'erro adicionar votacao',
+                [
+                    'sessao_id' => $sessao->id,
+                    'usr_msg' => 'Ordem inválida para adicionar votação',
+                    'data' => $data
+                ]
+            );
+            return ['status' => 'erro', 'data' => 'Ordem inválida para adicionar votação'];
         }
-        R::store($votacao);
 
-        if (!empty($data->alternativas)) {
-            SELF::adicionarAlternativas($votacao, $data->alternativas);
+        R::begin();
+        try {
+            $votacao = R::dispense('votacao');
+            $votacao->sessao_id = $sessao->id;
+            $votacao->ordem = SELF::atualizarOrdem($votacao, $ordem);
+            $votacao->estado = 0;
+            $votacao->input_type = 'checkbox';
+            $votacao->input_count = '1';
+            foreach ($data as $key => $val) {
+                if (in_array($key, ['nome', 'descricao', 'tipo'])) {
+                    $votacao->$key = trim($val);
+                }
+            }
+            R::store($votacao);
+            if (!empty($data->alternativas)) {
+                SELF::adicionarAlternativas($votacao, $data->alternativas);
+            }
+            R::commit();
+            return ['status' => 'ok', 'data' => 'Votação adicionada com sucesso.'];
+        } catch (\Exception $e) {
+            R::rollback();
+            Log::db(
+                'erro adicionar votacao',
+                [
+                    'sessao_id' => $sessao->id,
+                    'err_msg' => $e->getMessage(),
+                    'usr_msg' => 'A votação não pode ser adicionada. Se o erro persistir entre em contato com o suporte.',
+                    'data' => $data->getData()
+                ]
+            );
+            return [
+                'status' => 'erro',
+                'data' => 'A votação não pode ser adicionada. Se o erro persistir entre em contato com o suporte.'
+            ];
         }
-        return true;
     }
 
     public static function editar($votacao, $data)
@@ -152,22 +162,43 @@ class Votacao
         // vamos verificar as respostas também
         if (empty($votacao->data_ini) and empty($votacao->ownRespostaList)) {
             // se não tiver sido votado, vamos editar
-            foreach ($data as $key => $val) {
-                // vamos aceitar do $data somente os campos autorizados
-                if (in_array($key, ['nome', 'descricao', 'tipo'])) {
-                    $votacao->$key = trim($val);
+            R::begin();
+            try {
+                if (!empty($data->ordem)) {
+                    $votacao->ordem = SELF::atualizarOrdem($votacao, $data->ordem);
                 }
-            }
-            R::store($votacao);
+                foreach ($data as $key => $val) {
+                    // vamos aceitar do $data somente os campos autorizados
+                    if (in_array($key, ['nome', 'descricao', 'tipo'])) {
+                        $votacao->$key = trim($val);
+                    }
+                }
+                R::store($votacao);
 
-            // vamos mexer nas algternativas somente se for enviado
-            if (!empty($data->alternativas)) {
-                SELF::adicionarAlternativas($votacao, $data->alternativas);
+                // vamos mexer nas alternativas somente se for enviado
+                if (!empty($data->alternativas)) {
+                    SELF::adicionarAlternativas($votacao, $data->alternativas);
+                }
+
+                R::commit();
+                return ['status' => 'ok', 'data' => 'Votação atualizada com sucesso.'];
+            } catch (\Exception $e) {
+                R::rollback();
+                $usr_msg = 'A votação não pode ser editada. Se o erro persistir entre em contato com o suporte.';
+                Log::db(
+                    'erro editar votacao',
+                    [
+                        'sessao_id' => $votacao->sessao_id,
+                        'err_msg' => $e->getMessage(),
+                        'usr_msg' => $usr_msg,
+                        'data' => $data->getData()
+                    ]
+                );
+                return ['status' => 'erro', 'data' => $usr_msg];
             }
-            return true;
         } else {
-            // se ja tiver sido votado não faremos nada
-            return false;
+            // se ja tiver sido votado não faremos nada, não precisamos gerar log
+            return ['status' => 'erro', 'data' => 'Impossível editar uma votação que já foi votada'];
         }
     }
 
@@ -193,14 +224,32 @@ class Votacao
         // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
         // vamos verificar as respostas também
         if (empty($votacao->data_ini) and empty($votacao->ownRespostaList)) {
-            // se nao foi votado removemos as alternativas 
-            R::trashALl($votacao->ownAlternativaList);
-            // R::trashAll($votacao->ownRespostaList);
-            R::trash($votacao);
-            return true;
+            R::begin();
+            try {
+                // se nao foi votado removemos as alternativas 
+                R::trashALl($votacao->ownAlternativaList);
+                // R::trashAll($votacao->ownRespostaList);
+                $votacao->ordem = SELF::atualizarOrdem($votacao, -1);
+                R::trash($votacao);
+                R::commit();
+                return ['status' => 'ok', 'data' => 'Votação removida com sucesso.'];
+            } catch (\Exception $e) {
+                R::rollback();
+                $usr_msg = 'A votação não pode ser removida. Se o erro persistir entre em contato com o suporte.';
+                Log::db(
+                    'erro remover votacao',
+                    [
+                        'sessao_id' => $votacao->sessao_id,
+                        'err_msg' => $e->getMessage(),
+                        'usr_msg' => $usr_msg,
+                        'votacao_id' => $id,
+                    ]
+                );
+                return ['status' => 'erro', 'data' => $usr_msg];
+            }
         } else {
             // se já foi votado não fazemos nada
-            return false;
+            return ['status' => 'erro', 'data' => 'Impossível remover uma votação que já foi votada'];
         }
     }
 
@@ -232,5 +281,67 @@ class Votacao
         $resposta->alternativa;
 
         return $resposta;
+    }
+
+    // se $votacao não possuir ordem, é novo registro
+    // se $ordem_nova for < 0, vai apagar registro
+    // se $ordem_nova for == 0, vai para o final
+    // se $ordem_nova for > 0, vai para a posição indicada
+    protected static function atualizarOrdem($votacao, $ordem_nova = 0)
+    {
+        $max = R::getCell(
+            'SELECT MAX(ordem) FROM votacao WHERE sessao_id = ?',
+            [$votacao->sessao_id]
+        );
+
+        if (empty($max)) {
+            $max = 0;
+            $novo = true;
+        }
+
+        if (empty($votacao->ordem)) {
+            $novo = true;
+            $ordem_atual = $max + 1;
+        } else {
+            $novo = false;
+            $ordem_atual = $votacao->ordem;
+        }
+
+        // verifica se vai para o final
+        if ($ordem_nova == 0 || $ordem_nova > $max) {
+            $ordem_nova = ($novo) ? $max + 1 : $max;
+        }
+
+        // se for negativo é delete
+        if ($ordem_nova < 0) {
+            R::exec(
+                'UPDATE votacao SET ordem = ordem-1 WHERE ordem > ? AND sessao_id = ?',
+                [$ordem_atual, $votacao->sessao_id]
+            );
+            return $ordem_atual;
+        }
+
+        // se for igual não faz nada
+        if ($ordem_nova == $ordem_atual) {
+            return $ordem_nova;
+        }
+
+        // atualizar para um valor: descendo
+        if ($ordem_nova > $ordem_atual) {
+            R::exec(
+                'UPDATE votacao SET ordem = ordem-1 WHERE ordem > ? AND ordem <= ? AND sessao_id = ?',
+                [$ordem_atual, $ordem_nova, $votacao->sessao_id]
+            );
+            return $ordem_nova;
+        }
+
+        // atualizar para um valor: subindo
+        if ($ordem_nova < $ordem_atual) {
+            R::exec(
+                'UPDATE votacao SET ordem = ordem+1 WHERE ordem < ? AND ordem >= ? AND sessao_id = ?',
+                [$ordem_atual, $ordem_nova, $votacao->sessao_id]
+            );
+            return $ordem_nova;
+        }
     }
 }

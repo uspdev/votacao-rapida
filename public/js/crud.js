@@ -119,7 +119,7 @@
             target.find('input').each(function () {
                 var name = $(this).attr('name');
                 var value = target.closest('.item').find('.item_target').attr(name);
-                if (['text', 'hidden', 'email'].includes($(this).attr('type'))) {
+                if (['text', 'hidden', 'email', 'number'].includes($(this).attr('type'))) {
                     $(this).val(value);
                 } else if ($(this).attr('type') == 'radio') {
                     $(this).attr('value') == value ? $(this).prop('checked', true) : $(this).prop('checked', false);

@@ -153,35 +153,53 @@ class Gerente
 
                 case 'editarVotacao':
                     if (empty($this->data->id)) {
+                        Log::votacao(
+                            'erro editarVotacao',
+                            [
+                                'sessao_id' => $sessao->id,
+                                'err_msg' => 'id de votação inexistente',
+                                'usr_msg' => 'Dados de editar votação mal formados',
+                                'codpes' => $usuario->codpes,
+                                'usr_name' => $usuario->nome
+                            ]
+                        );
                         return ['status' => 'erro', 'data' => 'Dados de editar votação mal formados'];
                     }
                     $votacao = array_pop($sessao->withCondition('id = ?', [$this->data->id])->ownVotacao);
-                    if ($votacao) {
-                        if ($ret = Votacao::editar($votacao, $this->data)) {
-                            return ['status' => 'ok', 'data' => 'Votação atualizada com sucesso.'];
-                        } else {
-                            return ['status' => 'erro', 'data' => 'Impossível editar uma votação que já foi votada'];
-                        }
+                    if (!$votacao) {
+                        Log::votacao(
+                            'erro editarVotacao',
+                            [
+                                'sessao_id' => $sessao->id,
+                                'usr_msg' => 'Votação id=' . $this->data->id . ' não encontrada.',
+                                'codpes' => $usuario->codpes,
+                                'usr_name' => $usuario->nome
+                            ]
+                        );
+                        return ['status' => 'erro', 'data' => 'Votação id=' . $this->data->id . ' não encontrada.'];
                     }
-                    return ['status' => 'erro', 'data' => 'Votação id=' . $this->data->id . ' não encontrada.'];
+                    return Votacao::editar($votacao, $this->data);
                     break;
 
                 case 'adicionarVotacao':
-                    if ($ret = Votacao::adicionar($sessao, $this->data)) {
-                        return ['status' => 'ok', 'data' => 'Votação adicionada com sucesso.'];
-                    }
-                    return ['status' => 'erro', 'data' => $ret];
+                    return Votacao::adicionar($sessao, $this->data);
                     break;
 
                 case 'removerVotacao':
                     if (empty($this->data->id)) {
+                        Log::votacao(
+                            'erro removerVotacao',
+                            [
+                                'sessao_id' => $sessao->id,
+                                'err_msg' => 'id de votação inexistente',
+                                'usr_msg' => 'Dados de remover votação mal formados',
+                                'codpes' => $usuario->codpes,
+                                'usr_name' => $usuario->nome
+                            ]
+                        );
                         return ['status' => 'erro', 'data' => 'Dados de remover votação mal formados'];
                     }
-                    if ($ret = Votacao::remover($this->data->id)) {
-                        return ['status' => 'ok', 'data' => 'Votação removida com sucesso.'];
-                    } else {
-                        return ['status' => 'erro', 'data' => 'Impossível remover uma votação que já foi votada'];
-                    }
+                    return Votacao::remover($this->data->id);
                     break;
 
                 case 'atualizarSessao':
@@ -211,7 +229,7 @@ class Gerente
 
         $sessao->sharedUsuarioList;
         // vamos buscar as alternativas também
-        foreach ($sessao->ownVotacaoList as $v) {
+        foreach ($sessao->with('ORDER BY ordem')->ownVotacaoList as $v) {
             // e respostas se houver
             foreach ($v->ownAlternativaList as $a) {
                 $q = 'SELECT count(id) as total
