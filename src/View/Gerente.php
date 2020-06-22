@@ -109,7 +109,7 @@ class Gerente
         }
 
         // vamos listar as sessoes de admin se houver
-        if (empty($sessoes->status)) {
+        if (empty($sessoes_admin->status)) {
             foreach ($sessoes_admin as $sessao) {
                 $tpl->SA = $sessao;
                 $tpl->block('block_sessao_admin');
