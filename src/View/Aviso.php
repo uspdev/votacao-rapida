@@ -22,7 +22,7 @@ class Aviso
                     SS::set('avisos', 0);
                 }
             }
-            header('Location:');
+            header('Location:'.$_SERVER['REDIRECT_URL']);
             exit;
         }
 
