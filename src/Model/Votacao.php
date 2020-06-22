@@ -129,7 +129,7 @@ class Votacao
 
     public static function adicionar($sessao, $data)
     {
-        if (empty($data['ordem'])) $ordem = 0;
+        $ordem = (empty($data['ordem'])) ? 0 : $data['ordem'];
         if ($data->ordem < 0) {
             Log::votacao(
                 'erro adicionar votacao',
@@ -216,11 +216,7 @@ class Votacao
                     ]
                 );
                 return ['status' => 'erro', 'data' => $usr_msg];
-
             }
-
-
-
         } else {
             // se ja tiver sido votado não faremos nada, não precisamos gerar log
             return ['status' => 'erro', 'data' => 'Impossível editar uma votação que já foi votada'];
