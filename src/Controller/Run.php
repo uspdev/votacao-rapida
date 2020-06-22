@@ -142,7 +142,7 @@ class Run
     protected static function apoioGet($sessao)
     {
         // vamos carregar as votações
-        $sessao->votacoes = $sessao->ownVotacaoList;
+        $sessao->votacoes = $sessao->with('ORDER BY ordem ASC')->ownVotacaoList;
         foreach ($sessao->votacoes as &$votacao) {
 
             // vamos pegar o nome do estado
