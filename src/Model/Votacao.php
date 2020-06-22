@@ -224,14 +224,32 @@ class Votacao
         // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
         // vamos verificar as respostas também
         if (empty($votacao->data_ini) and empty($votacao->ownRespostaList)) {
-            // se nao foi votado removemos as alternativas 
-            R::trashALl($votacao->ownAlternativaList);
-            // R::trashAll($votacao->ownRespostaList);
-            R::trash($votacao);
-            return true;
+            R::begin();
+            try {
+                // se nao foi votado removemos as alternativas 
+                R::trashALl($votacao->ownAlternativaList);
+                // R::trashAll($votacao->ownRespostaList);
+                $votacao->ordem = SELF::atualizarOrdem($votacao, -1);
+                R::trash($votacao);
+                R::commit();
+                return ['status' => 'ok', 'data' => 'Votação removida com sucesso.'];
+            } catch (\Exception $e) {
+                R::rollback();
+                $usr_msg = 'A votação não pode ser removida. Se o erro persistir entre em contato com o suporte.';
+                Log::db(
+                    'erro remover votacao',
+                    [
+                        'sessao_id' => $votacao->sessao_id,
+                        'err_msg' => $e->getMessage(),
+                        'usr_msg' => $usr_msg,
+                        'votacao_id' => $id,
+                    ]
+                );
+                return ['status' => 'erro', 'data' => $usr_msg];
+            }
         } else {
             // se já foi votado não fazemos nada
-            return false;
+            return ['status' => 'erro', 'data' => 'Impossível remover uma votação que já foi votada'];
         }
     }
 
