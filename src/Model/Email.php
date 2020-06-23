@@ -174,7 +174,7 @@ class Email
         $corpo = $tpl->parse();
         SELF::adicionarFila($sessao, [
             'destinatario' => $sessao->email,
-            'assunto' => 'Relatório de votação: ' . substr($votacao->nome, 0, 30) . '.. - ' . $sessao->nome,
+            'assunto' => 'Relatório de votação: ' . mb_substr($votacao->nome, 0, 30) . '.. - ' . $sessao->nome,
             'corpo' => $corpo,
             'alt' => $corpo,
             'responder_para' => $sessao->email,
