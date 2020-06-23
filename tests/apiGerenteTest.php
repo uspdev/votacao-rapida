@@ -8,16 +8,23 @@ use Uspdev\Votacao\View\Api;
 class apiGerenteTest extends TestCase
 {
 
-    // primeiro criar nova sessão
-    public function testCriarNovaSessao()
+    // primeiro adicionar nova sessão
+    public function testAdicionarRemoverSessao()
     {
         $user = '1575309'; //ok
         $endpoint = '/gerente/sessao/0?codpes=' . $user;
-        $data = ['acao'=>'criarSessao', 'nome'=>'Sessao unit test'];
-        $sessoes = Api::send($endpoint, $data);
+        $data = ['acao' => 'adicionarSessao', 'nome' => 'Sessao unit test'];
+        $sessao = Api::send($endpoint, $data);
+        $sessao_id = $sessao->data;
         $expected = '{"status":"ok","data":';
-        $this->assertStringContainsString($expected, json_encode($sessoes, JSON_UNESCAPED_UNICODE));
-        return true;
+        $this->assertStringContainsString($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
+
+        // remover
+        $endpoint = '/gerente/sessao/' . $sessao_id . '?codpes=' . $user;
+        $data = ['acao' => 'removerSessao'];
+        $sessao = Api::send($endpoint, $data);
+        $expected = '{"status":"ok","data":"Sessão removida com sucesso."}';
+        $this->assertStringContainsString($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 
     // primeiro vamos testar listagem para depois testar 
@@ -92,12 +99,11 @@ class apiGerenteTest extends TestCase
         $hash = $sessao->hash;
 
         $user = '1575309'; // para listar sessoes
-        $endpoint = '/gerente/listarTokens/'.$hash.'?codpes=' . $user;
+        $endpoint = '/gerente/listarTokens/' . $hash . '?codpes=' . $user;
         $tokens = Api::send($endpoint);
 
         // testou empty mas poderia testar algo melhor pois retorna a lista de tokens
         // ou vazio possivelmente
         $this->assertNotEmpty(json_encode($tokens, JSON_UNESCAPED_UNICODE));
-        
     }
 }

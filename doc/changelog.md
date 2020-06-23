@@ -1,5 +1,11 @@
 # Changelog
 
+* 23/06/2020
+  * Gerando logs ao adicionar e remover gerente (#68)
+  * Melhorando a busca de gerentes e os processos relacionados
+  * Testes em gerente
+  * Renomeando criarSessao para adicionarSessao e algumas outras ações
+
 * 22/06/2020
   * Implementado ordenação das votações (#71)
   * Corrigido exibição de menu de lista de sessões para não admins

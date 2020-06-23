@@ -77,7 +77,7 @@ class Gerente
         // debug
         //echo '<pre>';print_r($sessoes);exit;
 
-        if ($this->method == "POST" && $this->data->acao == 'criarSessao') {
+        if ($this->method == "POST" && $this->data->acao == 'adicionarSessao') {
             $endpoint = '/gerente/sessao/0?codpes=' . $user['codpes'];
             $data = $this->data->getData();
             $ret = Api::send($endpoint, $data);
@@ -233,7 +233,7 @@ class Gerente
                 $ret = Api::send($endpoint, $data);
                 break;
 
-            case 'apagarSessao':
+            case 'removerSessao':
                 $data['acao'] = $this->query->acao;
                 $ret = Api::send($endpoint, $data);
                 if ($ret->status == 'ok') {
@@ -268,11 +268,12 @@ class Gerente
             $ret = Api::send($endpoint, $data, $this->files);
         }
 
+        $class = $ret->status == 'erro' ? 'alert-danger' : 'alert-success';
+        SS::setMsg(['class' => $class, 'msg' => $ret->data]);
+
         if ($this->ajax) {
             echo json_encode(['status' => $ret->status, 'msg' => $ret->data]);
         } else {
-            $class = $ret->status == 'erro' ? 'alert-danger' : 'alert-success';
-            SS::setMsg(['class' => $class, 'msg' => $ret->data]);
             $redirect = (empty($_SERVER['REDIRECT_URL'])) ? '' : $_SERVER['REDIRECT_URL'];
             header('Location:' . $redirect);
         }

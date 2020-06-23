@@ -100,6 +100,10 @@ class Email
         return true;
     }
 
+    public static function sendNovoGerente($sessao, $gerente) {
+        
+    }
+
     public static function sendExportarVotacao($export)
     {
         $votacao = json_decode(json_encode($export));

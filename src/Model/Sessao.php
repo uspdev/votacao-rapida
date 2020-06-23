@@ -39,7 +39,7 @@ class Sessao
         return R::findOne('sessao', 'hash = ?', [$hash]);
     }
 
-    public static function criar($usuario, $data)
+    public static function adicionar($usuario, $data)
     {
         $sessao = R::dispense('sessao');
         $sessao->unidade = $usuario->unidade;

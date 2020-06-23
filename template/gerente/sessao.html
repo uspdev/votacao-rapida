@@ -67,8 +67,8 @@
                         <div class="form-group row ml-2">
                             <label for="unidade" class="col-form-label text-secondary">Unidade</label>
                             <div class="col-sm-2">
-                                <input id="unidade" class="form-control" type="text" name="unidade"
-                                    value="{S->unidade}" disabled>
+                                <input id="unidade" class="form-control" type="text" name="unidade" value="{S->unidade}"
+                                    disabled>
                             </div>
                         </div>
                         <div class="form-group row ml-2">
@@ -176,13 +176,14 @@
             <div>
                 <h3>Manutenção</h3>
                 <div class="ml-2">
-                    <a id="apagarSessaoLnk" href="{main->self}?acao=apagarSessao" class="text-danger">Apagar esta
-                        sessão</a>
+                    <a id="removerSessaoLnk" href="{main->self}?acao=removerSessao" class="text-danger">
+                        Remover esta sessão
+                    </a>
                 </div>
                 <script>
                     $(function () {
-                        $('#apagarSessaoLnk').click(function (e) {
-                            if (!confirm('Apagar esta sessão removerá todas as informações e não poderá ser desfeito.\nTem certeza?')) {
+                        $('#removerSessaoLnk').click(function (e) {
+                            if (!confirm('Remover esta sessão apagará todas as informações e não poderá ser desfeito.\nTem certeza?')) {
                                 return false;
                             }
                         });

@@ -26,18 +26,20 @@ class Gerente
 
         $usuario = Usuario::obter($this->query->codpes);
 
-        if ($id == '0' && !empty($this->data->acao)  && $this->data->acao == 'criarSessao') {
-            // vamos criar nova sessão com dados do post
-
-            $ns = Sessao::criar($usuario, $this->data);
-            Log::sessao('Criar sessão', [
-                'sessao_id' => $ns->id, 'hash' => $ns->hash,
-                'usuario-codpes' => $usuario->codpes, 'usuario-nome' => $usuario->nome
+        if ($id == '0' && !empty($this->data->acao)  && $this->data->acao == 'adicionarSessao') {
+            // vamos criar nova sessão com dados do post adicionarSessao
+            $ns = Sessao::adicionar($usuario, $this->data);
+            Log::sessao('sucesso adicionarSessao', [
+                'id' => $ns->id,
+                'nome' => $ns->id,
+                'hash' => $ns->hash,
+                'usr_codpes' => $usuario->codpes,
+                'usr_nome' => $usuario->nome
             ]);
 
             return ['status' => 'ok', 'data' => $ns->id];
         } else {
-            // ou obter existente
+            // ou obter existente e validando o usuario
             $sessao = Sessao::obterPorId($id, $usuario);
             if (!$sessao) {
                 return ['status' => 'erro', 'msg' => 'Sessão inexistente ou sem acesso'];
@@ -47,19 +49,38 @@ class Gerente
         if ($this->method == 'POST') {
             $acao = $this->data->acao;
             switch ($acao) {
-                case 'addUser':
-                    $novo_usuario = R::findOrCreate('usuario', [
-                        'codpes' => $this->data->codpes,
+                case 'adicionarGerente':
+                    if (!is_numeric($this->data->codpes)) {
+                        return ['status' => 'erro', 'data' => 'Número USP informado está mal formado.'];
+                    }
+                    $novo_gerente = Usuario::obterOuCriar($this->data->codpes);
+                    $novo_gerente->noLoad()->sharedSessaoList[] = $sessao;
+                    Log::sessao('sucesso adicionarGerente', [
+                        'sessao_id' => $sessao->id,
+                        'codpes' => $novo_gerente->codpes,
+                        'nome' => $novo_gerente->nome,
+                        'usr_codpes' => $usuario->codpes,
+                        'usr_nome' => $usuario->nome,
                     ]);
-                    $sessao->sharedUsuarioList[] = $novo_usuario;
-                    R::store($sessao);
-                    return ['status' => 'ok', 'data' => 'Usuário adicionado com sucesso.'];
+                    R::store($novo_gerente);
+                    return ['status' => 'ok', 'data' => 'Gerente adicionado com sucesso.'];
                     break;
-                case 'delUser':
-                    $usuario = $sessao->withCondition('usuario.id = ? ', [$this->data->id])->sharedUsuarioList;
-                    unset($sessao->sharedUsuarioList[key($usuario)]);
-                    R::store($sessao);
-                    return ['status' => 'ok', 'data' => 'Usuário removido com sucesso.'];
+                case 'removerGerente':
+                    if ($gerente = R::load('usuario', $this->data->id)) {
+                        $sharedSessao = $gerente->withCondition('sessao_id = ?', [$sessao->id])->sharedSessaoList;
+                        unset($gerente->sharedSessaoList[key($sharedSessao)]);
+                        R::store($gerente);
+                        Log::sessao('sucesso removerGerente', [
+                            'sessao_id' => $sessao->id,
+                            'codpes' => $gerente->codpes,
+                            'nome' => $gerente->nome,
+                            'usr_codpes' => $usuario->codpes,
+                            'usr_nome' => $usuario->nome,
+                        ]);
+                        return ['status' => 'ok', 'data' => 'Gerente removido com sucesso.'];
+                    } else {
+                        return ['status' => 'erro', 'data' => 'Dados de gerente mal formados.'];
+                    }
                     break;
                 case 'emailTokensControle':
                     $data = Email::sendControle($sessao);
@@ -210,14 +231,13 @@ class Gerente
                     }
                     break;
 
-                case 'apagarSessao':
-                    Log::sessao('Remover sessão', [
-                        'sessao_id' => $sessao->id, 'hash' => $sessao->hash,
-                        'usuario-codpes' => $usuario->codpes, 'usuario-nome' => $usuario->nome,
+                case 'removerSessao':
+                    Log::sessao('sucesso removerSessao', [
+                        'id' => $sessao->id, 'hash' => $sessao->hash,
+                        'usr_codpes' => $usuario->codpes, 'usr_nome' => $usuario->nome,
                     ]);
-
                     $ret = Sessao::remover($sessao);
-                    return ['status' => 'ok', 'data' => 'Sessão excluída com sucesso.'];
+                    return ['status' => 'ok', 'data' => 'Sessão removida com sucesso.'];
                     break;
             }
             return ['status' => 'erro', 'data' => 'Sem ação para ' . $this->data->acao];
