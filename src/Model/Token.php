@@ -43,18 +43,19 @@ class Token
         return $token;
     }
 
-    public static function adicionarTokenAberto($sessao, $eleitor)
+    public static function adicionar($sessao, $eleitor)
     {
         $e = array_map('trim', $eleitor);
         //$eleitor = array_intersect_key($eleitor, array_flip(['apelido', 'nome', 'email']));
 
         // se já existir não cadastramos nada
         if (R::find('token', 'sessao_id = ? and (apelido = ? or nome = ? or email = ?)', [$sessao->id, $e['apelido'], $e['nome'], $e['email']])) {
-            Log::sessao(
-                'erro AdicionarEleitor',
-                ['sessao_id' => $sessao->id, 'msg' => 'Eleitor já existe', 'apelido' => $eleitor['apelido'], 'nome' => $eleitor['nome'], 'email' => $eleitor['email']]
-            );
-            return false;
+            Log::sessao('erro AdicionarEleitor', [
+                'sessao_id' => $sessao->id, 'msg' => 'Eleitor já existe',
+                'apelido' => $eleitor['apelido'], 'nome' => $eleitor['nome'],
+                'email' => $eleitor['email']
+            ]);
+            return ['status' => 'erro', 'data' => 'Eleitor já existe'];
         }
 
         // vamos inserir verificando se o token não é repetido
@@ -73,23 +74,61 @@ class Token
             }
             //echo 'gerou repetido! ', $newToken,PHP_EOL;exit;
         }
-        Log::sessao(
-            'sucesso AdicionarEleitor',
-            ['sessao_id' => $sessao->id, 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]
-        );
-        return $token;
+        Log::sessao('sucesso AdicionarEleitor', [
+            'sessao_id' => $sessao->id, 'apelido' => $token->apelido,
+            'nome' => $token->nome, 'email' => $token->email, 'token' => $token->token
+        ]);
+        return ['status' => 'ok', 'data' => 'Eleitor inserido com sucesso.'];
     }
 
-    public static function removerTokenAberto($sessao, $id)
+    public static function editar($data)
+    {
+        $eleitor = R::findOne('token', 'id = ?', [$data->id]);
+        if (!$eleitor) {
+            return ['status' => 'erro', 'data' => 'Eleitor não encontrado.'];
+        }
+        $sessao_id = $eleitor->sessao_id;
+        //vamos procurar eleitores com $data duplicado
+        $dup = R::find(
+            'token',
+            'sessao_id = ? and (apelido = ? or nome = ? or email = ?) and id != ?',
+            [$sessao_id, $data['apelido'], $data['nome'], $data['email'], $eleitor->id]
+        );
+        if ($dup) {
+            Log::sessao('erro editarEleitor', [
+                'sessao_id' => $sessao_id, 'msg' => 'Dado de eleitor duplicado',
+                'data' => $data->getData(),
+                //'novo_nome' => $eleitor['nome'], 'novo_email' => $eleitor['email']
+            ]);
+            return ['status' => 'erro', 'data' => 'Erro na alteração: dado de eleitor duplicado.'];
+        }
+
+        $eleitor->import($data, 'apelido, nome, email');
+        R::store($eleitor);
+        Log::sessao('sucesso editarEleitor', [
+            'sessao_id' => $sessao_id, 'token' => $eleitor->token, 'novo_apelido' => $eleitor['apelido'],
+            'novo_nome' => $eleitor['nome'], 'novo_email' => $eleitor['email']
+        ]);
+        return ['status' => 'ok', 'data' => 'Eleitor atualizado com sucesso.'];
+    }
+
+    public static function remover($sessao, $id)
     {
         $token = array_pop($sessao->withCondition('id = ?', [$id])->ownTokenList);
         if ($token) {
-            Log::sessao('sucesso removerEleitor', ['sessao_id' => $sessao->id, 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]);
+            Log::sessao('sucesso removerEleitor', [
+                'sessao_id' => $sessao->id, 'apelido' => $token->apelido,
+                'nome' => $token->nome, 'email' => $token->email, 'token' => $token->token
+            ]);
             R::trash($token);
-            return true;
+            return ['status' => 'ok', 'data' => 'Eleitor removido com sucesso.'];
         } else {
-            Log::sessao('erro removerEleitor', ['sessao_id' => $sessao->id, 'msg' => 'Eleitor não existe nessa sessão', 'apelido' => $token->apelido, 'nome' => $token->nome, 'email' => $token->email]);
-            return false;
+            Log::sessao('erro removerEleitor', [
+                'sessao_id' => $sessao->id, 'msg' => 'Eleitor não existe nessa sessão',
+                'apelido' => $token->apelido, 'nome' => $token->nome,
+                'email' => $token->email
+            ]);
+            return ['status' => 'erro', 'data' => 'Eleitor não existe nessa sessão'];
         }
     }
 

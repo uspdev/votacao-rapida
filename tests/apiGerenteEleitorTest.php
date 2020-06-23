@@ -121,7 +121,7 @@ class apiGerenteEleitorTest extends TestCase
         $data['acao'] = 'removerEleitor';
         $sessao = Api::send($endpoint, $data);
 
-        $expected = '{"status":"ok","data":"Eleitor excluído com sucesso."}';
+        $expected = '{"status":"ok","data":"Eleitor removido com sucesso."}';
         $this->assertEquals($expected, json_encode($sessao, JSON_UNESCAPED_UNICODE));
     }
 }

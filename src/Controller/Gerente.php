@@ -120,14 +120,14 @@ class Gerente
                                 $line = mb_convert_encoding($line, 'UTF-8', 'ISO-8859-1');
                             }
                             $eleitor = str_getcsv($line, ';');
-                            $res = Token::adicionarTokenAberto($sessao, ['apelido' => substr($eleitor[0], 0, 20), 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
-                            ($res) ? $s++ : $r++;
+                            $res = Token::adicionar($sessao, ['apelido' => substr($eleitor[0], 0, 20), 'nome' => $eleitor[1], 'email' => $eleitor[2]]);
+                            ($res['status'] == 'ok') ? $s++ : $r++;
                             $t++;
                         }
                     }
                     fclose($handle);
                     unlink($arq['tmp_name']);
-                    return ['status' => 'ok', 'data' => "Resultado da importação: sucesso: $s, repetido: $r, total: $t"];
+                    return ['status' => 'ok', 'data' => "Resultado da importação: sucesso: $s, erro: $r, total: $t"];
                     break;
 
                 case 'exportarEleitores':
@@ -145,31 +145,21 @@ class Gerente
                         return ['status' => 'erro', 'data' => 'Email mal formado'];
                     }
 
-                    if (Token::adicionarTokenAberto($sessao, $eleitor)) {
-                        return ['status' => 'ok', 'data' => 'Eleitor inserido com sucesso.'];
-                    } else {
-                        return ['status' => 'erro', 'data' => 'Eleitor já existe'];
-                    }
+                    return Token::adicionar($sessao, $eleitor);
                     break;
 
                 case 'removerEleitor':
                     if (empty($this->data->id)) {
                         return ['status' => 'erro', 'data' => 'Eleitor não existe nessa sessão'];
                     }
-                    if (Token::removerTokenAberto($sessao, $this->data->id)) {
-                        return ['status' => 'ok', 'data' => 'Eleitor excluído com sucesso.'];
-                    } else {
-                        // aqui só deve acontecer se usuário injetar $id inexistente
-                        return ['status' => 'erro', 'data' => 'Eleitor não existe nessa sessão'];
-                    }
+                    return Token::remover($sessao, $this->data->id);
                     break;
 
                 case 'editarEleitor':
-                    $id = $this->data->id;
-                    $token = R::findOne('token', 'id = ?', [$id]);
-                    $token->import($this->data, 'apelido, nome, email');
-                    R::store($token);
-                    return ['status' => 'ok', 'data' => 'Eleitor atualizado com sucesso.'];
+                    if (empty($this->data->id)) {
+                        return ['status' => 'erro', 'data' => 'Dados mal formados - sem id.'];
+                    }
+                    return Token::editar($this->data);
                     break;
 
                 case 'editarVotacao':
