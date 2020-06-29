@@ -31,7 +31,7 @@ class Gerente
             $ns = Sessao::adicionar($usuario, $this->data);
             Log::sessao('sucesso adicionarSessao', [
                 'id' => $ns->id,
-                'nome' => $ns->id,
+                'nome' => $ns->nome,
                 'hash' => $ns->hash,
                 'usr_codpes' => $usuario->codpes,
                 'usr_nome' => $usuario->nome
@@ -223,7 +223,7 @@ class Gerente
 
                 case 'removerSessao':
                     Log::sessao('sucesso removerSessao', [
-                        'id' => $sessao->id, 'hash' => $sessao->hash,
+                        'id' => $sessao->id, 'nome' => $sessao->nome, 'hash' => $sessao->hash,
                         'usr_codpes' => $usuario->codpes, 'usr_nome' => $usuario->nome,
                     ]);
                     $ret = Sessao::remover($sessao);
