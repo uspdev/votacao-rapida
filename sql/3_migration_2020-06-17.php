@@ -1,4 +1,5 @@
 <?php
+// Desenvolvido usando MYSQL/MARIADB. Pode ser necessário adaptar para outro BD
 // Issue #71 - Implementação de ordenação das votações
 // Criar coluna no BD
 // atualizar registros existentes
@@ -12,7 +13,7 @@ R::freeze(false);
 
 echo 'Criando coluna no BD.. ';
 try {
-    R::exec('ALTER TABLE `votacao` ADD `ordem` INT(11) UNSIGNED;');
+    R::exec('ALTER TABLE `votacao` ADD `ordem` INT(11) UNSIGNED NULL DEFAULT NULL COLLATE utf8mb4_unicode_ci ;');
     echo 'OK', PHP_EOL;
 
     echo 'Atualizando registros existentes (pode demorar um pouco).. ';
