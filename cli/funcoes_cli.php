@@ -35,6 +35,7 @@ function limparBD()
     return 'Banco de dados apagado com sucesso.';
 }
 
+// transferido para sql/seeds
 function dadosDeControle()
 {
     // estes dados são de controle da votação 
