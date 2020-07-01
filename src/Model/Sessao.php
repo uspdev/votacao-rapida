@@ -23,19 +23,20 @@ class Sessao
 
     public static function obterPorId($sessao_id, $usuario)
     {
-        if ($usuario->codpes == '1575309') {
+        if ($usuario->admin == 1) {
             $sessao = R::load('sessao', $sessao_id);
+            return ($sessao->id == 0) ? false : $sessao;
         } else {
             $sessoes = $usuario->withCondition('sessao.id = ?', [$sessao_id])->sharedSessaoList;
             if (empty($sessoes)) {
                 return false;
             }
-            $sessao = array_pop($sessoes);
+            return array_pop($sessoes);
         }
-        return $sessao;
     }
 
-    public static function obterPorHash($hash) {
+    public static function obterPorHash($hash)
+    {
         return R::findOne('sessao', 'hash = ?', [$hash]);
     }
 
