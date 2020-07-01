@@ -196,6 +196,12 @@ class Votacao
                 );
                 return ['status' => 'erro', 'data' => $usr_msg];
             }
+        } elseif ($data->obs) {
+            // se já foi votado e veio observação, vamos aceitar
+            $votacao->obs = $data->obs;
+            R::store($votacao);
+            return ['status' => 'ok', 'data' => 'Editado observação pós votação'];
+
         } else {
             // se ja tiver sido votado não faremos nada, não precisamos gerar log
             return ['status' => 'erro', 'data' => 'Impossível editar uma votação que já foi votada'];
