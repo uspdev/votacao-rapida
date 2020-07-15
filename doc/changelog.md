@@ -1,5 +1,9 @@
 # Changelog
 
+* 15/07/2020
+  * Criando campo de observação pós votação (#54)
+  * Melhorando migrations com tabela inicial e scripts php.
+
 * 23/06/2020
   * Gerando logs ao adicionar e remover gerente (#68)
   * Melhorando a busca de gerentes e os processos relacionados

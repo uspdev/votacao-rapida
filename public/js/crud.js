@@ -92,10 +92,18 @@
 
         this.on('click', '.editar_btn', function (e) {
             e.preventDefault();
-            var target = $(this).closest('.item').find('.form_target');
-            renderForm(target, opts.editAction).slideDown(300);
-            addFormData(target);
-            edit = true;
+            if (edit == false) {
+                var target = $(this).closest('.item').find('.form_target');
+                renderForm(target, opts.editAction).slideDown(300);
+                addFormData(target);
+                edit = true;
+            } else {
+                var item = $(this).closest('.item').find('.form_target').slideUp(300, function () {
+                    $(this).empty();
+                });
+                edit = false;
+            }
+
         });
 
         this.on('click', '.remover_btn', function (e) {
@@ -115,23 +123,36 @@
             return target;
         }
 
+        // seleciona todos os inputs relevantes e copia o valor de span item_target.
+        // trata diferente radio button
+        // NAO trata checkbox
+        // desabilita campos de votações já votadas
         var addFormData = function (target) {
-            target.find('input').each(function () {
-                var name = $(this).attr('name');
-                var value = target.closest('.item').find('.item_target').attr(name);
-                if (['text', 'hidden', 'email', 'number'].includes($(this).attr('type'))) {
+            target.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function () {
+                var name = $(this).attr('name')
+                var value = target.closest('.item').find('.item_target').attr(name)
+                if ($(this).is(':radio')) {
+                    $(this).attr('value') == value ? $(this).prop('checked', true) : $(this).prop('checked', false)
+                } else {
                     $(this).val(value);
-                } else if ($(this).attr('type') == 'radio') {
-                    $(this).attr('value') == value ? $(this).prop('checked', true) : $(this).prop('checked', false);
                 }
-            });
+                console.log($(this).data().edit)
 
-            target.find('textarea').each(function () {
-                var name = $(this).attr('name');
-                var value = target.closest('.item').find('.item_target').attr(name);
-                $(this).val(value);
-            });
+                if ($(this).is(':not([type=hidden])')) {
+                    var votado = target.closest('.item').find('.item_target').attr('votado')
+                    if (votado) {
+                        if ($(this).data().edit == undefined) {
+                            $(this).attr('disabled', 'true')
+                        }
+                    } else {
+                        if ($(this).data().edit == 'votado') {
+                            $(this).attr('disabled', 'true')
+                        }
+                    }
+                }
+            })
         }
+
         return this;
     };
 

@@ -35,7 +35,9 @@
                 {V->nome} <span class="badge {V->class}">{V->tipo}</span>
                 {V->data_ini|show_if:<span class="badge badge-info">Votado</span>}
                 <span class="item_target" nome="{V->nome}" descricao="{V->descricao}" tipo="{V->tipo}"
-                    alternativas="{V->alternativas}" id="{V->id}" ordem="{V->ordem}"></span>
+                    alternativas="{V->alternativas}" id="{V->id}" ordem="{V->ordem}" votado="{V->data_ini}"
+                    obs="{V->obs}">
+                </span>
             </div>
             <div class="descricao small ml-3">
                 {V->descricao|nl2br}
@@ -43,23 +45,24 @@
             <div class="alternativas small ml-3">
                 {V->alternativas|nl2pipe}
             </div>
+            <div class="observacao small ml-4 text-danger">
+                {V->obs|nl2br}
+            </div>
             <div class="form_target"></div>
         </div>
         <!-- END block_votacao -->
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
     <div class="form_template hide">
         <form method="POST">
             <div class="row">
-                <div class="col-md-12 ml-3" <label>
-                    <span class="text-secondary">Nome</span>
-                    <div>
-                        <input type="text" name="nome" maxlength="300" style="width:100%">
-                    </div>
+                <div class="col-md-12">
+                    <label class="col-form-label col-md-12">
+                        <span class="text-secondary">Nome</span>
+                        <div>
+                            <input type="text" name="nome" maxlength="300" style="width:100%">
+                        </div>
                     </label>
                 </div>
             </div>
@@ -69,9 +72,24 @@
                         <label class="col-form-label col-sm-12">
                             <span class="text-secondary">Descrição</span>
                             <div>
-                                <textarea name="descricao" rows="4" style="width:100%"></textarea>
+                                <textarea name="descricao" rows="4" maxlength="1000" style="width:100%"></textarea>
                             </div>
                         </label>
+                    </div>
+                    <div class="ml-3">
+                        <span class="text-secondary">Tipo</span>
+                        <div class="form-check form-check-inline">
+                            <label class="col-form-label">
+                                <span>Aberta</span>
+                                <input type="radio" name="tipo" value="aberta" checked>
+                            </label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <label class="col-form-label">
+                                <span>Fechada</span>
+                                <input type="radio" name="tipo" value="fechada">
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -79,37 +97,29 @@
                         <label class="col-form-label col-sm-12">
                             <span class="text-secondary">Alternativas</span>
                             <div>
-                                <textarea name="alternativas" rows="4" style="width:100%"></textarea>
+                                <textarea name="alternativas" rows="4" maxlength="1000" style="width:100%"></textarea>
                             </div>
                         </label>
                     </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 ml-3">
-                    <span class="text-secondary">Tipo</span>
-                    <div class="form-check form-check-inline">
+                    <div class="ml-3">
                         <label class="col-form-label">
-                            <span>Aberta</span>
-                            <input type="radio" name="tipo" value="aberta" checked>
-                        </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <label class="col-form-label">
-                            <span>Fechada</span>
-                            <input type="radio" name="tipo" value="fechada">
+                            <span class="text-secondary">Ordem</span>
+                            <input type="number" name="ordem" class="" size="3" min="1" value="">
                         </label>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-12 ml-3">
-                    <label class="col-form-label">
-                        <span class="text-secondary">Ordem</span>
-                        <input type="number" name="ordem" class="" size="3" min="1" value="">
+                <div class="col-md-12">
+                    <label class="col-form-label col-md-12">
+                        <span class="text-secondary">Observações pós votação</span>
+                        <div>
+                            <textarea name="obs" rows="2" maxlength="1000" style="width:100%" data-edit="votado"></textarea>
+                        </div>
                     </label>
                 </div>
             </div>
+
             <input type="hidden" name="id" value="">
             <div class="text-right mr-4">
                 <button type="submit" class="btn btn-sm btn-outline-primary" name="acao" value="">
