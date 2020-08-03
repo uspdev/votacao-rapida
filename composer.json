@@ -19,7 +19,7 @@
         "vlucas/phpdotenv": "^4.1",
         "spipu/html2pdf": "^5.2",
         "oomphinc/composer-installers-extender": "^1.1",
-        "phpmailer/phpmailer": "6.1.*",
+        "phpmailer/phpmailer": "^6.1",
         "monolog/monolog": "2.*",
         "npm-asset/jquery": "3.5.*",
         "npm-asset/font-awesome": "5.*",
