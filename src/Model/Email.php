@@ -285,7 +285,7 @@ class Email
 
         if (!$mail->send()) {
             return $mail->ErrorInfo;
-            file_put_contents(LOCAL . '/emaillog.txt', $mail->ErrorInfo, FILE_APPEND);
+            file_put_contents(LOCAL . '/emaillog2.txt', $mail->ErrorInfo, FILE_APPEND);
         } else {
             return true;
         }
