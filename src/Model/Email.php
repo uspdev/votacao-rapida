@@ -100,8 +100,8 @@ class Email
         return true;
     }
 
-    public static function sendNovoGerente($sessao, $gerente) {
-        
+    public static function sendNovoGerente($sessao, $gerente)
+    {
     }
 
     public static function sendExportarVotacao($export)
@@ -238,6 +238,7 @@ class Email
         //$mail->Encoding = 'base64';
 
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        //$mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
         $mail->IsSMTP();
         $mail->Host = "smtp.gmail.com";
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
@@ -267,6 +268,18 @@ class Email
         //$mail->Body = $arr['corpo']; 
         $mail->msgHTML($arr['corpo']);
         //$mail->AltBody = $arr['alt']; //PlainText, para caso quem receber o email não aceite o corpo HTML
+        $mail->Debugoutput = function ($str, $level) use ($arr) {
+            //echo "debug level $level; message: $str";
+            $arq = LOCAL . '/emaillog.txt';
+            file_put_contents($arq, $str, FILE_APPEND);
+            // $context = [
+            //     'debug level' => $level,
+            //     'message' => $str,
+            //     'dest' => $arr['destinatario'],
+            //     'assunto' => $arr['assunto'],
+            // ];
+            // Log::email('erro - ' . $arr['destinatario'], $context);
+        };
 
         if (!$mail->send()) {
             return $mail->ErrorInfo;
