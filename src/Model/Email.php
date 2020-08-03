@@ -286,6 +286,7 @@ class Email
         if (!$mail->send()) {
             return $mail->ErrorInfo;
         } else {
+            sleep (1);
             return true;
         }
     }
