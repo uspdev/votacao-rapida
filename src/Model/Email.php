@@ -251,7 +251,7 @@ class Email
         $mail->setLanguage('pt_br');
 
         $mail->setFrom(getenv('EMAIL'), utf8_decode("Votação rápida"));
-        $mail->AddAddress($arr['destinatario']);
+        $mail->AddAddress(utf8_decode($arr['destinatario']));
 
         (isset($arr['bcc'])) ? $mail->addBCC($arr['bcc']) : '';
 
