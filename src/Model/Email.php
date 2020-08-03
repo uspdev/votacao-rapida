@@ -240,6 +240,7 @@ class Email
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;
         //$mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
         $mail->IsSMTP();
+        $mail->SMTPKeepAlive = true;
         $mail->Host = "smtp.gmail.com";
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->SMTPAuth = true;
