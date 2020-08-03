@@ -283,9 +283,11 @@ class Email
             // Log::email('erro - ' . $arr['destinatario'], $context);
         };
 
-        if (!$mail->send()) {
+        $sent = $mail->send();
+        file_put_contents(LOCAL . '/emaillog2.txt', $mail->ErrorInfo, FILE_APPEND);
+
+        if (!$sent) {
             return $mail->ErrorInfo;
-            file_put_contents(LOCAL . '/emaillog2.txt', $mail->ErrorInfo, FILE_APPEND);
         } else {
             return true;
         }
