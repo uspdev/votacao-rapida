@@ -287,7 +287,7 @@ class Email
             return $mail->ErrorInfo;
         } else {
             $mail->SmtpClose();
-            sleep (1);
+            sleep (5);
             return true;
         }
     }
