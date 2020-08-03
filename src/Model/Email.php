@@ -243,13 +243,13 @@ class Email
         $mail->Host = "smtp.gmail.com";
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->SMTPAuth = true;
-        $mail->Username = $_ENV['EMAIL'];
-        $mail->Password = $_ENV['EMAIL_PWD'];
+        $mail->Username = getenv('EMAIL');
+        $mail->Password = getenv('EMAIL_PWD');
         $mail->Port = 587;
 
         $mail->setLanguage('pt_br');
 
-        $mail->setFrom($_ENV['EMAIL'], utf8_decode("Votação rápida"));
+        $mail->setFrom(getenv('EMAIL'), utf8_decode("Votação rápida"));
         $mail->AddAddress($arr['destinatario']);
 
         (isset($arr['bcc'])) ? $mail->addBCC($arr['bcc']) : '';
