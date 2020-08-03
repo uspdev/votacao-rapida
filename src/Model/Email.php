@@ -240,13 +240,7 @@ class Email
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;
         //$mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
         $mail->IsSMTP();
-        //https://cursos.alura.com.br/forum/topico-erro-ao-enviar-email-com-smtp-42437
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            ));
+
         $mail->SMTPKeepAlive = true;
         $mail->Host = "smtp.gmail.com";
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
