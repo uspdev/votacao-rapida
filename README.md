@@ -18,7 +18,7 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 
 * git clone
 * composer install
-* cp .env.example .env
+* cp env .env
 * Ajuste o .env conforme necessário
 * Utilize AMBIENTE='dev' para criar as tabelas on the fly
 * Rode `php cli\atualizar_estrutura.php`
