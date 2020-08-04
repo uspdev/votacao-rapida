@@ -244,8 +244,8 @@ class Email
         //$mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
 
         //$mail->SMTPKeepAlive = true;
-        $mail->Host = "smtp.gmail.com";
-        $mail->Port = 587;
+        $mail->Host = getenv('EMAIL_HOST');
+        $mail->Port = getenv('EMAIL_PORT');
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         //$mail->SMTPSecure = 'tls';
         $mail->SMTPAuth = true;
