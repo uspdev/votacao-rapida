@@ -271,7 +271,7 @@ class Email
                 'userName' => $email,
             ]));
         } elseif (getenv('EMAIL_AUTH_TYPE') == 'login') {
-            $mail->AuthType = 'LOGIN';
+            $mail->AuthType = 'PLAIN';
             $mail->SMTPAutoTLS=false;
             $mail->Username = getenv('EMAIL');
             $mail->Password = getenv('EMAIL_PWD');
@@ -317,7 +317,7 @@ class Email
         };
 
         $sent = $mail->send();
-
+        $mail->smtpClose();
         file_put_contents(LOCAL . '/emaillog3.txt', $mail->getSentMIMEMessage(), FILE_APPEND);
         file_put_contents(LOCAL . '/emaillog2.txt', $mail->ErrorInfo, FILE_APPEND);
 
