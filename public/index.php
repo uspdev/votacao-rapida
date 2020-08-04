@@ -101,6 +101,10 @@ Flight::route('/ticket', function () {
     $run->ticket();
 });
 
+Flight::route('/get_auth_token', function () {
+    require_once(ROOTDIR.'/app/get_oauth_token.php');
+});
+
 Flight::route('GET /@hash:[A-Z]{20}', function ($hash) {
     Run::hashGet($hash);
 });

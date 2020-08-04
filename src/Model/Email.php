@@ -6,6 +6,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use raelgc\view\Template;
 use \RedBeanPHP\R as R;
+use League\OAuth2\Client\Provider\Google;
+use PHPMailer\PHPMailer\OAuth;
 
 class Email
 {
@@ -236,20 +238,46 @@ class Email
         $mail = new PHPMailer();
         //$mail->CharSet = 'UTF-8';
         //$mail->Encoding = 'base64';
+        $mail->IsSMTP();
 
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;
         //$mail->SMTPDebug = SMTP::DEBUG_CONNECTION;
-        $mail->IsSMTP();
 
-        $mail->SMTPKeepAlive = true;
+        //$mail->SMTPKeepAlive = true;
         $mail->Host = "smtp.gmail.com";
-        //$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->SMTPSecure = 'tls';
-        $mail->SMTPAuth = true;
-        $mail->Username = getenv('EMAIL');
-        $mail->Password = getenv('EMAIL_PWD');
         $mail->Port = 587;
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        //$mail->SMTPSecure = 'tls';
+        $mail->SMTPAuth = true;
+        // $mail->Username = getenv('EMAIL');
+        // $mail->Password = getenv('EMAIL_PWD');
 
+        $mail->AuthType = 'XOAUTH2';
+
+        $email = getenv('EMAIL');
+        $clientId = getenv('EMAIL_OAUTH_CLIENT_ID');
+        $clientSecret = getenv('EMAIL_OAUTH_CLIENT_SECRET');
+        $refreshToken = getenv('EMAIL_OAUTH_REFRESH_TOKEN');
+
+        $provider = new Google(
+            [
+                'clientId' => $clientId,
+                'clientSecret' => $clientSecret,
+            ]
+        );
+
+        $mail->setOAuth(
+            new OAuth(
+                [
+                    'provider' => $provider,
+                    'clientId' => $clientId,
+                    'clientSecret' => $clientSecret,
+                    'refreshToken' => $refreshToken,
+                    'userName' => $email,
+                ]
+            )
+        );
+        
         $mail->setLanguage('pt_br');
 
         $mail->setFrom(getenv('EMAIL'), utf8_decode("Votação rápida"));
@@ -285,6 +313,8 @@ class Email
         };
 
         $sent = $mail->send();
+
+        file_put_contents(LOCAL . '/emaillog3.txt', $mail->getSentMIMEMessage(), FILE_APPEND);
         file_put_contents(LOCAL . '/emaillog2.txt', $mail->ErrorInfo, FILE_APPEND);
 
         if (!$sent) {
