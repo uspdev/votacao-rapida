@@ -244,6 +244,7 @@ class Email
         $mail->SMTPKeepAlive = true;
         $mail->Host = "smtp.gmail.com";
         //$mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->SMTPSecure = 'tls';
         $mail->SMTPAuth = true;
         $mail->Username = getenv('EMAIL');
         $mail->Password = getenv('EMAIL_PWD');
