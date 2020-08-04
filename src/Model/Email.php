@@ -270,8 +270,8 @@ class Email
                 'refreshToken' => $refreshToken,
                 'userName' => $email,
             ]));
-        } elseif (getenv('EMAIL_AUTH_TYPE') == 'plain') {
-            $mail->AuthType = 'PLAIN';
+        } elseif (getenv('EMAIL_AUTH_TYPE') == 'login') {
+            $mail->AuthType = 'LOGIN';
             $mail->SMTPAutoTLS=false;
             $mail->Username = getenv('EMAIL');
             $mail->Password = getenv('EMAIL_PWD');
