@@ -240,7 +240,7 @@ class Email
         //$mail->Encoding = 'base64';
         $mail->IsSMTP();
 
-        $mail->SMTPDebug = SMTP::DEBUG_LOWleVEL;
+        $mail->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
         //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
 
         //$mail->SMTPKeepAlive = true;
