@@ -240,57 +240,52 @@ class Email
         //$mail->Encoding = 'base64';
         $mail->IsSMTP();
 
-        $mail->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
-        //$mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        //$mail->SMTPDebug = SMTP::DEBUG_LOWLEVEL;
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER;
 
         //$mail->SMTPKeepAlive = true;
         $mail->Host = getenv('EMAIL_HOST');
         $mail->Port = getenv('EMAIL_PORT');
         $mail->SMTPAuth = true;
 
+        switch (getenv('EMAIL_AUTH_TYPE')) {
+            case 'oauth':
+                $mail->AuthType = 'XOAUTH2';
+                $email = getenv('EMAIL');
+                $clientId = getenv('EMAIL_OAUTH_CLIENT_ID');
+                $clientSecret = getenv('EMAIL_OAUTH_CLIENT_SECRET');
+                $refreshToken = getenv('EMAIL_OAUTH_REFRESH_TOKEN');
 
-        if (getenv('EMAIL_AUTH_TYPE') == 'oauth') {
-            $mail->AuthType = 'XOAUTH2';
-
-            $email = getenv('EMAIL');
-            $clientId = getenv('EMAIL_OAUTH_CLIENT_ID');
-            $clientSecret = getenv('EMAIL_OAUTH_CLIENT_SECRET');
-            $refreshToken = getenv('EMAIL_OAUTH_REFRESH_TOKEN');
-
-            $provider = new Google([
-                'clientId' => $clientId,
-                'clientSecret' => $clientSecret,
-            ]);
-
-            $mail->setOAuth(new OAuth([
-                'provider' => $provider,
-                'clientId' => $clientId,
-                'clientSecret' => $clientSecret,
-                'refreshToken' => $refreshToken,
-                'userName' => $email,
-            ]));
-
-        } elseif (getenv('EMAIL_AUTH_TYPE') == 'login') {
-            $mail->AuthType = 'LOGIN';
-            $mail->SMTPAutoTLS = false;
-            $mail->Username = getenv('EMAIL');
-            $mail->Password = getenv('EMAIL_PWD');
-
-        } elseif (getenv('EMAIL_AUTH_TYPE') == 'tls') {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Username = getenv('EMAIL');
-            $mail->Password = getenv('EMAIL_PWD');
-
-        } elseif (getenv('EMAIL_AUTH_TYPE') == 'ssl') {
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-            $mail->Username = getenv('EMAIL');
-            $mail->Password = getenv('EMAIL_PWD');
+                $provider = new Google(['clientId' => $clientId, 'clientSecret' => $clientSecret,]);
+                $mail->setOAuth(new OAuth([
+                    'provider' => $provider,
+                    'clientId' => $clientId,
+                    'clientSecret' => $clientSecret,
+                    'refreshToken' => $refreshToken,
+                    'userName' => $email,
+                ]));
+                break;
+            case 'login':
+                $mail->AuthType = 'LOGIN';
+                $mail->SMTPAutoTLS = false;
+                $mail->Username = getenv('EMAIL');
+                $mail->Password = getenv('EMAIL_PWD');
+                break;
+            case 'tls':
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Username = getenv('EMAIL');
+                $mail->Password = getenv('EMAIL_PWD');
+                break;
+            case 'ssl':
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Username = getenv('EMAIL');
+                $mail->Password = getenv('EMAIL_PWD');
+                break;
         }
 
         $mail->setLanguage('pt_br');
-
         $mail->setFrom(getenv('EMAIL'), utf8_decode("Votação rápida"));
-        $mail->AddAddress(utf8_decode($arr['destinatario']));
+        $mail->AddAddress($arr['destinatario']);
 
         (isset($arr['bcc'])) ? $mail->addBCC($arr['bcc']) : '';
 
@@ -308,23 +303,14 @@ class Email
         //$mail->Body = $arr['corpo']; 
         $mail->msgHTML($arr['corpo']);
         //$mail->AltBody = $arr['alt']; //PlainText, para caso quem receber o email não aceite o corpo HTML
+
         $mail->Debugoutput = function ($str, $level) use ($arr) {
-            //echo "debug level $level; message: $str";
-            $arq = LOCAL . '/emaillog.txt';
+            $arq = LOCAL . '/emaillog-'.date('Y-m-d').'.txt';
             file_put_contents($arq, $str, FILE_APPEND);
-            // $context = [
-            //     'debug level' => $level,
-            //     'message' => $str,
-            //     'dest' => $arr['destinatario'],
-            //     'assunto' => $arr['assunto'],
-            // ];
-            // Log::email('erro - ' . $arr['destinatario'], $context);
         };
 
         $sent = $mail->send();
         $mail->smtpClose();
-        file_put_contents(LOCAL . '/emaillog3.txt', $mail->getSentMIMEMessage(), FILE_APPEND);
-        file_put_contents(LOCAL . '/emaillog2.txt', $mail->ErrorInfo, FILE_APPEND);
 
         if (!$sent) {
             return $mail->ErrorInfo;
