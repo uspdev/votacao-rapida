@@ -271,7 +271,11 @@ class Email
                 'refreshToken' => $refreshToken,
                 'userName' => $email,
             ]));
-        } else {
+        } elseif (getenv('EMAIL_AUTH_TYPE') == 'plain') {
+            $mail->AuthType = 'PLAIN';
+            $mail->Username = getenv('EMAIL');
+            $mail->Password = getenv('EMAIL_PWD');
+        } elseif (getenv('EMAIL_AUTH_TYPE') == 'tls') {
             $mail->Username = getenv('EMAIL');
             $mail->Password = getenv('EMAIL_PWD');
         }
