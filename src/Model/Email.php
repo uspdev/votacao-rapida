@@ -246,7 +246,6 @@ class Email
         //$mail->SMTPKeepAlive = true;
         $mail->Host = getenv('EMAIL_HOST');
         $mail->Port = getenv('EMAIL_PORT');
-        //$mail->SMTPSecure = 'tls';
         $mail->SMTPAuth = true;
 
 
@@ -270,13 +269,20 @@ class Email
                 'refreshToken' => $refreshToken,
                 'userName' => $email,
             ]));
+
         } elseif (getenv('EMAIL_AUTH_TYPE') == 'login') {
             $mail->AuthType = 'LOGIN';
-            $mail->SMTPAutoTLS=false;
+            $mail->SMTPAutoTLS = false;
             $mail->Username = getenv('EMAIL');
             $mail->Password = getenv('EMAIL_PWD');
+
         } elseif (getenv('EMAIL_AUTH_TYPE') == 'tls') {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Username = getenv('EMAIL');
+            $mail->Password = getenv('EMAIL_PWD');
+
+        } elseif (getenv('EMAIL_AUTH_TYPE') == 'ssl') {
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Username = getenv('EMAIL');
             $mail->Password = getenv('EMAIL_PWD');
         }
