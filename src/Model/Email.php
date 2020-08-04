@@ -249,35 +249,33 @@ class Email
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         //$mail->SMTPSecure = 'tls';
         $mail->SMTPAuth = true;
-        // $mail->Username = getenv('EMAIL');
-        // $mail->Password = getenv('EMAIL_PWD');
 
-        $mail->AuthType = 'XOAUTH2';
 
-        $email = getenv('EMAIL');
-        $clientId = getenv('EMAIL_OAUTH_CLIENT_ID');
-        $clientSecret = getenv('EMAIL_OAUTH_CLIENT_SECRET');
-        $refreshToken = getenv('EMAIL_OAUTH_REFRESH_TOKEN');
+        if (getenv('EMAIL_AUTH_TYPE') == 'oauth') {
+            $mail->AuthType = 'XOAUTH2';
 
-        $provider = new Google(
-            [
+            $email = getenv('EMAIL');
+            $clientId = getenv('EMAIL_OAUTH_CLIENT_ID');
+            $clientSecret = getenv('EMAIL_OAUTH_CLIENT_SECRET');
+            $refreshToken = getenv('EMAIL_OAUTH_REFRESH_TOKEN');
+
+            $provider = new Google([
                 'clientId' => $clientId,
                 'clientSecret' => $clientSecret,
-            ]
-        );
+            ]);
 
-        $mail->setOAuth(
-            new OAuth(
-                [
-                    'provider' => $provider,
-                    'clientId' => $clientId,
-                    'clientSecret' => $clientSecret,
-                    'refreshToken' => $refreshToken,
-                    'userName' => $email,
-                ]
-            )
-        );
-        
+            $mail->setOAuth(new OAuth([
+                'provider' => $provider,
+                'clientId' => $clientId,
+                'clientSecret' => $clientSecret,
+                'refreshToken' => $refreshToken,
+                'userName' => $email,
+            ]));
+        } else {
+            $mail->Username = getenv('EMAIL');
+            $mail->Password = getenv('EMAIL_PWD');
+        }
+
         $mail->setLanguage('pt_br');
 
         $mail->setFrom(getenv('EMAIL'), utf8_decode("Votação rápida"));
