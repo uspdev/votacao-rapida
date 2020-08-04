@@ -271,13 +271,12 @@ class Email
                 'userName' => $email,
             ]));
         } elseif (getenv('EMAIL_AUTH_TYPE') == 'login') {
-            $mail->AuthType = 'PLAIN';
+            $mail->AuthType = 'LOGIN';
             $mail->SMTPAutoTLS=false;
             $mail->Username = getenv('EMAIL');
             $mail->Password = getenv('EMAIL_PWD');
         } elseif (getenv('EMAIL_AUTH_TYPE') == 'tls') {
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-
             $mail->Username = getenv('EMAIL');
             $mail->Password = getenv('EMAIL_PWD');
         }
