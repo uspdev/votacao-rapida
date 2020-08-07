@@ -305,7 +305,7 @@ class Email
         //$mail->AltBody = $arr['alt']; //PlainText, para caso quem receber o email não aceite o corpo HTML
 
         $mail->Debugoutput = function ($str, $level) use ($arr) {
-            $arq = LOCAL . '/emaillog-'.date('Y-m-d').'.txt';
+            $arq = LOCAL . '/log/emaillog-'.date('Y-m-d').'.txt';
             file_put_contents($arq, $str, FILE_APPEND);
         };
 
