@@ -27,12 +27,21 @@ SENHA_UNICA_CALLBACK_ID=''
 SENHA_UNICA_AMB='' # prod ou dev
 
 # Como a api está junto, vai criar esse usuário e usar ele para a comunicação
-API_USER = 'admin'
-API_PWD = 'admin'
+API_USER='admin'
+API_PWD='admin'
 
 # Email de envio de mensagens (google)
-EMAIL = 
-EMAIL_PWD = 
+EMAIL_AUTH_TYPE='ssl' # plain, tls, ssl, oauth
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=465
+
+EMAIL=
+EMAIL_PWD=
+
+# Caso EMAIL_AUTH_TYPE=oauth, é necessário configurar as credenciais
+EMAIL_OAUTH_CLIENT_ID=
+EMAIL_OAUTH_CLIENT_SECRET=
+EMAIL_OAUTH_REFRESH_TOKEN=
 
 # Número usp do primeiro usuário admin
-ADMIN_CODPES = 
+ADMIN_CODPES=
