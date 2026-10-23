@@ -2,15 +2,28 @@
 
 namespace Uspdev\Votacao\Model;
 
+use League\OAuth2\Client\Provider\Google;
+use PHPMailer\PHPMailer\OAuth;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use raelgc\view\Template;
+use \RedBeanPHP\OODBBean;
 use \RedBeanPHP\R as R;
-use League\OAuth2\Client\Provider\Google;
-use PHPMailer\PHPMailer\OAuth;
 
+/**
+ * Model Email
+ *
+ * Responsável pelo gerenciamento, geração de templates, enfileiramento
+ * e disparo de e-mails da aplicação (credenciais de votação, controle e relatórios).
+ */
 class Email
 {
+    /**
+     * Envia e-mail com as credenciais de votação para todos os tokens de votação aberta da sessão.
+     *
+     * @param OODBBean $sessao Objeto/Bean da sessão de votação
+     * @return array{0: int, 1: int} Retorna array contendo [sucessos, erros]
+     */
     public static function sendTodosVotacao($sessao)
     {
         $tokens = $sessao->withCondition("tipo = 'aberta'")->ownTokenList;
@@ -31,6 +44,14 @@ class Email
         return [$count, $erro];
     }
 
+    /**
+     * Gera o template e enfileira o e-mail de votação para um eleitor específico.
+     *
+     * @param OODBBean $sessao Objeto/Bean da sessão de votação
+     * @param OODBBean $token Objeto/Bean do token associado ao eleitor
+     * @param bool $now Se true, aciona imediatamente o script CLI de envio da fila em background
+     * @return bool Retorna true se o e-mail foi adicionado à fila com sucesso
+     */
     public static function sendVotacao($sessao, $token, $now = false)
     {
         $tpl = new Template(TPL . '/email/votacao.html');
@@ -74,6 +95,12 @@ class Email
         return $ret;
     }
 
+    /**
+     * Enfileira as credenciais de controle da sessão (apoio, painel, recepção) para os gerentes/usuários.
+     *
+     * @param OODBBean $sessao Objeto/Bean da sessão de votação
+     * @return bool Retorna true após enfileirar as mensagens
+     */
     public static function sendControle($sessao)
     {
         $sessao->wwwroot = getenv('WWWROOT');
@@ -102,10 +129,23 @@ class Email
         return true;
     }
 
+    /**
+     * Notifica a adição de um novo gerente à sessão (placeholder para futura implementação).
+     *
+     * @param OODBBean $sessao
+     * @param mixed $gerente
+     * @return void
+     */
     public static function sendNovoGerente($sessao, $gerente)
     {
     }
 
+    /**
+     * Gera e envia o relatório com o resultado consolidado e votos individuais de uma votação finalizada.
+     *
+     * @param object|array $export Dados consolidados da votação para exportação
+     * @return bool Retorna true se adicionado à fila com sucesso
+     */
     public static function sendExportarVotacao($export)
     {
         $votacao = json_decode(json_encode($export));
@@ -188,6 +228,13 @@ class Email
         return true;
     }
 
+    /**
+     * Salva uma mensagem na tabela de fila de e-mails do banco de dados.
+     *
+     * @param OODBBean $sessao Objeto/Bean da sessão vinculada
+     * @param array $arr Dados do e-mail (destinatario, assunto, corpo, embedded, etc.)
+     * @return bool Retorna true após persistir
+     */
     public static function adicionarFila($sessao, $arr)
     {
         $email = R::dispense('email');
@@ -198,6 +245,14 @@ class Email
         return true;
     }
 
+    /**
+     * Processa as mensagens pendentes na fila de e-mails (`enviado IS NULL`).
+     *
+     * Dispara as mensagens via SMTP ou salva em log de acordo com a configuração,
+     * atualizando a data de envio e gerando registros de log.
+     *
+     * @return int Retorna a quantidade de e-mails processados
+     */
     public static function processarFila()
     {
         return R::transaction(function () {
@@ -233,8 +288,89 @@ class Email
         });
     }
 
+    /**
+     * Verifica se as variáveis de ambiente possuem um servidor de e-mail válido configurado.
+     *
+     * @return bool Retorna true se houver host e remetente válidos configurados, ou false para simulação em log
+     */
+    public static function isConfigured()
+    {
+        $authType = strtolower(getenv('EMAIL_AUTH_TYPE') ?: '');
+        if ($authType === 'log') {
+            return false;
+        }
+
+        $host = getenv('EMAIL_HOST');
+        $email = getenv('EMAIL');
+
+        if (empty($host) || empty($email) || strtolower($host) === 'log') {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Registra o e-mail em arquivo de log quando não há servidor de e-mail ativo.
+     *
+     * Grava os dados completos em `local/log/emails_YYYY-MM.log` e registra o evento no Monolog.
+     *
+     * @param array $arr Dados do e-mail (destinatario, assunto, corpo, bcc, responder_para)
+     * @return bool Sempre retorna true indicando que o registro foi realizado
+     */
+    public static function logEmail($arr)
+    {
+        $dataHora = date('Y-m-d H:i:s');
+        $destinatario = $arr['destinatario'] ?? '';
+        $assunto = $arr['assunto'] ?? '';
+        $corpo = $arr['corpo'] ?? '';
+        $responderPara = $arr['responder_para'] ?? '';
+        $bcc = $arr['bcc'] ?? '';
+
+        $logTxt = "================================================================================" . PHP_EOL;
+        $logTxt .= "DATA/HORA: " . $dataHora . PHP_EOL;
+        $logTxt .= "PARA: " . $destinatario . PHP_EOL;
+        if (!empty($bcc)) {
+            $logTxt .= "BCC: " . $bcc . PHP_EOL;
+        }
+        if (!empty($responderPara)) {
+            $logTxt .= "RESPONDER PARA: " . $responderPara . PHP_EOL;
+        }
+        $logTxt .= "ASSUNTO: " . $assunto . PHP_EOL;
+        $logTxt .= "--------------------------------- MENSAGEM -------------------------------------" . PHP_EOL;
+        $logTxt .= $corpo . PHP_EOL;
+        $logTxt .= "================================================================================" . PHP_EOL . PHP_EOL;
+
+        $logDir = LOCAL . '/log';
+        if (!is_dir($logDir)) {
+            mkdir($logDir, 0775, true);
+        }
+        $logFile = $logDir . '/emails_' . date('Y-m') . '.log';
+        file_put_contents($logFile, $logTxt, FILE_APPEND);
+
+        Log::email('email salvo em log (sem servidor configurado) - ' . $destinatario, [
+            'assunto' => $assunto,
+            'destinatario' => $destinatario,
+            'arquivo' => $logFile,
+        ]);
+
+        return true;
+    }
+
+    /**
+     * Envia o e-mail utilizando PHPMailer ou o registra em log caso não haja servidor configurado.
+     *
+     * Suporta métodos de autenticação: ssl, tls, login e oauth (XOAUTH2 com Google).
+     *
+     * @param array $arr Dados do e-mail a enviar (destinatario, assunto, corpo, etc.)
+     * @return bool|string Retorna true em caso de sucesso ou string com ErrorInfo do PHPMailer
+     */
     public static function send($arr)
     {
+        if (!SELF::isConfigured()) {
+            return SELF::logEmail($arr);
+        }
+
         $mail = new PHPMailer();
         //$mail->CharSet = 'UTF-8';
         //$mail->Encoding = 'base64';
@@ -319,6 +455,12 @@ class Email
         }
     }
 
+    /**
+     * Gera os dados binários da imagem PNG do QR Code correspondente à URL informada.
+     *
+     * @param string $url URL a ser embutida no QR Code
+     * @return string Dados binários do arquivo PNG do QR Code
+     */
     protected static function qrCodePngData($url)
     {
         $barcodeobj = new \TCPDF2DBarcode($url, 'QRCODE,M');
