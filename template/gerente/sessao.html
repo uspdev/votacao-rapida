@@ -18,24 +18,37 @@
         <div class="col-md-8">
             <div id="sessao">
                 <button class="edit_btn btn btn-link"><i class="fas fa-edit"></i> Editar</button>
-                <button class="ajuda_btn btn btn-link"><i class="fas fa-question-circle"></i> Ajuda</button>
-                <div class="ajuda hide alert alert-info">
-                    <div class="h3 mt-2">Informações da Sessão</div>
-                    <div>
-                        <p>O <b>nome</b> da sessão de votação aparecerá em todas as telas, inclusive dos eleitores.
-                            Escolha um nome significativo como por exemplo "320a. Sessão do Conselho Universitário"<br>
-                            A <b>unidade</b> é utilizada somente no GERENTE para facilitar a identificação na lista
-                            de sessões.<br>
-                            <b>Quando</b> é utilizado no email enviado aos eleitores.<br>
-                            O <b>email de retorno</b> receberá uma cópia de todos os emails enviados pelo sistema,
-                            inclusive contendo os tokens abertos enviados para cada eleitor. Também é o email
-                            que receberá as mensagens de "reply" dos eleitores.<br>
-                            O <b>link alternativo</b> é onde deverá ser colado o link encurtado gerado em e.usp.br
-                            ou outro serviço similar. Copie o link original e cole no encurtador. Copie o link encurtado
-                            gerado e cole no link alternativo.
-                            É importante apenas quando o eleitor recebe suas credenciais por papel facilitando
-                            a digitação manual do endereço da sessão de votação.
-                        </p>
+                <button class="ajuda_btn btn btn-link" data-toggle="modal" data-target="#modalAjudaSessao"><i class="fas fa-question-circle"></i> Ajuda</button>
+                
+                <div class="modal fade" id="modalAjudaSessao" tabindex="-1" role="dialog" aria-labelledby="modalAjudaSessaoTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalAjudaSessaoTitle"><i class="fas fa-question-circle text-info"></i> Informações da Sessão</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>O <b>nome</b> da sessão de votação aparecerá em todas as telas, inclusive dos eleitores.
+                                    Escolha um nome significativo como por exemplo "320a. Sessão do Conselho Universitário"<br><br>
+                                    A <b>unidade</b> é utilizada somente no GERENTE para facilitar a identificação na lista
+                                    de sessões.<br><br>
+                                    <b>Quando</b> é utilizado no email enviado aos eleitores.<br><br>
+                                    O <b>email de retorno</b> receberá uma cópia de todos os emails enviados pelo sistema,
+                                    inclusive contendo os tokens abertos enviados para cada eleitor. Também é o email
+                                    que receberá as mensagens de "reply" dos eleitores.<br><br>
+                                    O <b>link alternativo</b> é onde deverá ser colado o link encurtado gerado em e.usp.br
+                                    ou outro serviço similar. Copie o link original e cole no encurtador. Copie o link encurtado
+                                    gerado e cole no link alternativo.
+                                    É importante apenas quando o eleitor recebe suas credenciais por papel facilitando
+                                    a digitação manual do endereço da sessão de votação.
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="dados">
@@ -108,7 +121,6 @@
                         var sessao = $('#sessao');
                         sessao.find('.edit_btn').click(function () {
                             sessao.find('.dados').hide();
-                            sessao.find('.ajuda').slideUp(500);
                             sessao.find('.form').show();
                             sessao.find('input[name="nome"]').focus();
                         });
@@ -119,8 +131,9 @@
                             sessao.find('.form').hide();
                         });
 
-                        sessao.find('.ajuda_btn').click(function () {
-                            sessao.find('.ajuda').slideToggle();
+                        sessao.find('.ajuda_btn').click(function (e) {
+                            e.preventDefault();
+                            $('#modalAjudaSessao').modal('show');
                         });
 
                     });

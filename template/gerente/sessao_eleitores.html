@@ -28,7 +28,7 @@
 
             <span class="badge badge-secondary">{S->countTokenFechado} tokens fechados</span>
 
-            <a href class="ajuda_btn btn btn-sm btn-outline-primary"><i class="fas fa-question-circle"></i> Ajuda</a>
+            <a href="#" class="ajuda_btn btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#modalAjudaEleitores"><i class="fas fa-question-circle"></i> Ajuda</a>
 
             <form enctype="multipart/form-data" method="POST" class="importar_form"
                 style="width: 0px; height: 0px; overflow: hidden;">
@@ -39,17 +39,32 @@
     </h2>
     <div class="ml-2">
         <div class="form_target add_form_target"></div>
-        <div class="ajuda hide alert alert-info">
-            <h3>Ajuda para eleitores</h3>
-            Cada eleitor é associado a um token de votação aberta e a um ticket de geração de token fechada.
-            A possibilidade de gerar token fechada só é enviada ao eleitor se houver pelo menos uma votação 
-            fechada cadastrada. Se for o caso, é enviado no email um link correspondente.
-            O token fechado poderá ser emitido uma única vez por eleitor e ao emitir ele é contabilizado
-            no menu acima.<br>
-            Portanto não envie email antes de criar pelo menos uma votação fechada, se for o caso.<br>
-            <br>
-            Os eleitores podem ser cadastrados individualmente ou em lote a partir de um arquivo texto.<br>
-            A lista de eleitores pode ser exportada também.
+
+        <div class="modal fade" id="modalAjudaEleitores" tabindex="-1" role="dialog" aria-labelledby="modalAjudaEleitoresTitle" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalAjudaEleitoresTitle"><i class="fas fa-question-circle text-info"></i> Ajuda para Eleitores</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Cada eleitor é associado a um token de votação aberta e a um ticket de geração de token fechada.</p>
+                        <p>A possibilidade de gerar token fechada só é enviada ao eleitor se houver pelo menos uma votação 
+                        fechada cadastrada. Se for o caso, é enviado no email um link correspondente.</p>
+                        <p>O token fechado poderá ser emitido uma única vez por eleitor e ao emitir ele é contabilizado
+                        no menu acima.<br>
+                        <b>Atenção:</b> Portanto, não envie email antes de criar pelo menos uma votação fechada, se for o caso.</p>
+                        <hr>
+                        <p>Os eleitores podem ser cadastrados individualmente ou em lote a partir de um arquivo texto (CSV/TXT).<br>
+                        A lista de eleitores pode ser exportada também.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    </div>
+                </div>
+            </div>
         </div>
         <!-- BEGIN block_eleitor -->
         <div class="item" id="token_{T->id}">
@@ -120,8 +135,8 @@
 
             eleitores.find('.ajuda_btn').click(function(e){
                 e.preventDefault();
-                eleitores.find('.ajuda').slideToggle();
-            })
+                $('#modalAjudaEleitores').modal('show');
+            });
 
             eleitores.crud({
                 editAction: 'editarEleitor',
