@@ -321,6 +321,7 @@ class Gerente
         //SELF::db();
         if (!$user = R::findOne('usuario', 'codpes = ?', [$userdata['codpes']])) {
             $user = R::dispense('usuario');
+            $user->ultimo_aviso = 0;
         };
         Log::auth('user login', $userdata->getData());
 

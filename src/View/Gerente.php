@@ -15,32 +15,35 @@ class Gerente
                 $newUser['codpes'] = $cod;
                 $usr = Api::send('/gerente/login', $newUser);
                 SS::set('user', json_decode(json_encode($usr), true));
-                SS::set('avisos', Aviso::obterUltimoId() - (int) $usr->ultimo_aviso);
+                SS::set('avisos', Aviso::obterUltimoId() - (int) ($usr->ultimo_aviso ?? 0));
                 header('Location:' . SS::getNext());
                 exit;
             } else {
                 return false;
             }
         }
-        $auth = new Senhaunica([
-            'consumer_key' => getenv('CONSUMER_KEY'),
-            'consumer_secret' => getenv('CONSUMER_SECRET'),
-            'callback_id' => getenv('SENHA_UNICA_CALLBACK_ID'), // callback_id é o sequencial no servidor
-            'amb' => getenv('SENHA_UNICA_AMB'), // 'dev' = teste, 'prod' = producao
+        $res = Senhaunica::login([
+            'identifier' => getenv('SENHAUNICA_KEY') ?: getenv('CONSUMER_KEY'),
+            'secret' => getenv('SENHAUNICA_SECRET') ?: getenv('CONSUMER_SECRET'),
+            'callback_id' => getenv('SENHAUNICA_CALLBACK_ID') ?: getenv('SENHA_UNICA_CALLBACK_ID'),
         ]);
-        $res = $auth->login();
 
         $user['codpes'] = $res['loginUsuario'];
         $user['nome'] = $res['nomeUsuario'];
         $user['email'] = $res['emailPrincipalUsuario'];
 
         // todo: ainda tem de ajustar os vinculos permitidos
-        $vinculo = $auth->obterVinculo('tipoVinculo', ['SERVIDOR', 'ESTAGIARIORH']);
+        $vinculo = Senhaunica::obterVinculo('tipoVinculo', ['SERVIDOR', 'ESTAGIARIORH']);
         if ($vinculo) {
             $user['unidade'] = $vinculo['siglaUnidade'];
             $usr = Api::send('/gerente/login', $user);
+            if (isset($usr->message) || (isset($usr->status) && $usr->status === 'erro')) {
+                SS::setMsg(['class' => 'alert-danger', 'msg' => 'Erro na API: ' . ($usr->message ?? $usr->data ?? 'Não autorizado')]);
+                header('Location: ' . getenv('WWWROOT'));
+                exit;
+            }
             SS::set('user', json_decode(json_encode($usr), true));
-            SS::set('avisos', Aviso::obterUltimoId() - (int) $usr->ultimo_aviso);
+            SS::set('avisos', Aviso::obterUltimoId() - (int) ($usr->ultimo_aviso ?? 0));
         } else {
             $user['vinculos'] = array_column($res['vinculo'], 'tipoVinculo');
             $usr = Api::send('/gerente/nologin', $user);

@@ -3,7 +3,11 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    CGIPassAuth On
+
     RewriteEngine On
+    RewriteCond %{HTTP:Authorization} ^(.*)
+    RewriteRule .* - [e=HTTP_AUTHORIZATION:%1]
     
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
