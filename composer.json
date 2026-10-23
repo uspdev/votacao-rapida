@@ -11,7 +11,7 @@
     ],
     "require": {
         "ext-curl": "*",
-        "uspdev/webservice": "@dev",
+        "uspdev/webservice": "1.*",
         "uspdev/senhaunica": "^2.0",
         "flightphp/core": "^3.0",
         "gabordemooij/redbean": "^5.7",
@@ -32,10 +32,6 @@
         "phpunit/phpunit": "^8"
     },
     "repositories": [
-        {
-            "type": "path",
-            "url": "../webservice"
-        },
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
