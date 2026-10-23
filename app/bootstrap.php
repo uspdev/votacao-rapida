@@ -19,13 +19,24 @@ $dotenv->load();
 # o servidor da API deve ser colocada no /etc/hosts 
 # para que não passe pelo proxy e mantenha o virtualhost do apache
 # ex.: 12.7.0.0.1 servidor-do-wwwroot.usp.br
-define('API', getenv('WWWROOT') . '/api'); // caminho da API
+# ou configure API_URL no .env com http://127.0.0.1/...
+define('API', getenv('API_URL') ?: (getenv('WWWROOT') . '/api')); // caminho da API
 
 $amb = getenv('AMBIENTE');
 if ($amb == 'dev') {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
-    error_reporting(E_ALL);
+    // error_reporting(E_ALL);
+    error_reporting(E_ALL & ~E_DEPRECATED);
+
+    // Ativa exibição de erros do Flight no navegador
+    \Flight::set('flight.debug', true);
+    \Flight::set('flight.log_errors', true);
+
+    // Compatibilidade com Flight v2 / saída imediata antes de exit
+    \Flight::set('flight.v2.output_buffering', true);
+    \Flight::response()->v2_output_buffering = true;
+
     # 1-faz o navegador solicitar as credenciais do usuário;
     # 0-nega acesso (default)
     putenv('USPDEV_WEBSERVICE_USER_FRIENDLY=0');
@@ -39,6 +50,10 @@ if ($amb == 'prod') {
     ini_set('display_startup_errors', 0);
     putenv('USPDEV_CACHE_DISABLE=1');
 }
+
+// Compatibilidade com Flight v2 / envio imediato antes de exit
+\Flight::set('flight.v2.output_buffering', true);
+\Flight::response()->v2_output_buffering = true;
 
 # veja https://github.com/uspdev/ip-control
 # desativado pois dá problema quando está atrás de proxy
