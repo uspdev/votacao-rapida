@@ -38,7 +38,7 @@ class Log
     }
 
     public static function listar($numLogFiles = 5) {
-        $files = glob(LOCAL. '/log/*.log');
+        $files = glob(LOCAL. '/log/info*.log');
         arsort($files, SORT_STRING);
         $i = 0;
         $logs = [];

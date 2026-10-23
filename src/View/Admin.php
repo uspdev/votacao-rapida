@@ -30,7 +30,13 @@ class Admin
         if ($aba == 'log') {
             $logs = Log::listar();
             foreach ($logs as $log) {
-                $tpl->log = json_decode($log);
+                $item = json_decode($log);
+                if (!$item || !is_object($item)) {
+                    continue;
+                }
+                $item->context = !empty($item->context) ? json_encode($item->context, JSON_UNESCAPED_UNICODE) : '';
+                $item->extra = !empty($item->extra) ? json_encode($item->extra, JSON_UNESCAPED_UNICODE) : '';
+                $tpl->log = $item;
                 $tpl->block('block_log_list');
             }
         }
