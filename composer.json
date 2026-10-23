@@ -11,19 +11,19 @@
     ],
     "require": {
         "ext-curl": "*",
-        "uspdev/webservice": "1.*",
-        "uspdev/senhaunica": "^1.1",
-        "mikecao/flight": "^1.3",
-        "gabordemooij/redbean": "^5.4",
+        "uspdev/webservice": "@dev",
+        "uspdev/senhaunica": "^2.0",
+        "flightphp/core": "^3.0",
+        "gabordemooij/redbean": "^5.7",
         "raelgc/template": "^2.2",
         "vlucas/phpdotenv": "^4.1",
         "spipu/html2pdf": "^5.2",
-        "oomphinc/composer-installers-extender": "^1.1",
+        "oomphinc/composer-installers-extender": "^2.0",
         "phpmailer/phpmailer": "^6.1",
-        "monolog/monolog": "2.*",
-        "npm-asset/jquery": "3.5.*",
-        "npm-asset/font-awesome": "5.*",
-        "bower-asset/bootstrap4": "4.5.*",
+        "monolog/monolog": "^2.0",
+        "npm-asset/jquery": "^3.5",
+        "npm-asset/fortawesome--fontawesome-free": "^5.15",
+        "bower-asset/bootstrap4": "^4.6",
         "npm-asset/bootstrap-table": "^1.16",
         "league/commonmark": "^1.4",
         "league/oauth2-google": "^3.0"
@@ -32,6 +32,10 @@
         "phpunit/phpunit": "^8"
     },
     "repositories": [
+        {
+            "type": "path",
+            "url": "../webservice"
+        },
         {
             "type": "composer",
             "url": "https://asset-packagist.org"
@@ -43,6 +47,9 @@
             "npm-asset"
         ],
         "installer-paths": {
+            "public/assets/font-awesome/": [
+                "npm-asset/fortawesome--fontawesome-free"
+            ],
             "public/assets/{$name}/": [
                 "type:bower-asset",
                 "type:npm-asset"
@@ -55,5 +62,11 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "oomphinc/composer-installers-extender": true
+        }
+    }
 }
