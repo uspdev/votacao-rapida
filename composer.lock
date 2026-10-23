@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "480da6be99f799fd70958d676af88e9c",
+    "content-hash": "de3d29375be935b759c64cf994e5d4b8",
     "packages": [
         {
             "name": "bower-asset/bootstrap4",
@@ -2102,11 +2102,17 @@
         },
         {
             "name": "uspdev/webservice",
-            "version": "dev-master",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/uspdev/webservice.git",
+                "reference": "2adf605a39a0bba39abe3c847d3092f305886be9"
+            },
             "dist": {
-                "type": "path",
-                "url": "../webservice",
-                "reference": "e721c70d997c5287b39f24faf0505e3a86d87889"
+                "type": "zip",
+                "url": "https://api.github.com/repos/uspdev/webservice/zipball/2adf605a39a0bba39abe3c847d3092f305886be9",
+                "reference": "2adf605a39a0bba39abe3c847d3092f305886be9",
+                "shasum": ""
             },
             "require": {
                 "ext-sqlite3": "*",
@@ -2121,6 +2127,7 @@
                     "Uspdev\\Webservice\\": "src"
                 }
             },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-3.0-or-later"
             ],
@@ -2131,9 +2138,11 @@
                 }
             ],
             "description": "Biblioteca para criação de webservices rest",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "issues": "https://github.com/uspdev/webservice/issues",
+                "source": "https://github.com/uspdev/webservice/tree/1.1.0"
+            },
+            "time": "2026-10-23T20:48:23+00:00"
         },
         {
             "name": "vlucas/phpdotenv",
@@ -3682,9 +3691,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "uspdev/webservice": 20
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
