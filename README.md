@@ -10,28 +10,43 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 
 ## Dependências
 
-* Servidor web (testado no apache mas deve funcionar em nginx)
-* PHP 7.2
+* Servidor web (Apache ou Nginx)
+* PHP >= 7.4 (compatível com PHP 8.x)
+* Composer 2
 * ext-curl
+* ext-sqlite3
+* ext-pdo_mysql (caso utilize MySQL/MariaDB)
 
 ## Instalação e configuração
 
-* git clone
-* composer install
-* cp .env.example .env
-* Ajuste o .env conforme necessário
-* Utilize AMBIENTE='dev' para criar as tabelas on the fly
-* Rode `php cli\atualizar_estrutura.php`
-* Rode `php cli\salvarAdmin.php` para cadastrar-se como admin
-* Ajuste a permissão da pasta local e todo o conteúdo para que o apache possa escrever nele. Outra opção é usar o módulo mpm-itk do apache para que ele rode no mesmo usuário da aplicação (http://mpm-itk.sesse.net/)
+* `git clone <url_repositorio>`
+* `composer install`
+* `cp .env.example .env`
+* Ajuste o `.env` conforme necessário (URLs, banco de dados, credenciais da Senha Única)
+* Provisione o banco de dados (migrations e seeds iniciais):
+  ```bash
+  php sql/provisionar.php
+  ```
+* Ajuste as permissões da pasta `local/` e subpastas para que o servidor web possa gravar:
+  ```bash
+  chmod -R 775 local/
+  ```
+* Cadastre na Senha Única USP a URL de retorno (callback): `<WWWROOT>/login`
 
-É esperado que seja cadastrada a seguinte url de rertono (callback): /login
+### Observações sobre Rede e E-mails
 
-Caso o servidor esteja atrás de um proxy ou firewall é necessário cadastrar no `/etc/hosts` o domínio utilizado no sistema.
-Se for o ambiente de desenvolvimento geralmente não é necessário.\
-Ex.: 127.0.0.1 votacaorapida.dominio.usp.br
+* **Comunicação interna da API:**
+  Caso o servidor esteja atrás de proxy/firewall que bloqueie loopback para o próprio IP público (sem Hairpin NAT), defina no `.env`:
+  ```env
+  API_URL='http://127.0.0.1/pasta_raiz/api'
+  ```
+  Isso permite que o PHP acesse a API localmente via HTTP na porta 80, enquanto os usuários acessam via HTTPS normalmente.
 
-Mesmo em dev, não utilize o servidor interno do PHP pois ele é monotarefa e o sistema precisa de pelo menos dois processos ativos para funcionar.
+* **Servidor de E-mail (opcional em desenvolvimento):**
+  Caso não configure servidor SMTP no `.env` (ou use `EMAIL_AUTH_TYPE='log'`), os e-mails com as credenciais e links de votação serão salvos em `local/log/emails_YYYY-MM.log`.
+
+* **Servidor web de desenvolvimento:**
+  Mesmo em desenvolvimento, recomenda-se utilizar Apache ou Nginx em vez do servidor embutido do PHP (`php -S`), pois o sistema realiza chamadas concorrentes entre front-end e API.
 
 ## Mais informações
 

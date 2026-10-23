@@ -1,5 +1,17 @@
 # Changelog
 
+* 23/10/2026
+  * Atualização para Composer 2 e compatibilidade completa com PHP 8.1, 8.2 e 8.3
+  * Atualização do framework Flight para `flightphp/core ^3.0`
+  * Atualização da integração com Senha Única USP para `uspdev/senhaunica ^2.0` (chamadas estáticas)
+  * Atualização do Font Awesome para versão 5 (`@fortawesome/fontawesome-free`)
+  * Criação do script unificado de provisionamento de banco de dados (`sql/provisionar.php`)
+  * Suporte à configuração de `API_URL` para comunicação cURL interna em servidores atrás de proxy/firewall
+  * Compatibilidade com Apache + PHP-FPM (`CGIPassAuth On` e polyfill de Basic Auth)
+  * Implementação de modo fallback para gravação de e-mails em log quando não houver servidor SMTP configurado
+  * Adicionada documentação no padrão DocBlock (PHPDoc) no model `Email`
+  * Conversão das caixas de ajuda da sessão para modais interativos do Bootstrap 4
+
 * 15/07/2020
   * Criando campo de observação pós votação (#54)
   * Melhorando migrations com tabela inicial e scripts php.
