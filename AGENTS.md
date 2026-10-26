@@ -124,6 +124,7 @@ Ao modificar este projeto, atenção especial deve ser dada aos seguintes itens:
 * Em modo SMTP, `Email::dispararProcessamentoFila()` utiliza `Email::getPhpCli()` para resolver o binário CLI do PHP (`/usr/bin/php`), evitando o erro de execução de `/usr/sbin/php-fpm*` (que ocorre ao utilizar `PHP_BINARY` no PHP-FPM). A saída é direcionada para `local/log/email_worker.log`.
 * O status é registrado no banco como `YYYY-MM-DD HH:MM:SS (log)` ou `YYYY-MM-DD HH:MM:SS` e no painel admin com seus respectivos badges.
 * Os corpos dos e-mails são gravados em `local/log/emails_YYYY-MM.log`.
+* O script `cli/processarEmailsFila.php` utiliza trava exclusiva não-bloqueante (`flock` em `local/log/email_queue.lock`) para evitar concorrência e duplicidade de disparos entre cliques manuais e o cron.
 * **Recomendação para Produção:** Agendar cron job a cada minuto para garantir o esvaziamento contínuo da fila:
   ```cron
   * * * * * cd /caminho/do/projeto && php cli/processarEmailsFila.php >> local/log/email_worker.log 2>&1
