@@ -1,5 +1,14 @@
 # Changelog
 
+* 26/10/2026
+  * Requisito mínimo de versão do PHP atualizado para `PHP >= 8.2` no `composer.json` e documentação
+  * Implementação de paginação server-side (`LIMIT`/`OFFSET` e AJAX) na visualização de e-mails no painel admin
+  * Registro explícito no banco de dados para e-mails salvos em log (`YYYY-MM-DD HH:MM:SS (log)`)
+  * Adicionado badge e filtro para status `Salvo em Log` no painel administrativo
+  * Otimização no processamento da fila de e-mails com limite por lote e execução direta em modo simulação
+  * Adicionada documentação no padrão DocBlock (PHPDoc) no model `Log`
+  * Criação do `AGENTS.md` para guiar desenvolvedores e agentes de IA
+
 * 23/10/2026
   * Atualização para Composer 2 e compatibilidade completa com PHP 8.1, 8.2 e 8.3
   * Atualização do framework Flight para `flightphp/core ^3.0`

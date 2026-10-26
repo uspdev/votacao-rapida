@@ -11,7 +11,7 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 ## Dependências
 
 * Servidor web (Apache ou Nginx)
-* PHP >= 7.4 (compatível com PHP 8.x)
+* PHP >= 8.2
 * Composer 2
 * ext-curl
 * ext-sqlite3
