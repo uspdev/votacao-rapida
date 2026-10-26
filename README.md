@@ -41,6 +41,14 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 * **Servidor de E-mail (opcional em desenvolvimento):**
   Caso não configure servidor SMTP no `.env` (ou use `EMAIL_AUTH_TYPE='log'`), os e-mails com as credenciais e links de votação serão salvos em `local/log/emails_YYYY-MM.log`.
 
+* **Fila de E-mails e Cron Job (Produção):**
+  Os e-mails gerados pelo sistema são registrados em fila na tabela `email`. A aplicação tenta disparar o processamento em background automaticamente via PHP CLI (`cli/processarEmailsFila.php`).
+  Para garantir o envio ininterrupto e confiável em ambiente de produção, configure a execução a cada minuto na **crontab** do servidor (`crontab -e` do usuário que executa a aplicação):
+  ```cron
+  * * * * * cd /caminho/do/projeto && php cli/processarEmailsFila.php >> local/log/email_worker.log 2>&1
+  ```
+  *(Substitua `/caminho/do/projeto` pelo caminho absoluto da aplicação no servidor).*
+
 * **Servidor web de desenvolvimento:**
   Mesmo em desenvolvimento, recomenda-se utilizar Apache ou Nginx em vez do servidor embutido do PHP (`php -S`), pois o sistema realiza chamadas concorrentes entre front-end e API.
 

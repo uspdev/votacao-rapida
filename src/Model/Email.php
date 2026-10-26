@@ -299,10 +299,49 @@ class Email
     }
 
     /**
+     * Localiza o executável CLI do PHP no sistema operacional.
+     *
+     * Evita utilizar o binário do PHP-FPM (/usr/sbin/php-fpm*) que é retornado por PHP_BINARY
+     * em ambientes Web FastCGI.
+     *
+     * @return string Caminho do binário PHP CLI
+     */
+    public static function getPhpCli()
+    {
+        // 1. Variável de ambiente explícita
+        $envBin = getenv('PHP_BIN') ?: getenv('PHP_CLI');
+        if (!empty($envBin) && file_exists($envBin)) {
+            return $envBin;
+        }
+
+        // 2. PHP_BINDIR (geralmente /usr/bin no Linux)
+        if (defined('PHP_BINDIR') && file_exists(PHP_BINDIR . '/php')) {
+            return PHP_BINDIR . '/php';
+        }
+
+        // 3. PHP_BINARY caso NÃO seja php-fpm ou cgi
+        if (defined('PHP_BINARY') && !empty(PHP_BINARY) && file_exists(PHP_BINARY)) {
+            $base = basename(PHP_BINARY);
+            if (!str_contains($base, 'fpm') && !str_contains($base, 'cgi')) {
+                return PHP_BINARY;
+            }
+        }
+
+        // 4. Caminhos padrão usuais no Linux
+        foreach (['/usr/bin/php', '/usr/local/bin/php', '/bin/php'] as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+
+        return 'php';
+    }
+
+    /**
      * Dispara o processamento da fila de e-mails.
      *
      * Em modo log, processa imediatamente no próprio processo sem overhead de subprocesso.
-     * Em modo SMTP, dispara script CLI em background utilizando o binário PHP do sistema.
+     * Em modo SMTP, dispara script CLI em background utilizando o binário PHP CLI do sistema.
      *
      * @return bool|int Retorna quantidade de e-mails processados em modo síncrono ou true em background
      */
@@ -312,8 +351,13 @@ class Email
             return self::processarFila();
         }
 
-        $phpBin = defined('PHP_BINARY') && file_exists(PHP_BINARY) ? PHP_BINARY : 'php';
-        exec($phpBin . ' ' . escapeshellarg(ROOTDIR . '/cli/processarEmailsFila.php') . ' > /dev/null &');
+        $phpBin = self::getPhpCli();
+        $script = ROOTDIR . '/cli/processarEmailsFila.php';
+        $logFile = LOCAL . '/log/email_worker.log';
+
+        // Redireciona STDOUT e STDERR para log para não prender o FastCGI e registrar eventuais erros
+        $cmd = escapeshellcmd($phpBin) . ' ' . escapeshellarg($script) . ' >> ' . escapeshellarg($logFile) . ' 2>&1 &';
+        exec($cmd);
         return true;
     }
 

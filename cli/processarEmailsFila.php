@@ -3,9 +3,15 @@ require_once __DIR__ . '/../app/bootstrap.php';
 require_once __DIR__ . '/funcoes_cli.php';
 
 use Uspdev\Votacao\Model\Email;
+
 /**
- * Este script é chamado pelo sistema para enviar emails que estão em fila
- * A fila é na tabela email. Ao enviar, ele registra a data e hora do envio.
+ * Este script é chamado pelo sistema (ou via cron) para enviar e-mails pendentes na fila.
+ * A fila reside na tabela `email` (onde `enviado IS NULL`).
  */
-$count = Email::processarFila();
-echo 'Enviados ' . $count . ' emails.'.PHP_EOL;
+$total = 0;
+do {
+    $count = Email::processarFila(100);
+    $total += $count;
+} while ($count >= 100);
+
+echo '[' . date('Y-m-d H:i:s') . '] Processados ' . $total . ' e-mail(s).' . PHP_EOL;

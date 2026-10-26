@@ -121,8 +121,13 @@ Ao modificar este projeto, atenção especial deve ser dada aos seguintes itens:
 ### 5.6. Envio de E-mails vs. Modo Log
 * Se `EMAIL_AUTH_TYPE='log'` ou se `EMAIL` estiver vazio, o sistema opera em modo de simulação.
 * O método `Email::dispararProcessamentoFila()` detecta o modo log e processa imediatamente no processo atual (levando `< 1ms`), evitando dependência do `exec()` em background.
-* O status é registrado no banco como `YYYY-MM-DD HH:MM:SS (log)` e no painel admin como `Salvo em Log` (badge azul).
+* Em modo SMTP, `Email::dispararProcessamentoFila()` utiliza `Email::getPhpCli()` para resolver o binário CLI do PHP (`/usr/bin/php`), evitando o erro de execução de `/usr/sbin/php-fpm*` (que ocorre ao utilizar `PHP_BINARY` no PHP-FPM). A saída é direcionada para `local/log/email_worker.log`.
+* O status é registrado no banco como `YYYY-MM-DD HH:MM:SS (log)` ou `YYYY-MM-DD HH:MM:SS` e no painel admin com seus respectivos badges.
 * Os corpos dos e-mails são gravados em `local/log/emails_YYYY-MM.log`.
+* **Recomendação para Produção:** Agendar cron job a cada minuto para garantir o esvaziamento contínuo da fila:
+  ```cron
+  * * * * * cd /caminho/do/projeto && php cli/processarEmailsFila.php >> local/log/email_worker.log 2>&1
+  ```
 
 ### 5.7. PHP 8.2+ Depreciações e Tratamento de Erro na API
 * No PHP 8.2+, a criação de propriedades dinâmicas emite avisos `E_DEPRECATED`. O Flight PHP converte qualquer aviso de erro coberto pelo `error_reporting()` em `ErrorException`, gerando HTTP 500 caso `E_DEPRECATED` esteja ativo (padrão em produção).
