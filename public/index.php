@@ -90,6 +90,10 @@ Flight::route('GET /apoio', function () {
     Run::apoioGet();
 });
 
+Flight::route('GET /apoio/status', function () {
+    Run::apoioStatus();
+});
+
 Flight::route('POST /apoio', function () {
     $data = Flight::request()->data;
     Run::apoioPOST($data);
@@ -97,6 +101,10 @@ Flight::route('POST /apoio', function () {
 
 Flight::route('GET /painel', function () {
     Run::painelGet();
+});
+
+Flight::route('GET /painel/status', function () {
+    Run::painelStatus();
 });
 
 Flight::route('GET /votacao', function () {

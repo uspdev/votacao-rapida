@@ -174,6 +174,18 @@ class Run
         // vmos carregar a votação
         $votacao = Votacao::obter($data->votacao_id);
 
+        // Se houver alguma votação em andamento ou em exibição de resultado (Em votação, Em pausa ou Resultado), bloqueia ações em outras votações
+        $emAndamento = R::findOne('votacao', 'sessao_id = ? AND estado IN (2, 3, 4)', [$sessao->id]);
+        if ($emAndamento) {
+            $acaoCod = intval($data['acao']);
+            if ($acaoCod == 9) {
+                return ['status' => 'erro', 'msg' => 'Não é permitido criar votação enquanto a votação "' . $emAndamento->nome . '" estiver em andamento/exibição.'];
+            }
+            if ($votacao && $emAndamento->id != $votacao->id) {
+                return ['status' => 'erro', 'msg' => 'Não é permitido alterar outras votações enquanto a votação "' . $emAndamento->nome . '" estiver em andamento/exibição.'];
+            }
+        }
+
         switch (intval($data['acao'])) {
             case '0': // mostrar na tela
                 $votacao->estado = $acao->estado;
@@ -235,7 +247,7 @@ class Run
                 return ['msg' => $acao->msg];
                 break;
 
-            case '7': // finalizar
+            case '7': // esconder resultado
                 $votacao->estado = $acao->estado;
                 R::store($votacao);
 

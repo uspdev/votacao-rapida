@@ -1,0 +1,2 @@
+ALTER TABLE `votacao` ADD `ordem` INT(11) UNSIGNED NULL DEFAULT NULL COLLATE utf8mb4_unicode_ci ;;
+ALTER TABLE `votacao` ADD `obs` TEXT NULL DEFAULT NULL;;

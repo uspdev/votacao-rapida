@@ -58,7 +58,7 @@ $acoes = [
     ['_type' => 'acao', 'cod' => 4, 'estado' => '4', 'nome' => 'Mostrar resultado', 'msg' => 'Mostrando resultados', 'escopo' => 'apoio'],
     ['_type' => 'acao', 'cod' => 5, 'estado' => '2', 'nome' => 'Continuar', 'msg' => 'Votação aberta', 'escopo' => 'apoio'],
     ['_type' => 'acao', 'cod' => 6, 'estado' => '1', 'nome' => 'Reiniciar', 'msg' => 'Votação reiniciada', 'escopo' => 'apoio'],
-    ['_type' => 'acao', 'cod' => 7, 'estado' => '5', 'nome' => 'Finalizar', 'msg' => 'Votação finalizada', 'escopo' => 'apoio'],
+    ['_type' => 'acao', 'cod' => 7, 'estado' => '5', 'nome' => 'Esconder resultado', 'msg' => 'Resultado ocultado da tela', 'escopo' => 'apoio'],
     ['_type' => 'acao', 'cod' => 8, 'estado' => '', 'nome' => 'Responder', 'msg' => 'Resposta aceita', 'escopo' => 'votacao'],
     ['_type' => 'acao', 'cod' => 9, 'estado' => '', 'nome' => 'Instantâneo', 'msg' => 'Novo instantâneo', 'escopo' => 'apoio'],
     ['_type' => 'acao', 'cod' => 10, 'estado' => '', 'nome' => 'Excluir', 'msg' => 'Excluido com sucesso', 'escopo' => 'apoio'],

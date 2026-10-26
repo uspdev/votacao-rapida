@@ -1,6 +1,23 @@
-<h1>{S->nome}</h1>
-<p>Votações para essa sessão</p>
+<div class="d-flex justify-content-between align-items-center">
+    <h1>{S->nome}</h1>
+    <span class="badge badge-light text-muted border py-2 px-3" id="sync_status" title="Sincronização em tempo real entre múltiplos dispositivos de apoio">
+        <i class="fas fa-sync-alt fa-spin text-primary d-none" id="sync_spinner"></i>
+        <i class="fas fa-check-circle text-success" id="sync_ok"></i>
+        <span id="sync_text" class="ml-1">Sincronizado</span>
+    </span>
+</div>
+<p class="text-muted">Painel de apoio para controle das votações desta sessão</p>
+<!-- BEGIN block_aviso_andamento -->
+<div class="alert alert-warning py-2 mb-3">
+    <i class="fas fa-lock mr-1"></i> Votação ativa: <strong>{andamento_nome}</strong> ({andamento_estado}). Os botões das demais votações estão desabilitados.
+</div>
+<!-- END block_aviso_andamento -->
+<div id="alerta_mudanca" class="alert alert-info py-2" style="display:none;">
+    <i class="fas fa-info-circle"></i> O estado da votação foi atualizado em outro dispositivo. Sincronizando...
+</div>
 <hr />
+
+<div id="apoio_state" data-hash="{hash_estado}" style="display:none;"></div>
 
 <div id="accordion">
     <!-- BEGIN block_votacao -->
@@ -26,7 +43,7 @@
 
                 <div class="card-body">
                     <!-- BEGIN block_acao -->
-                    <a class="btn btn-primary btn-block" href="apoio?acao={cod}&votacao_id={V->id}">{acao}</a>
+                    <a class="btn {acao_class} btn-block btn-acao mb-2" href="{acao_href}" data-cod="{cod}" {acao_attr}>{acao}</a>
                     <!-- END block_acao -->
                 </div>
             </div>
@@ -39,7 +56,7 @@
     <div id="instantaneo" class="card {V->accordion->border}">
         <div class="card-header">
             <h5 class="mb-0">
-                <button id="instantaneo_button" class="btn btn-light btn-block {V->accordion->disabled}">
+                <button id="instantaneo_button" class="btn btn-light btn-block {instantaneo_disabled}" {instantaneo_attr}>
                     Criar votação instantânea
                 </button>
             </h5>
@@ -60,9 +77,47 @@
         <script type="text/javascript">
             $(function () {
                 $('#instantaneo_button').click(function () {
-                    $('#instantaneo_body').slideToggle(500);  //toggleClass('d-none');
+                    $('#instantaneo_body').slideToggle(500);
                     $('#instantaneo_body input:text').focus();
                 });
+
+                $('.btn-acao').on('click', function () {
+                    $(this).addClass('disabled').text('Processando...');
+                });
+
+                // Sincronização em tempo real entre múltiplos dispositivos de apoio
+                var currentHash = $('#apoio_state').data('hash');
+                var pollingInterval = 2500; // verifica a cada 2.5 segundos
+
+                function verificarAtualizacoes() {
+                    // Não recarrega automaticamente enquanto o operador estiver digitando
+                    if ($('#instantaneo_body input[name="texto"]').is(':focus') ||
+                        $('#instantaneo_body input[name="texto"]').val().trim() !== '') {
+                        return;
+                    }
+
+                    $('#sync_ok').addClass('d-none');
+                    $('#sync_spinner').removeClass('d-none');
+
+                    $.getJSON('apoio/status')
+                        .done(function (data) {
+                            if (data && data.hash && currentHash && data.hash !== currentHash) {
+                                $('#alerta_mudanca').slideDown(200);
+                                setTimeout(function () {
+                                    window.location.reload();
+                                }, 500);
+                            } else {
+                                $('#sync_spinner').addClass('d-none');
+                                $('#sync_ok').removeClass('d-none');
+                            }
+                        })
+                        .fail(function () {
+                            $('#sync_spinner').addClass('d-none');
+                            $('#sync_ok').addClass('d-none');
+                        });
+                }
+
+                setInterval(verificarAtualizacoes, pollingInterval);
             });
         </script>
     </div>

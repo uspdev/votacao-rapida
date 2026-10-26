@@ -8,7 +8,7 @@
     }
 </style>
 
-<meta http-equiv="Refresh" content="3">
+<div id="painel_state" data-hash="{hash_estado}" style="display:none;"></div>
 
 <h1>{S->nome}</h1>
 <hr>
@@ -77,3 +77,21 @@
     <br>
 </div>
 <!-- END block_resultado -->
+
+<script type="text/javascript">
+    $(function () {
+        var currentHash = $('#painel_state').data('hash');
+        var pollingInterval = 2000; // verifica alterações a cada 2 segundos
+
+        function verificarAtualizacoes() {
+            $.getJSON('painel/status')
+                .done(function (data) {
+                    if (data && data.hash && currentHash && data.hash !== currentHash) {
+                        window.location.reload();
+                    }
+                });
+        }
+
+        setInterval(verificarAtualizacoes, pollingInterval);
+    });
+</script>

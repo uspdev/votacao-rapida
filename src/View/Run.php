@@ -175,24 +175,61 @@ class Run
         $tpl = new Template('apoio_index.html');
 
         $tpl->S = $sessao;
+        $tpl->hash_estado = self::gerarHashApoio($sessao);
+
+        // Verifica se há alguma votação em andamento ou em exibição de resultado (Em votação, Em pausa ou Resultado)
+        $votacaoEmAndamento = null;
+        if (!empty($sessao->votacoes)) {
+            foreach ($sessao->votacoes as $item) {
+                if (in_array($item->estado, ['Em votação', 'Em pausa', 'Resultado'])) {
+                    $votacaoEmAndamento = $item;
+                    break;
+                }
+            }
+        }
+
+        if ($votacaoEmAndamento) {
+            $tpl->andamento_nome = $votacaoEmAndamento->nome;
+            $tpl->andamento_estado = $votacaoEmAndamento->estado;
+            $tpl->block('block_aviso_andamento');
+
+            $tpl->instantaneo_disabled = 'disabled';
+            $tpl->instantaneo_attr = 'tabindex="-1" aria-disabled="true" style="pointer-events:none;opacity:0.5;" title="Desabilitado: há uma votação ativa ou em exibição de resultado"';
+        } else {
+            $tpl->instantaneo_disabled = '';
+            $tpl->instantaneo_attr = '';
+        }
+
         foreach ($sessao->votacoes as $v) {
             $v->tipo = $v->tipo == 'aberta' ? 'Voto aberto' : 'Voto fechado';
             $v->estadoclass = SELF::getEstadoClass($v->estado);
             $v->accordion = new \stdClass();
             if ($v->estado == 'Fechada' or $v->estado == 'Finalizado') {
                 $v->accordion->mostrar = '';
-                $v->accordion->disabled = 'disabled';
+                $v->accordion->disabled = ($votacaoEmAndamento && $v->id != $votacaoEmAndamento->id) ? 'disabled' : '';
                 $v->accordion->border = '';
             } else {
                 $v->accordion->mostrar = 'show';
-                $v->accordion->disabled = '';
-                $v->accordion->border = 'border-primary mb-3';
+                $v->accordion->disabled = ($votacaoEmAndamento && $v->id != $votacaoEmAndamento->id) ? 'disabled' : '';
+                $v->accordion->border = ($votacaoEmAndamento && $v->id == $votacaoEmAndamento->id) ? 'border-primary mb-3' : 'mb-3';
             }
             $tpl->V = $v;
 
             foreach ($v->acoes as $acao) {
                 $tpl->cod = $acao->cod;
                 $tpl->acao = $acao->nome;
+
+                // Se houver votação ativa/em andamento/resultado, desabilita os botões de todas as outras votações
+                if ($votacaoEmAndamento && $v->id != $votacaoEmAndamento->id) {
+                    $tpl->acao_class = 'btn-secondary disabled';
+                    $tpl->acao_href = 'javascript:void(0)';
+                    $tpl->acao_attr = 'tabindex="-1" aria-disabled="true" style="pointer-events:none;opacity:0.5;" title="Desabilitado: a votação \'' . htmlspecialchars($votacaoEmAndamento->nome, ENT_QUOTES) . '\' está ativa/em exibição"';
+                } else {
+                    $tpl->acao_class = 'btn-primary';
+                    $tpl->acao_href = 'apoio?acao=' . $acao->cod . '&votacao_id=' . $v->id;
+                    $tpl->acao_attr = '';
+                }
+
                 $tpl->block('block_acao');
             }
             $tpl->block('block_votacao');
@@ -218,6 +255,109 @@ class Run
         exit;
     }
 
+    /**
+     * Gera um hash MD5 representativo do estado das votações para o painel de apoio.
+     *
+     * @param object $sessao Dados da sessão obtidos da API
+     * @return string Hash MD5
+     */
+    protected static function gerarHashApoio($sessao)
+    {
+        $statusList = [];
+        if (!empty($sessao->votacoes)) {
+            foreach ($sessao->votacoes as $v) {
+                $statusList[] = [
+                    'id' => $v->id,
+                    'estado' => $v->estado,
+                ];
+            }
+        }
+        return md5(json_encode($statusList));
+    }
+
+    /**
+     * Retorna o status das votações em JSON para sincronização em tempo real entre dispositivos de apoio.
+     *
+     * @return void
+     */
+    public static function apoioStatus()
+    {
+        if (!isset($_SESSION['apoio']) || !isset($_SESSION['hash'])) {
+            \Flight::json(['status' => 'erro', 'msg' => 'Sem sessão de apoio ativa'], 401);
+            return;
+        }
+
+        $hash = $_SESSION['hash'];
+        $token = $_SESSION['apoio']['apoio']['token'] ?? '';
+        if (empty($token)) {
+            \Flight::json(['status' => 'erro', 'msg' => 'Token de apoio não encontrado'], 401);
+            return;
+        }
+
+        $sessao = SELF::obterSessao($hash, $token);
+
+        \Flight::json([
+            'status' => 'ok',
+            'hash' => self::gerarHashApoio($sessao),
+            'total' => !empty($sessao->votacoes) ? count($sessao->votacoes) : 0,
+        ]);
+    }
+
+    /**
+     * Gera um hash MD5 representativo do estado atual do painel de exibição.
+     *
+     * @param object $sessao Dados da sessão obtidos da API
+     * @return string Hash MD5
+     */
+    protected static function gerarHashPainel($sessao)
+    {
+        $painelData = [
+            'msg' => $sessao->msg ?? '',
+            'em_tela' => !empty($sessao->em_tela),
+            'nome' => $sessao->em_tela->nome ?? '',
+            'estado' => $sessao->em_tela->estado ?? '',
+            'computados' => $sessao->em_tela->computados ?? 0,
+        ];
+        if (!empty($sessao->em_tela->respostas)) {
+            $painelData['respostas'] = $sessao->em_tela->respostas;
+        }
+        if (!empty($sessao->em_tela->votos)) {
+            $painelData['votos_count'] = count($sessao->em_tela->votos);
+        }
+
+        return md5(json_encode($painelData));
+    }
+
+    /**
+     * Retorna o status atual do painel em JSON para sincronização em tempo real sem recarregamento contínuo.
+     *
+     * @return void
+     */
+    public static function painelStatus()
+    {
+        if (!isset($_SESSION['painel']) || !isset($_SESSION['hash'])) {
+            \Flight::json(['status' => 'erro', 'msg' => 'Sem sessão de painel ativa'], 401);
+            return;
+        }
+
+        $hash = $_SESSION['hash'];
+        $token = $_SESSION['painel']['painel']['token'] ?? '';
+        if (empty($token)) {
+            \Flight::json(['status' => 'erro', 'msg' => 'Token de painel não encontrado'], 401);
+            return;
+        }
+
+        $sessao = SELF::obterSessao($hash, $token);
+
+        \Flight::json([
+            'status' => 'ok',
+            'hash' => self::gerarHashPainel($sessao),
+            'em_tela' => !empty($sessao->em_tela),
+            'computados' => $sessao->em_tela->computados ?? 0,
+            'estado' => $sessao->em_tela->estado ?? '',
+        ]);
+    }
+
     public static function painelGet()
     {
         list($hash, $token) = SS::verificaSessao('painel');
@@ -227,8 +367,10 @@ class Run
         $tpl = new Template('painel_index.html');
         $tpl->block('block_topo_img');
 
-        // se não houver votação
         $tpl->S = $sessao;
+        $tpl->hash_estado = self::gerarHashPainel($sessao);
+
+        // se não houver votação
         if (!empty($sessao->msg)) {
             $tpl->msg = $sessao->msg;
             $tpl->block('block_msg');

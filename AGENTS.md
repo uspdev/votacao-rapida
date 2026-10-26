@@ -141,28 +141,34 @@ Ao modificar este projeto, atenção especial deve ser dada aos seguintes itens:
 
 ## 6. Comandos e Procedimentos Frequentes
 
-### 6.1. Provisionamento do Banco de Dados
-Para criar tabelas, executar migrações e aplicar seeds iniciais:
+### 6.1. Provisionamento do Banco de Dados (Instalação Inicial)
+Para criar tabelas, executar migrações e aplicar seeds iniciais em banco vazio:
 ```bash
 php sql/provisionar.php
 ```
 
-### 6.2. Processamento Manual da Fila de E-mails
+### 6.2. Atualização do Banco de Dados (Migrations em Produção / Atualizações)
+Para verificar e aplicar automaticamente apenas as migrations incrementais pendentes:
+```bash
+php sql/atualizar.php
+```
+
+### 6.3. Processamento Manual da Fila de E-mails
 ```bash
 php cli/processarEmailsFila.php
 ```
 
-### 6.3. Validação do Composer
+### 6.4. Validação do Composer
 ```bash
 composer validate
 ```
 
-### 6.4. Atualização de Lock sem alterar dependências
+### 6.5. Atualização de Lock sem alterar dependências
 ```bash
 composer update --lock
 ```
 
-### 6.5. Permissões de Pastas em Desenvolvimento
+### 6.6. Permissões de Pastas em Desenvolvimento
 ```bash
 chmod -R 775 local/
 ```
