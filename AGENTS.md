@@ -86,10 +86,11 @@ A aplicação é dividida em duas camadas fundamentais que residem no mesmo repo
 
 Ao modificar este projeto, atenção especial deve ser dada aos seguintes itens:
 
-### 5.1. Comunicação cURL e Redirecionamento Local (`API_URL`)
+### 5.1. Comunicação cURL e Redirecionamento Local (`CURLOPT_RESOLVE` / `API_URL`)
 * Em servidores atrás de firewall/proxy reverso sem Hairpin NAT (loopback para o IP público bloqueado), o cURL do PHP falha ao tentar acessar a URL pública de si mesmo.
-* Para contornar isso, o arquivo `.env` suporta a diretiva `API_URL` (ex: `http://127.0.0.1/kawabata/votacao-rapida/public/api`).
-* O arquivo `src/View/Api.php` dá prioridade a `API_URL` antes de recorrer a `WWWROOT/api`.
+* Para resolver isso automaticamente **sem necessidade de alterar o `/etc/hosts`**, a classe `src/View/Api.php` utiliza `CURLOPT_RESOLVE` para mapear o hostname do `API` / `WWWROOT` diretamente para `127.0.0.1` em memória.
+* Isso garante compatibilidade imediata com **VirtualHosts** baseados em nome (`ServerName`), pois o cURL conecta no loopback local mas preserva o cabeçalho `Host: seu-dominio`.
+* Caso necessário, o arquivo `.env` ainda suporta a diretiva `API_URL` para sobrescrever a URL completa ou `API_RESOLVE_IP` (para mudar o IP de resolução ou desativar com `none`).
 
 ### 5.2. Apache + PHP-FPM (FastCGI) e Basic Auth
 * Servidores Apache que usam PHP-FPM descartam os cabeçalhos `Authorization: Basic ...` por padrão.

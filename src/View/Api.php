@@ -21,6 +21,24 @@ class Api
 
         $ch = curl_init(API . $endpoint);
 
+        // Resolução local em memória para VirtualHost (evita necessidade de /etc/hosts e timeout de NAT)
+        $parsed = parse_url(API);
+        $host = $parsed['host'] ?? '';
+        $scheme = $parsed['scheme'] ?? 'http';
+        $port = $parsed['port'] ?? ($scheme === 'https' ? 443 : 80);
+
+        if ($host && $host !== 'localhost' && $host !== '127.0.0.1') {
+            $resolveIp = getenv('API_RESOLVE_IP') ?: '127.0.0.1';
+            if ($resolveIp !== 'none' && $resolveIp !== 'false') {
+                curl_setopt($ch, CURLOPT_RESOLVE, ["{$host}:{$port}:{$resolveIp}"]);
+            }
+        }
+
+        if ($scheme === 'https' && (getenv('AMBIENTE') === 'dev' || getenv('API_VERIFY_SSL') === 'false')) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        }
+
         // vamos coletar informaçoes de debug, caso precise
         // https://stackoverflow.com/questions/3757071/php-debugging-curl
         curl_setopt($ch, CURLOPT_VERBOSE, true);

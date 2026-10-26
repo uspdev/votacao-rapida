@@ -35,12 +35,8 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
 
 ### Observações sobre Rede e E-mails
 
-* **Comunicação interna da API:**
-  Caso o servidor esteja atrás de proxy/firewall que bloqueie loopback para o próprio IP público (sem Hairpin NAT), defina no `.env`:
-  ```env
-  API_URL='http://127.0.0.1/pasta_raiz/api'
-  ```
-  Isso permite que o PHP acesse a API localmente via HTTP na porta 80, enquanto os usuários acessam via HTTPS normalmente.
+* **Comunicação interna da API e VirtualHosts:**
+  O sistema resolve o host do `WWWROOT` automaticamente para `127.0.0.1` em memória (`CURLOPT_RESOLVE`), permitindo funcionamento em VirtualHosts e servidores sem Hairpin NAT sem necessidade de alterar o `/etc/hosts`. Caso precise sobrescrever manualmente, defina `API_URL='http://...'` no `.env`.
 
 * **Servidor de E-mail (opcional em desenvolvimento):**
   Caso não configure servidor SMTP no `.env` (ou use `EMAIL_AUTH_TYPE='log'`), os e-mails com as credenciais e links de votação serão salvos em `local/log/emails_YYYY-MM.log`.
