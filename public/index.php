@@ -62,6 +62,14 @@ Flight::route('/gerente/@id(/@aba)', function ($id, $aba) {
     $gerente->sessao($id, $aba);
 });
 
+Flight::route('/admin/email/ver/@id:[0-9]+', function ($id) {
+    if (SS::isAdmin()) {
+        Admin::verEmail($id);
+    } else {
+        Flight::notFound();
+    }
+});
+
 Flight::route('/admin(/@aba)', function ($aba) {
     if (SS::isAdmin()) {
         Admin::home($aba);
