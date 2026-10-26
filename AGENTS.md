@@ -128,7 +128,8 @@ Ao modificar este projeto, atenção especial deve ser dada aos seguintes itens:
 * No PHP 8.2+, a criação de propriedades dinâmicas emite avisos `E_DEPRECATED`. O Flight PHP converte qualquer aviso de erro coberto pelo `error_reporting()` em `ErrorException`, gerando HTTP 500 caso `E_DEPRECATED` esteja ativo (padrão em produção).
 * O `app/bootstrap.php` define globalmente `error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);` tanto para `dev` quanto para `prod`.
 * Os controladores da API (`src/Controller/`) utilizam o atributo `#[\AllowDynamicProperties]` e declaram propriedades públicas (`$query`, `$data`, `$method`, `$files`) para recepção de requisições pelo `uspdev/webservice`.
-* O `public/api/index.php` implementa manipulador customizado `Flight::map('error', ...)` retornando JSON padronizado com código 500 e logando a exceção no PHP error_log.
+* O `public/api/index.php` implementa manipulador customizado `Flight::map('error', ...)` retornando JSON padronizado com código 500 e logando a exceção no PHP error_log. Em ambiente `dev`, o JSON inclui também a classe da exceção, arquivo, linha e stack trace.
+* O consumidor `src/View/Api.php` exibe automaticamente na tela, quando em ambiente `dev`, mensagens detalhadas e formatadas (código HTTP, endpoint, postdata, resposta com trace e log verbose do cURL) caso ocorra qualquer erro HTTP (>= 400).
 
 ---
 

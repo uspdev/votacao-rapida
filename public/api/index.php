@@ -11,15 +11,27 @@ use Uspdev\Webservice\Webservice as WS;
     if (\Flight::get('flight.log_errors')) {
         error_log('[API Error] ' . $e->getMessage() . "\n" . $e->getTraceAsString());
     }
+
+    $isDev = getenv('AMBIENTE') === 'dev';
+    $erro = [
+        'status' => 'erro',
+        'msg' => $e->getMessage(),
+        'code' => $e->getCode(),
+    ];
+
+    // Se estiver em ambiente de desenvolvimento, exibe detalhes completos na resposta
+    if ($isDev) {
+        $erro['exception'] = get_class($e);
+        $erro['file'] = $e->getFile();
+        $erro['line'] = $e->getLine();
+        $erro['trace'] = explode("\n", $e->getTraceAsString());
+    }
+
     \Flight::response()
         ->clearBody()
         ->status(500)
         ->header('Content-Type', 'application/json; charset=utf-8')
-        ->write(json_encode([
-            'status' => 'erro',
-            'msg' => $e->getMessage(),
-            'code' => $e->getCode(),
-        ], JSON_UNESCAPED_UNICODE))
+        ->write(json_encode($erro, JSON_UNESCAPED_UNICODE | ($isDev ? JSON_PRETTY_PRINT : 0)))
         ->send();
     exit;
 });

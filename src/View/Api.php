@@ -93,13 +93,25 @@ class Api
         rewind($verbose);
         $verboseLog = stream_get_contents($verbose);
         $obj = json_decode($ret);
-        if (!is_object($obj)) {
-            echo '<pre>', PHP_EOL;
-            echo 'Erro no retorno da API (HTTP ', $httpCode, '): ', PHP_EOL;
-            echo 'endpoint = ', API, $endpoint, PHP_EOL;
-            echo 'postdata = ', json_encode($postdata), PHP_EOL;
-            echo 'retorno = ', var_dump($ret), PHP_EOL;
-            echo 'verboselog = ', $verboseLog, PHP_EOL;
+        $isDev = getenv('AMBIENTE') === 'dev';
+
+        // Em dev ou em caso de retorno inválido/erro HTTP, exibe mensagens detalhadas na tela
+        if (!is_object($obj) || ($isDev && $httpCode >= 400)) {
+            echo '<pre style="background:#f8f9fa;color:#212529;padding:15px;border:1px solid #ced4da;border-radius:4px;font-family:monospace;">', PHP_EOL;
+            echo '<strong>Erro no retorno da API (HTTP ', $httpCode, '):</strong>', PHP_EOL, PHP_EOL;
+            echo '<strong>Endpoint:</strong> ', API, $endpoint, PHP_EOL;
+            echo '<strong>Postdata:</strong> ', json_encode($postdata, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), PHP_EOL;
+            echo '<strong>Retorno:</strong> ', PHP_EOL;
+            if (is_object($obj)) {
+                echo json_encode($obj, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), PHP_EOL;
+            } else {
+                var_dump($ret);
+            }
+            if ($isDev || !empty($verboseLog)) {
+                echo PHP_EOL, '<strong>cURL Verbose Log:</strong>', PHP_EOL;
+                echo htmlspecialchars($verboseLog), PHP_EOL;
+            }
+            echo '</pre>', PHP_EOL;
             exit;
         }
 
