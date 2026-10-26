@@ -33,6 +33,29 @@ O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a f
   ```
 * Cadastre na Senha Única USP a URL de retorno (callback): `<WWWROOT>/login`
 
+## Atualização da aplicação
+
+Para atualizar uma instalação existente (em desenvolvimento ou produção):
+
+1. Obtenha a versão mais recente do código:
+   ```bash
+   git pull
+   ```
+2. Atualize as dependências:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   ```
+   *(ou apenas `composer install` em desenvolvimento)*
+3. Aplique as migrações de banco de dados pendentes:
+   ```bash
+   php sql/atualizar.php
+   ```
+   *O script verifica quais migrações já foram executadas e aplica automaticamente apenas as pendentes, registrando o histórico na tabela `migration`.*
+4. Verifique as permissões de escrita:
+   ```bash
+   chmod -R 775 local/
+   ```
+
 ### Observações sobre Rede e E-mails
 
 * **Comunicação interna da API e VirtualHosts:**
