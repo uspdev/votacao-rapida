@@ -42,42 +42,7 @@ class Admin
         }
 
         if ($aba == 'email') {
-            R::selectDatabase('votacao');
-            $emails = R::findAll('email', 'ORDER BY id DESC');
-            foreach ($emails as $email) {
-                $e = new \stdClass();
-                $e->id = $email->id;
-                $e->destinatario = htmlspecialchars(self::safeUnserialize($email->destinatario) ?: '-');
-                $e->assunto = htmlspecialchars(self::safeUnserialize($email->assunto) ?: '-');
-                $e->bcc = htmlspecialchars(self::safeUnserialize($email->bcc) ?: '');
-
-                if (!empty($email->enviado)) {
-                    $e->enviado = htmlspecialchars($email->enviado);
-                    $e->status = 'Enviado';
-                    $e->status_badge = '<span class="badge badge-success">Enviado</span>';
-                } else {
-                    $e->enviado = 'Pendente';
-                    $e->status = 'Pendente';
-                    $e->status_badge = '<span class="badge badge-warning">Pendente</span>';
-                }
-
-                if (!empty($email->sessao_id)) {
-                    $sessao = R::load('sessao', $email->sessao_id);
-                    if ($sessao && $sessao->id) {
-                        $e->sessao_nome = htmlspecialchars($sessao->nome ?: ('#' . $sessao->id));
-                        $e->sessao_link = '<a href="gerente/' . $sessao->id . '">' . $e->sessao_nome . '</a>';
-                    } else {
-                        $e->sessao_nome = '#' . $email->sessao_id;
-                        $e->sessao_link = '<span class="text-muted">#' . $email->sessao_id . '</span>';
-                    }
-                } else {
-                    $e->sessao_nome = 'Sem sessão';
-                    $e->sessao_link = '<span class="text-muted">Sem sessão</span>';
-                }
-
-                $tpl->E = $e;
-                $tpl->block('block_email_list');
-            }
+            $tpl->block('block_email');
         }
 
         if ($aba == 'controle') {
@@ -118,6 +83,159 @@ class Admin
         }
 
         $tpl->show('userbar');
+    }
+
+    /**
+     * Retorna a listagem paginada e filtrada de e-mails em formato JSON para o Bootstrap Table.
+     *
+     * @return void
+     */
+    public static function listarEmails()
+    {
+        if (!SS::isAdmin()) {
+            \Flight::notFound();
+            return;
+        }
+
+        R::selectDatabase('votacao');
+
+        $whereClauses = ['1=1'];
+        $params = [];
+
+        // Busca global
+        $search = trim($_GET['search'] ?? '');
+        if (!empty($search)) {
+            $whereClauses[] = '(destinatario LIKE ? OR assunto LIKE ? OR enviado LIKE ?)';
+            $params[] = '%' . $search . '%';
+            $params[] = '%' . $search . '%';
+            $params[] = '%' . $search . '%';
+        }
+
+        // Filtros específicos por coluna
+        $filterStr = $_GET['filter'] ?? '';
+        $filter = is_string($filterStr) ? json_decode($filterStr, true) : [];
+        if (is_array($filter)) {
+            if (!empty($filter['status'])) {
+                if ($filter['status'] === 'Enviado') {
+                    $whereClauses[] = 'enviado IS NOT NULL AND enviado NOT LIKE ?';
+                    $params[] = '%(log)%';
+                } elseif ($filter['status'] === 'Log') {
+                    $whereClauses[] = 'enviado LIKE ?';
+                    $params[] = '%(log)%';
+                } elseif ($filter['status'] === 'Pendente') {
+                    $whereClauses[] = 'enviado IS NULL';
+                }
+            }
+            if (!empty($filter['destinatario'])) {
+                $whereClauses[] = 'destinatario LIKE ?';
+                $params[] = '%' . trim($filter['destinatario']) . '%';
+            }
+            if (!empty($filter['assunto'])) {
+                $whereClauses[] = 'assunto LIKE ?';
+                $params[] = '%' . trim($filter['assunto']) . '%';
+            }
+            if (!empty($filter['enviado'])) {
+                $whereClauses[] = 'enviado LIKE ?';
+                $params[] = '%' . trim($filter['enviado']) . '%';
+            }
+            if (!empty($filter['sessao'])) {
+                $sTerm = trim($filter['sessao']);
+                if (is_numeric($sTerm)) {
+                    $whereClauses[] = 'sessao_id = ?';
+                    $params[] = (int)$sTerm;
+                } else {
+                    $sessIds = R::getCol('SELECT id FROM sessao WHERE nome LIKE ?', ['%' . $sTerm . '%']);
+                    if (!empty($sessIds)) {
+                        $whereClauses[] = 'sessao_id IN (' . R::genSlots($sessIds) . ')';
+                        $params = array_merge($params, array_values($sessIds));
+                    } else {
+                        $whereClauses[] = '1=0';
+                    }
+                }
+            }
+        }
+
+        $whereSql = implode(' AND ', $whereClauses);
+        $total = R::count('email', $whereSql, $params);
+
+        $allowedSorts = [
+            'id' => 'id',
+            'enviado' => 'enviado',
+            'destinatario' => 'destinatario',
+            'assunto' => 'assunto'
+        ];
+        $sortKey = $_GET['sort'] ?? 'id';
+        $sortField = $allowedSorts[$sortKey] ?? 'id';
+        $sortOrder = strtoupper($_GET['order'] ?? '') === 'ASC' ? 'ASC' : 'DESC';
+
+        $limit = max(1, min(100, (int)($_GET['limit'] ?? 25)));
+        $offset = max(0, (int)($_GET['offset'] ?? 0));
+
+        $sql = "$whereSql ORDER BY $sortField $sortOrder LIMIT $limit OFFSET $offset";
+        $emails = R::findAll('email', $sql, $params);
+
+        $sessaoIds = array_values(array_filter(array_unique(array_map(function ($e) {
+            return $e->sessao_id;
+        }, $emails))));
+        $sessoes = [];
+        if (!empty($sessaoIds)) {
+            $sRows = R::find('sessao', 'id IN (' . R::genSlots($sessaoIds) . ')', $sessaoIds);
+            foreach ($sRows as $s) {
+                $sessoes[$s->id] = $s->nome;
+            }
+        }
+
+        $rows = [];
+        foreach ($emails as $email) {
+            $dest = self::safeUnserialize($email->destinatario) ?: '-';
+            $assunto = self::safeUnserialize($email->assunto) ?: '-';
+
+            if (empty($email->enviado)) {
+                $enviado = 'Pendente';
+                $statusBadge = '<span class="badge badge-warning">Pendente</span>';
+            } elseif (stripos($email->enviado, '(log)') !== false) {
+                $enviado = htmlspecialchars($email->enviado);
+                $statusBadge = '<span class="badge badge-info">Salvo em Log</span>';
+            } else {
+                $enviado = htmlspecialchars($email->enviado);
+                $statusBadge = '<span class="badge badge-success">Enviado</span>';
+            }
+
+            if (!empty($email->sessao_id) && isset($sessoes[$email->sessao_id])) {
+                $sNome = htmlspecialchars($sessoes[$email->sessao_id] ?: ('#' . $email->sessao_id));
+                $sLink = '<a href="gerente/' . $email->sessao_id . '">' . $sNome . '</a>';
+            } elseif (!empty($email->sessao_id)) {
+                $sLink = '<span class="text-muted">#' . $email->sessao_id . '</span>';
+            } else {
+                $sLink = '<span class="text-muted">Sem sessão</span>';
+            }
+
+            $acoes = '<button type="button" class="btn btn-sm btn-outline-primary btn-ver-email" ' .
+                     'data-id="' . $email->id . '" ' .
+                     'data-destinatario="' . htmlspecialchars($dest, ENT_QUOTES) . '" ' .
+                     'data-assunto="' . htmlspecialchars($assunto, ENT_QUOTES) . '" ' .
+                     'data-enviado="' . htmlspecialchars($enviado, ENT_QUOTES) . '" ' .
+                     'title="Visualizar e-mail">' .
+                     '<i class="fas fa-eye"></i> Ver' .
+                     '</button>';
+
+            $rows[] = [
+                'id' => (int)$email->id,
+                'status_badge' => $statusBadge,
+                'enviado' => $enviado,
+                'destinatario' => htmlspecialchars($dest),
+                'assunto' => htmlspecialchars($assunto),
+                'sessao_link' => $sLink,
+                'acoes' => $acoes,
+            ];
+        }
+
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'total' => $total,
+            'rows' => $rows,
+        ]);
+        exit;
     }
 
     /**

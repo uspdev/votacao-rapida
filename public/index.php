@@ -70,6 +70,14 @@ Flight::route('/admin/email/ver/@id:[0-9]+', function ($id) {
     }
 });
 
+Flight::route('/admin/email/listar', function () {
+    if (SS::isAdmin()) {
+        Admin::listarEmails();
+    } else {
+        Flight::notFound();
+    }
+});
+
 Flight::route('/admin(/@aba)', function ($aba) {
     if (SS::isAdmin()) {
         Admin::home($aba);

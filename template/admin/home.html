@@ -86,52 +86,32 @@
     <div class="col-md-12">
         <div class="d-flex justify-content-between align-items-center mb-2">
             <h2>E-mails</h2>
-            <span class="text-muted small">Visualização de mensagens enviadas e pendentes na fila</span>
+            <span class="text-muted small">Visualização paginada e filtro das mensagens enviadas ou em fila</span>
         </div>
-        <table class="table table-sm table-hover table-striped"
+        <table id="tableEmails" class="table table-sm table-hover table-striped"
             data-toggle="table"
-            data-filter-control="true"
-            data-search="true"
-            data-show-columns="true"
+            data-url="admin/email/listar"
+            data-side-pagination="server"
             data-pagination="true"
             data-page-size="25"
-            data-page-list="[10, 25, 50, 100, All]"
+            data-page-list="[10, 25, 50, 100]"
+            data-search="true"
+            data-filter-control="true"
+            data-show-columns="true"
             data-sort-name="id"
-            data-sort-order="desc">
+            data-sort-order="desc"
+            data-query-params="emailQueryParams">
             <thead>
                 <tr>
-                    <th data-field="id" data-sortable="true" data-width="60">#</th>
-                    <th data-field="status" data-filter-control="select" data-sortable="true" data-width="120">Status</th>
-                    <th data-field="enviado" data-filter-control="input" data-sortable="true">Data Envio</th>
+                    <th data-field="id" data-sortable="true" data-width="70">#</th>
+                    <th data-field="status_badge" data-filter-control="select" data-filter-data="var:emailStatusFilterData" data-sortable="false" data-width="120">Status</th>
+                    <th data-field="enviado" data-filter-control="input" data-sortable="true" data-width="160">Data Envio</th>
                     <th data-field="destinatario" data-filter-control="input" data-sortable="true">Destinatário</th>
                     <th data-field="assunto" data-filter-control="input" data-sortable="true">Assunto</th>
-                    <th data-field="sessao" data-filter-control="input" data-sortable="true">Sessão</th>
+                    <th data-field="sessao_link" data-filter-control="input" data-sortable="false">Sessão</th>
                     <th data-field="acoes" data-width="90" class="text-center">Ações</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- BEGIN block_email_list -->
-                <tr>
-                    <td>{E->id}</td>
-                    <td>{E->status_badge}</td>
-                    <td>{E->enviado}</td>
-                    <td>{E->destinatario}</td>
-                    <td>{E->assunto}</td>
-                    <td>{E->sessao_link}</td>
-                    <td class="text-center">
-                        <button type="button" 
-                            class="btn btn-sm btn-outline-primary btn-ver-email" 
-                            data-id="{E->id}" 
-                            data-destinatario="{E->destinatario}" 
-                            data-assunto="{E->assunto}" 
-                            data-enviado="{E->enviado}"
-                            title="Visualizar e-mail">
-                            <i class="fas fa-eye"></i> Ver
-                        </button>
-                    </td>
-                </tr>
-                <!-- END block_email_list -->
-            </tbody>
         </table>
     </div>
 </div>
@@ -166,6 +146,29 @@
 </div>
 
 <script>
+window.emailStatusFilterData = {
+    '': 'Todos',
+    'Enviado': 'Enviado (SMTP)',
+    'Log': 'Salvo em Log',
+    'Pendente': 'Pendente'
+};
+
+window.emailQueryParams = function(params) {
+    var filter = {};
+    $('#tableEmails thead .filter-control input, #tableEmails thead .filter-control select').each(function() {
+        var $th = $(this).closest('th');
+        var field = $th.data('field');
+        var val = $(this).val();
+        if (val) {
+            if (field === 'status_badge') field = 'status';
+            if (field === 'sessao_link') field = 'sessao';
+            filter[field] = val;
+        }
+    });
+    params.filter = JSON.stringify(filter);
+    return params;
+};
+
 $(function() {
     $(document).on('click', '.btn-ver-email', function(e) {
         e.preventDefault();

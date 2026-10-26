@@ -40,7 +40,7 @@ class Email
                 }
             }
         }
-        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        self::dispararProcessamentoFila();
         return [$count, $erro];
     }
 
@@ -90,7 +90,7 @@ class Email
             ],
         ]);
         if ($now) {
-            exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+            self::dispararProcessamentoFila();
         }
         return $ret;
     }
@@ -125,7 +125,7 @@ class Email
                 ],
             ]);
         }
-        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        self::dispararProcessamentoFila();
         return true;
     }
 
@@ -224,7 +224,7 @@ class Email
                 ['nome' => 'headtop.png', 'data' => base64_encode(file_get_contents(TPL . '/email/headtop.png'))],
             ],
         ]);
-        exec('php ' . ROOTDIR . '/cli/processarEmailsFila.php > /dev/null &');
+        self::dispararProcessamentoFila();
         return true;
     }
 
@@ -249,43 +249,72 @@ class Email
      * Processa as mensagens pendentes na fila de e-mails (`enviado IS NULL`).
      *
      * Dispara as mensagens via SMTP ou salva em log de acordo com a configuração,
-     * atualizando a data de envio e gerando registros de log.
+     * atualizando a data de envio (marcando com '(log)' quando em simulação) e gerando registros de log.
      *
+     * @param int $limit Quantidade máxima de e-mails a processar por lote
      * @return int Retorna a quantidade de e-mails processados
      */
-    public static function processarFila()
+    public static function processarFila($limit = 100)
     {
-        return R::transaction(function () {
-            $emails = R::findForUpdate('email', 'enviado IS NULL');
-            $count = 0;
-            foreach ($emails as $email) {
-                $email_arr = $email->export();
-                unset($email_arr['id']);
-                unset($email_arr['sessao_id']);
+        R::selectDatabase('votacao');
+        $emails = R::find('email', 'enviado IS NULL ORDER BY id ASC LIMIT ?', [$limit]);
+        $count = 0;
+        $isLog = !self::isConfigured();
+        foreach ($emails as $email) {
+            $email_arr = $email->export();
+            unset($email_arr['id']);
+            unset($email_arr['sessao_id']);
+            unset($email_arr['enviado']);
 
-                $arr = array_map('unserialize', $email_arr);
-                $envio = SELF::send($arr);
-                if ($envio == true) {
-                    $email->enviado = date('Y-m-d H:i:s');
-                    $context = [
-                        'sessao_id' => $email->sessao_id,
-                        'assunto' => $arr['assunto'],
-                    ];
-                    Log::email('enviado - ' . $arr['destinatario'], $context);
-                    R::store($email);
-                } else {
-                    $context = [
-                        'sessao_id' => $email->sessao_id,
-                        'assunto' => $arr['assunto'],
-                        'erro' => $envio,
-                    ];
-                    Log::email('erro - ' . $arr['destinatario'], $context);
+            $arr = array_map(function ($v) {
+                if (is_string($v)) {
+                    $u = @unserialize($v);
+                    return ($u !== false || $v === 'b:0;') ? $u : $v;
                 }
+                return $v;
+            }, $email_arr);
 
-                $count++;
+            $envio = self::send($arr);
+            if ($envio === true) {
+                $email->enviado = $isLog ? (date('Y-m-d H:i:s') . ' (log)') : date('Y-m-d H:i:s');
+                $context = [
+                    'sessao_id' => $email->sessao_id,
+                    'assunto' => $arr['assunto'] ?? '',
+                ];
+                $logMsg = $isLog ? ('salvo em log - ' . ($arr['destinatario'] ?? '')) : ('enviado - ' . ($arr['destinatario'] ?? ''));
+                Log::email($logMsg, $context);
+                R::store($email);
+            } else {
+                $context = [
+                    'sessao_id' => $email->sessao_id,
+                    'assunto' => $arr['assunto'] ?? '',
+                    'erro' => $envio,
+                ];
+                Log::email('erro - ' . ($arr['destinatario'] ?? ''), $context);
             }
-            return $count;
-        });
+
+            $count++;
+        }
+        return $count;
+    }
+
+    /**
+     * Dispara o processamento da fila de e-mails.
+     *
+     * Em modo log, processa imediatamente no próprio processo sem overhead de subprocesso.
+     * Em modo SMTP, dispara script CLI em background utilizando o binário PHP do sistema.
+     *
+     * @return bool|int Retorna quantidade de e-mails processados em modo síncrono ou true em background
+     */
+    public static function dispararProcessamentoFila()
+    {
+        if (!self::isConfigured()) {
+            return self::processarFila();
+        }
+
+        $phpBin = defined('PHP_BINARY') && file_exists(PHP_BINARY) ? PHP_BINARY : 'php';
+        exec($phpBin . ' ' . escapeshellarg(ROOTDIR . '/cli/processarEmailsFila.php') . ' > /dev/null &');
+        return true;
     }
 
     /**
