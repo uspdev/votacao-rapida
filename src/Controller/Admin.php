@@ -6,8 +6,39 @@ use Uspdev\Votacao\Model\Sessao;
 use Uspdev\Votacao\Model\Usuario;
 use \RedBeanPHP\R as R;
 
+#[\AllowDynamicProperties]
 class Admin
 {
+    /**
+     * Parâmetros query passados via GET pelo Webservice.
+     * @var \flight\util\Collection|null
+     */
+    public $query;
+
+    /**
+     * Dados enviados via POST pelo Webservice.
+     * @var \flight\util\Collection|null
+     */
+    public $data;
+
+    /**
+     * Método HTTP da requisição (GET, POST, etc.).
+     * @var string|null
+     */
+    public $method;
+
+    /**
+     * Arquivos enviados na requisição pelo Webservice.
+     * @var \flight\util\Collection|null
+     */
+    public $files;
+
+    /**
+     * Usuário administrador autenticado.
+     * @var \RedBeanPHP\OODBBean|null
+     */
+    public $usuario;
+
     const USER_MODEL = [
         [
             'campo' => 'codpes',

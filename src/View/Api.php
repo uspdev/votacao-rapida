@@ -88,13 +88,14 @@ class Api
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HEADER, false);
         $ret = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
         rewind($verbose);
         $verboseLog = stream_get_contents($verbose);
         $obj = json_decode($ret);
         if (!is_object($obj)) {
             echo '<pre>', PHP_EOL;
-            echo 'Erro no retorno da API: ', PHP_EOL;
+            echo 'Erro no retorno da API (HTTP ', $httpCode, '): ', PHP_EOL;
             echo 'endpoint = ', API, $endpoint, PHP_EOL;
             echo 'postdata = ', json_encode($postdata), PHP_EOL;
             echo 'retorno = ', var_dump($ret), PHP_EOL;

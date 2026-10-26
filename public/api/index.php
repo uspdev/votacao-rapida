@@ -6,6 +6,24 @@ require_once __DIR__.'/../../app/bootstrap.php';
 
 use Uspdev\Webservice\Webservice as WS;
 
+// Tratamento padronizado de erros para a API (sempre retornar JSON estruturado)
+\Flight::map('error', function (\Throwable $e) {
+    if (\Flight::get('flight.log_errors')) {
+        error_log('[API Error] ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+    }
+    \Flight::response()
+        ->clearBody()
+        ->status(500)
+        ->header('Content-Type', 'application/json; charset=utf-8')
+        ->write(json_encode([
+            'status' => 'erro',
+            'msg' => $e->getMessage(),
+            'code' => $e->getCode(),
+        ], JSON_UNESCAPED_UNICODE))
+        ->send();
+    exit;
+});
+
 // Polyfill para HTTP Basic Auth no PHP-FPM / FastCGI
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
     $auth = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';

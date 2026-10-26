@@ -7,6 +7,7 @@ use \Uspdev\Votacao\Model\Token;
 use \Uspdev\Votacao\Model\Votacao;
 use \Uspdev\Votacao\Model\Sessao;
 
+#[\AllowDynamicProperties]
 class Run
 {
     public static function run($hash, $token = '')

@@ -10,8 +10,33 @@ use Uspdev\Votacao\Model\Votacao;
 use Uspdev\Votacao\Model\Usuario;
 use Uspdev\Votacao\Model\Log;
 
+#[\AllowDynamicProperties]
 class Gerente
 {
+    /**
+     * Parâmetros query passados via GET pelo Webservice.
+     * @var \flight\util\Collection|null
+     */
+    public $query;
+
+    /**
+     * Dados enviados via POST pelo Webservice.
+     * @var \flight\util\Collection|null
+     */
+    public $data;
+
+    /**
+     * Método HTTP da requisição (GET, POST, etc.).
+     * @var string|null
+     */
+    public $method;
+
+    /**
+     * Arquivos enviados na requisição pelo Webservice.
+     * @var \flight\util\Collection|null
+     */
+    public $files;
+
     public function __construct()
     {
         R::selectDatabase('votacao');

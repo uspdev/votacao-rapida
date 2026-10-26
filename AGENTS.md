@@ -124,6 +124,12 @@ Ao modificar este projeto, atenção especial deve ser dada aos seguintes itens:
 * O status é registrado no banco como `YYYY-MM-DD HH:MM:SS (log)` e no painel admin como `Salvo em Log` (badge azul).
 * Os corpos dos e-mails são gravados em `local/log/emails_YYYY-MM.log`.
 
+### 5.7. PHP 8.2+ Depreciações e Tratamento de Erro na API
+* No PHP 8.2+, a criação de propriedades dinâmicas emite avisos `E_DEPRECATED`. O Flight PHP converte qualquer aviso de erro coberto pelo `error_reporting()` em `ErrorException`, gerando HTTP 500 caso `E_DEPRECATED` esteja ativo (padrão em produção).
+* O `app/bootstrap.php` define globalmente `error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);` tanto para `dev` quanto para `prod`.
+* Os controladores da API (`src/Controller/`) utilizam o atributo `#[\AllowDynamicProperties]` e declaram propriedades públicas (`$query`, `$data`, `$method`, `$files`) para recepção de requisições pelo `uspdev/webservice`.
+* O `public/api/index.php` implementa manipulador customizado `Flight::map('error', ...)` retornando JSON padronizado com código 500 e logando a exceção no PHP error_log.
+
 ---
 
 ## 6. Comandos e Procedimentos Frequentes
