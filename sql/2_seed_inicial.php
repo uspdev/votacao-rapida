@@ -20,18 +20,6 @@ echo 'OK.', PHP_EOL;
 
 R::selectDatabase('votacao');
 
-echo 'Cadastrando primeiro admin.. ';
-$codpes = config('admin_codpes');
-$usuario = R::findOrCreate('usuario', ['codpes' => $codpes,]);
-$usuario->admin = true;
-$usuario->nome = 'admin';
-$usuario->email = 'admin@local.com';
-$usuario->unidade = 'EESC';
-$usuario->lastlogin = date('Y-m-d H:i:s');
-$usuario->ultimo_aviso = 0;
-R::store($usuario);
-echo 'OK.',PHP_EOL;
-
 echo 'Seed de dados de estado e acao.. ';
 if ($estados = R::findAll('estado') or $acoes = R::findAll('acao')) {
     echo 'tabelas não estão vazias: abortando.', PHP_EOL;

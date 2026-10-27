@@ -33,9 +33,11 @@ class Gerente
         $user['email'] = $res['emailPrincipalUsuario'];
 
         // todo: ainda tem de ajustar os vinculos permitidos
-        $vinculo = Senhaunica::obterVinculo('tipoVinculo', ['SERVIDOR', 'ESTAGIARIORH']);
-        if ($vinculo) {
-            $user['unidade'] = $vinculo['siglaUnidade'];
+        $vinculo = Senhaunica::obterVinculo('tipoVinculo', ['SERVIDOR', 'ESTAGIARIORH', 'DOCENTE']);
+        $isAdminNoEnv = in_array((string) $user['codpes'], config('admin_codpes'), true);
+
+        if ($vinculo || $isAdminNoEnv) {
+            $user['unidade'] = $vinculo['siglaUnidade'] ?? 'USP';
             $usr = Api::send('/gerente/login', $user);
             if (isset($usr->message) || (isset($usr->status) && $usr->status === 'erro')) {
                 SS::setMsg(['class' => 'alert-danger', 'msg' => 'Erro na API: ' . ($usr->message ?? $usr->data ?? 'Não autorizado')]);

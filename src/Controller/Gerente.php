@@ -353,6 +353,12 @@ class Gerente
         foreach ($userdata as $key => $val) {
             $user->$key = $val;
         }
+
+        // Atribui privilégio de administrador sob demanda se o codpes constar no .env
+        if (in_array((string) $user->codpes, config('admin_codpes'), true)) {
+            $user->admin = 1;
+        }
+
         $user->lastlogin = date('Y-m-d H:i:s');
         R::store($user);
         return $user;

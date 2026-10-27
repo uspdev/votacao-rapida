@@ -73,9 +73,10 @@ $config = [
     'senhaunica_secret' => $env('CONSUMER_SECRET') ?: $env('SENHAUNICA_SECRET', ''),
     'senhaunica_callback_id' => $env('SENHA_UNICA_CALLBACK_ID') ?: $env('SENHAUNICA_CALLBACK_ID', ''),
     'senhaunica_amb' => $env('SENHA_UNICA_AMB') ?: $env('SENHAUNICA_AMB', 'prod'),
-    // Admin Inicial
-    'admin_codpes' => $env('ADMIN_CODPES', ''),
-    
+
+    // Administradores (lista de codpes em array)
+    'admin_codpes' => array_values(array_filter(array_map('trim', explode(',', (string) $env('ADMIN_CODPES', ''))))),
+
     // E-mails
     'email_auth_type' => strtolower($env('EMAIL_AUTH_TYPE', 'log')),
     'email_host' => $env('EMAIL_HOST', 'smtp.gmail.com'),
@@ -116,7 +117,7 @@ $envSync = [
     'EMAIL_OAUTH_CLIENT_ID' => $config['email_oauth_client_id'],
     'EMAIL_OAUTH_CLIENT_SECRET' => $config['email_oauth_client_secret'],
     'EMAIL_OAUTH_REFRESH_TOKEN' => $config['email_oauth_refresh_token'],
-    'ADMIN_CODPES' => $config['admin_codpes'],
+    'ADMIN_CODPES' => (string) $env('ADMIN_CODPES', ''),
     'PHP_BIN' => $config['php_bin'] ?? '',
 ];
 
@@ -129,6 +130,7 @@ foreach ($envSync as $envKey => $envVal) {
     }
     $config[$envKey] = $envVal;
 }
+$config['ADMIN_CODPES'] = $config['admin_codpes'];
 
 // Guarda na variável global para acesso rápido pela função config()
 $GLOBALS['__app_config'] = $config;
