@@ -12,7 +12,7 @@ namespace Uspdev\Votacao\View {
 
             // vamos carregar algumas variáveis de uso geral
             $main = new \Stdclass;
-            $main->wwwroot = getenv('WWWROOT');
+            $main->wwwroot = config('wwwroot');
             $main->self = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
             // Vamos pegar o papel e colocar no titulo. (gerente, painel, apoio, etc)
@@ -67,7 +67,7 @@ namespace Uspdev\Votacao\View {
                 $this->block('block_no_user');
             }
             // vamos colocar uma tarja se estiver em dev ou teste
-            if (getenv('AMBIENTE') == 'dev') {
+            if (config('is_dev')) {
                 $this->block('block_dev');
             }
             parent::show();

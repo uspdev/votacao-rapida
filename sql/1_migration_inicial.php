@@ -11,7 +11,7 @@ use \RedBeanPHP\R as R;
 R::selectDatabase('votacao');
 R::freeze(false);
 //R::nuke();
-echo 'Usando ', getenv('DB_DSN'), PHP_EOL;
+echo 'Usando ', config('db_dsn'), PHP_EOL;
 echo 'Criando estrutura inicial.. ';
 
 if ($tables = R::inspect()) {

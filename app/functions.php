@@ -53,7 +53,7 @@ function gerarListaQrcodePdf($sessao)
     $tpl->addFile('qrcode_lista', TPL . '/qrcode/lista.html');
     $tpl->style = file_get_contents(TPL . '/qrcode/style.html');
 
-    $tpl->wwwroot = getenv('WWWROOT');
+    $tpl->wwwroot = config('wwwroot');
     $tpl->S = $sessao;
 
     // para as instruções somente
@@ -131,7 +131,7 @@ function renderCedula($sessao, $token)
     $tpl->S = $sessao;
     $tpl->T = $token;
     $tpl->logo_usp = ROOTDIR . '/public/media/usp-logo.png';
-    $tpl->qrcode = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
+    $tpl->qrcode = config('wwwroot') . '/' . $sessao->hash . '/' . $token->token;
 
     ($sessao->logo) ? $tpl->block('block_logo') : '';
     ($token->tipo == 'aberta') ? $tpl->block('block_nome') : '';

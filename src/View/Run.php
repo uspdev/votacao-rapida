@@ -34,7 +34,7 @@ class Run
             $token = $data->token;
             SELF::hashToken($hash, $token);
         } else {
-            header('Location: ' . getenv('WWWROOT') . '/' . $hash);
+            header('Location: ' . config('wwwroot') . '/' . $hash);
             exit;
         }
     }
@@ -56,7 +56,7 @@ class Run
         SS::atribuir($perfil, $token);
         // print_r($_SESSION);
         // exit;
-        header('Location: ' . getenv('WWWROOT') . '/' . $perfil);
+        header('Location: ' . config('wwwroot') . '/' . $perfil);
         exit;
     }
 
@@ -149,7 +149,7 @@ class Run
 
             SS::set('votacao_msg', json_encode($res));
             //$_SESSION['msg'] = json_encode($res); //exit;
-            header('Location:' .  getenv('WWWROOT') . '/votacao');
+            header('Location:' .  config('wwwroot') . '/votacao');
             exit;
         }
     }
@@ -167,7 +167,7 @@ class Run
             $res = Api::post($hash, $token, $data);
             // temos de devolver res de alguma forma se houver erro
             //print_r($res);exit;
-            header('Location: ' . getenv('WWWROOT') . '/apoio');
+            header('Location: ' . config('wwwroot') . '/apoio');
             exit;
         }
 
@@ -251,7 +251,7 @@ class Run
                 break;
         }
 
-        header('Location: ' . getenv('WWWROOT') . '/apoio');
+        header('Location: ' . config('wwwroot') . '/apoio');
         exit;
     }
 
@@ -464,7 +464,7 @@ class Run
             SS::set('ticket', $ticket);
             SS::unset('token_fechado');
         }
-        header('Location: ' . getenv('WWWROOT') . '/ticket');
+        header('Location: ' . config('wwwroot') . '/ticket');
         exit;
     }
 

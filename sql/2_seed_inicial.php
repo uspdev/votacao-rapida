@@ -10,8 +10,8 @@ R::freeze(false);
 echo 'Criando usuário da API.. ';
 Uspdev\Webservice\Auth::salvarUsuario(
     [
-        'username' => getenv('API_USER'),
-        'pwd' => getenv('API_PWD'),
+        'username' => config('api_user'),
+        'pwd' => config('api_pwd'),
         'admin' => '1',
         'allow' => ''
     ]
@@ -21,7 +21,7 @@ echo 'OK.', PHP_EOL;
 R::selectDatabase('votacao');
 
 echo 'Cadastrando primeiro admin.. ';
-$codpes = getenv('ADMIN_CODPES');
+$codpes = config('admin_codpes');
 $usuario = R::findOrCreate('usuario', ['codpes' => $codpes,]);
 $usuario->admin = true;
 $usuario->nome = 'admin';

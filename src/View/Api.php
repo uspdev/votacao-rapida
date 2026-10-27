@@ -28,13 +28,13 @@ class Api
         $port = $parsed['port'] ?? ($scheme === 'https' ? 443 : 80);
 
         if ($host && $host !== 'localhost' && $host !== '127.0.0.1') {
-            $resolveIp = getenv('API_RESOLVE_IP') ?: '127.0.0.1';
+            $resolveIp = config('api_resolve_ip');
             if ($resolveIp !== 'none' && $resolveIp !== 'false') {
                 curl_setopt($ch, CURLOPT_RESOLVE, ["{$host}:{$port}:{$resolveIp}"]);
             }
         }
 
-        if ($scheme === 'https' && (getenv('AMBIENTE') === 'dev' || getenv('API_VERIFY_SSL') === 'false')) {
+        if ($scheme === 'https' && (config('is_dev') || !config('api_verify_ssl'))) {
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
         }
@@ -64,7 +64,7 @@ class Api
 
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_USERPWD, getenv('API_USER') . ':' . getenv('API_PWD'));
+        curl_setopt($ch, CURLOPT_USERPWD, config('api_user') . ':' . config('api_pwd'));
         curl_setopt($ch, CURLOPT_TIMEOUT, 30); // timeout
 
         // get ou post
@@ -93,7 +93,7 @@ class Api
         rewind($verbose);
         $verboseLog = stream_get_contents($verbose);
         $obj = json_decode($ret);
-        $isDev = getenv('AMBIENTE') === 'dev';
+        $isDev = config('is_dev');
 
         // Em dev ou em caso de retorno inválido/erro HTTP, exibe mensagens detalhadas na tela
         if (!is_object($obj) || ($isDev && $httpCode >= 400)) {

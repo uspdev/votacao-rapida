@@ -64,13 +64,13 @@ class Email
             if (empty($token->ticket)) {
                 $tpl->block('block_fechada_sem');
             } else {
-                $sessao->link_fechado = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->ticket;
+                $sessao->link_fechado = config('wwwroot') . '/' . $sessao->hash . '/' . $token->ticket;
                 $tpl->block('block_fechada_com');
             }
 
             $tpl->block('block_fechada');
         }
-        $sessao->link_direto = getenv('WWWROOT') . '/' . $sessao->hash . '/' . $token->token;
+        $sessao->link_direto = config('wwwroot') . '/' . $sessao->hash . '/' . $token->token;
         $qrcode = SELF::qrCodePngData($sessao->link_direto);
         $tpl->S = $sessao;
         $tpl->T = $token;
@@ -103,7 +103,7 @@ class Email
      */
     public static function sendControle($sessao)
     {
-        $sessao->wwwroot = getenv('WWWROOT');
+        $sessao->wwwroot = config('wwwroot');
         $lista = $sessao->sharedUsuarioList;
         foreach ($lista as $dest) {
             $tpl = new Template(TPL . '/email/controle.html');
@@ -151,7 +151,7 @@ class Email
         $votacao = json_decode(json_encode($export));
         $tpl = new Template(TPL . '/email/exportarVotacao.html');
         $sessao = $votacao->sessao;
-        $sessao->link_ori = getenv('WWWROOT') . '/gerente/' . $sessao->id;
+        $sessao->link_ori = config('wwwroot') . '/gerente/' . $sessao->id;
         $tpl->S = $sessao;
         $tpl->now = date('d/m/Y H:i:s');
 
@@ -308,8 +308,8 @@ class Email
      */
     public static function getPhpCli()
     {
-        // 1. Variável de ambiente explícita
-        $envBin = getenv('PHP_BIN') ?: getenv('PHP_CLI');
+        // 1. Variável de configuração explícita
+        $envBin = config('php_bin');
         if (!empty($envBin) && file_exists($envBin)) {
             return $envBin;
         }
@@ -368,13 +368,13 @@ class Email
      */
     public static function isConfigured()
     {
-        $authType = strtolower(getenv('EMAIL_AUTH_TYPE') ?: '');
+        $authType = config('email_auth_type');
         if ($authType === 'log') {
             return false;
         }
 
-        $host = getenv('EMAIL_HOST');
-        $email = getenv('EMAIL');
+        $host = config('email_host');
+        $email = config('email');
 
         if (empty($host) || empty($email) || strtolower($host) === 'log') {
             return false;
@@ -453,17 +453,17 @@ class Email
         $mail->SMTPDebug = SMTP::DEBUG_SERVER;
 
         //$mail->SMTPKeepAlive = true;
-        $mail->Host = getenv('EMAIL_HOST');
-        $mail->Port = getenv('EMAIL_PORT');
+        $mail->Host = config('email_host');
+        $mail->Port = config('email_port');
         $mail->SMTPAuth = true;
 
-        switch (getenv('EMAIL_AUTH_TYPE')) {
+        switch (config('email_auth_type')) {
             case 'oauth':
                 $mail->AuthType = 'XOAUTH2';
-                $email = getenv('EMAIL');
-                $clientId = getenv('EMAIL_OAUTH_CLIENT_ID');
-                $clientSecret = getenv('EMAIL_OAUTH_CLIENT_SECRET');
-                $refreshToken = getenv('EMAIL_OAUTH_REFRESH_TOKEN');
+                $email = config('email');
+                $clientId = config('email_oauth_client_id');
+                $clientSecret = config('email_oauth_client_secret');
+                $refreshToken = config('email_oauth_refresh_token');
 
                 $provider = new Google(['clientId' => $clientId, 'clientSecret' => $clientSecret,]);
                 $mail->setOAuth(new OAuth([
@@ -477,23 +477,23 @@ class Email
             case 'login':
                 $mail->AuthType = 'LOGIN';
                 $mail->SMTPAutoTLS = false;
-                $mail->Username = getenv('EMAIL');
-                $mail->Password = getenv('EMAIL_PWD');
+                $mail->Username = config('email');
+                $mail->Password = config('email_pwd');
                 break;
             case 'tls':
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-                $mail->Username = getenv('EMAIL');
-                $mail->Password = getenv('EMAIL_PWD');
+                $mail->Username = config('email');
+                $mail->Password = config('email_pwd');
                 break;
             case 'ssl':
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-                $mail->Username = getenv('EMAIL');
-                $mail->Password = getenv('EMAIL_PWD');
+                $mail->Username = config('email');
+                $mail->Password = config('email_pwd');
                 break;
         }
 
         $mail->setLanguage('pt_br');
-        $mail->setFrom(getenv('EMAIL'), utf8_decode("Votação rápida"));
+        $mail->setFrom(config('email'), utf8_decode("Votação rápida"));
         $mail->AddAddress($arr['destinatario']);
 
         (isset($arr['bcc'])) ? $mail->addBCC($arr['bcc']) : '';

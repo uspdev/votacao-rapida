@@ -74,8 +74,8 @@ if (!in_array($providerName, ['Google', 'Microsoft', 'Yahoo'])) {
 
 //These details are obtained by setting up an app in the Google developer console,
 //or whichever provider you're using.
-$clientId = getenv('EMAIL_OAUTH_CLIENT_ID');
-$clientSecret = getenv('EMAIL_OAUTH_CLIENT_SECRET');
+$clientId = config('email_oauth_client_id');
+$clientSecret = config('email_oauth_client_secret');
 
 //If this automatic URL doesn't work, set it yourself manually to the URL of this script
 //$redirectUri = (isset($_SERVER['HTTPS']) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];

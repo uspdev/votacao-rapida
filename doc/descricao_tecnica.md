@@ -76,7 +76,8 @@ A aplicação adota uma arquitetura desacoplada em duas camadas principais hospe
 
 ## 3. Estrutura do Código-fonte
 
-* **`app/bootstrap.php`:** Centraliza a inicialização do ambiente, leitura do `.env`, configuração do timezone (`America/Sao_Paulo`), conexão com o banco de dados via RedBeanPHP, supressão de `E_DEPRECATED` e ativação de buffers de saída.
+* **`config/app.php`:** Centraliza a leitura do `.env`, define os valores padrão para todas as variáveis de ambiente e disponibiliza o helper global `config('chave')` e retorno em array.
+* **`app/bootstrap.php`:** Centraliza a inicialização do ambiente, inclusão de `config/app.php`, configuração do timezone (`America/Sao_Paulo`), conexão com o banco de dados via RedBeanPHP, supressão de `E_DEPRECATED` e ativação de buffers de saída.
 * **`src/Model/`:**
   * `Email.php`: Gestão da fila de mensagens, envio via PHPMailer ou registro em log, disparos em background.
   * `Log.php`: Wrapper para Monolog com canais específicos (`db`, `email`, `votacao`, `gerente`, `admin`).

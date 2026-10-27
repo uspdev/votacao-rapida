@@ -89,7 +89,7 @@ class sessaoPhp
             return $user;
         } else {
             SELF::set('next', $_SERVER['REQUEST_URI']);
-            header('Location:' . getenv('WWWROOT') . '/login');
+            header('Location:' . config('wwwroot') . '/login');
             exit;
         }
     }
@@ -106,7 +106,7 @@ class sessaoPhp
 
     public static function getNext()
     {
-        $ret = empty($_SESSION['next']) ? getenv('WWWROOT') . '/gerente' : $_SESSION['next'];
+        $ret = empty($_SESSION['next']) ? config('wwwroot') . '/gerente' : $_SESSION['next'];
         unset($_SESSION['next']);
         return $ret;
     }

@@ -19,12 +19,14 @@ O **Votação Rápida** é uma plataforma desenvolvida no âmbito da Universidad
 ## 2. Estrutura de Diretórios
 
 ```
-├── app/                  # Bootstrap, inicialização de banco, constantes e variáveis de ambiente
-│   └── bootstrap.php     # Ponto central de inicialização (env, Flight, RedBean, error reporting)
+├── app/                  # Bootstrap, inicialização de banco, constantes e funções
+│   └── bootstrap.php     # Ponto central de inicialização (Flight, RedBean, error reporting)
 ├── cli/                  # Scripts utilitários de linha de comando
 │   ├── processarEmailsFila.php  # Worker de envio da fila de e-mails
 │   ├── atualizar_estrutura.php  # Atualizador de schema legado
 │   └── salvarAdmin.php   # Cadastro de administrador inicial
+├── config/               # Configuração centralizada da aplicação
+│   └── app.php           # Leitura do .env com definição de valores padrão e helper config()
 ├── doc/                  # Documentação funcional, técnica e changelog
 ├── local/                # Diretório de escrita em runtime (logs, cache) - DEVE TER PERMISSÃO 775
 │   └── log/              # Logs rotativos do Monolog (info-YYYY-MM-DD.log) e emails_YYYY-MM.log

@@ -11,21 +11,15 @@ define('LOCAL', ROOTDIR . '/local'); // Arquivos gerados pelo sistema
 define('ARQ', LOCAL . '/arquivos'); // Arquivos das votações
 define('TPL', ROOTDIR . '/template');
 
-// carregando as variáveis de .env para o ambiente
-$dotenv = Dotenv\Dotenv::createImmutable(ROOTDIR . '/');
-$dotenv->load();
+// Carrega as configurações da aplicação (lê o .env e define valores padrão)
+$config = require ROOTDIR . '/config/app.php';
 
-# Se o servidor estiver atrás de um proxy,
-# o servidor da API deve ser colocada no /etc/hosts 
-# para que não passe pelo proxy e mantenha o virtualhost do apache
-# ex.: 12.7.0.0.1 servidor-do-wwwroot.usp.br
-# ou configure API_URL no .env com http://127.0.0.1/...
-define('API', getenv('API_URL') ?: (getenv('WWWROOT') . '/api')); // caminho da API
+define('API', $config['api_url']); // caminho da API
 
 // Desativa avisos de depreciação globalmente para manter compatibilidade com RedBean e bibliotecas legadas no PHP 8.2+
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
-$amb = getenv('AMBIENTE');
+$amb = $config['ambiente'];
 if ($amb == 'dev') {
     ini_set('display_errors', 1);
     ini_set('display_startup_errors', 1);
@@ -52,19 +46,6 @@ putenv('USPDEV_CACHE_DISABLE=1');
 \Flight::set('flight.v2.output_buffering', true);
 \Flight::response()->v2_output_buffering = true;
 
-# veja https://github.com/uspdev/ip-control
-# desativado pois dá problema quando está atrás de proxy
-putenv('USPDEV_IP_CONTROL=');
-
-// vamos remover barra no final que não precisa, aparece no php -S
-// $base = Flight::request()->base;
-// $base = (substr($base, -1) == '/') ? substr($base, 0, -1) : $base;
-
-# O dominio vamos tentar adivinhar, se não for em linha de comando
-// if (PHP_SAPI != 'cli') {
-//     putenv('DOMINIO=http://' . $_SERVER['HTTP_HOST'] . $base);
-// }
-
 # Local onde o webservice colocará arquivos sqlite, logs, etc.
 putenv('USPDEV_WEBSERVICE_LOCAL=' . LOCAL);
 
@@ -72,10 +53,10 @@ putenv('USPDEV_WEBSERVICE_LOCAL=' . LOCAL);
 putenv('USPDEV_WEBSERVICE_ADMIN_ROUTE=ws');
 
 // Conexão com DB
-if (getenv('DB_TIPO') == 'sqlite') {
+if ($config['db_tipo'] == 'sqlite') {
     R::addDatabase('votacao', 'sqlite:' . LOCAL . '/votacao.db3');
 } else {
-    R::addDatabase('votacao', getenv('DB_DSN'), getenv('DB_USERNAME'), getenv('DB_PASSWORD'));
+    R::addDatabase('votacao', $config['db_dsn'], $config['db_username'], $config['db_password']);
 }
 
 R::selectDatabase('votacao');

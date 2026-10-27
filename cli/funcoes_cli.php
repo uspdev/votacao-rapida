@@ -9,8 +9,8 @@ function salvarUsuarioApi()
 {
     Auth::salvarUsuario(
         [
-            'username' => getenv('API_USER'),
-            'pwd' => getenv('API_PWD'),
+            'username' => config('api_user'),
+            'pwd' => config('api_pwd'),
             'admin' => '1',
             'allow' => ''
         ]

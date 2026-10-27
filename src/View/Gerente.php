@@ -23,9 +23,9 @@ class Gerente
             }
         }
         $res = Senhaunica::login([
-            'identifier' => getenv('SENHAUNICA_KEY') ?: getenv('CONSUMER_KEY'),
-            'secret' => getenv('SENHAUNICA_SECRET') ?: getenv('CONSUMER_SECRET'),
-            'callback_id' => getenv('SENHAUNICA_CALLBACK_ID') ?: getenv('SENHA_UNICA_CALLBACK_ID'),
+            'identifier' => config('senhaunica_key'),
+            'secret' => config('senhaunica_secret'),
+            'callback_id' => config('senhaunica_callback_id'),
         ]);
 
         $user['codpes'] = $res['loginUsuario'];
@@ -39,7 +39,7 @@ class Gerente
             $usr = Api::send('/gerente/login', $user);
             if (isset($usr->message) || (isset($usr->status) && $usr->status === 'erro')) {
                 SS::setMsg(['class' => 'alert-danger', 'msg' => 'Erro na API: ' . ($usr->message ?? $usr->data ?? 'Não autorizado')]);
-                header('Location: ' . getenv('WWWROOT'));
+                header('Location: ' . config('wwwroot'));
                 exit;
             }
             SS::set('user', json_decode(json_encode($usr), true));
@@ -48,7 +48,7 @@ class Gerente
             $user['vinculos'] = array_column($res['vinculo'], 'tipoVinculo');
             $usr = Api::send('/gerente/nologin', $user);
             SS::setMsg(['class' => 'alert-danger', 'msg' => 'Usuário sem acesso ao sistema "Votação Rápida"']);
-            header('Location: ' . getenv('WWWROOT'));
+            header('Location: ' . config('wwwroot'));
             exit;
         }
 
@@ -61,7 +61,7 @@ class Gerente
         SS::destroy();
 
         // vamos chamar a API para registrar o logout ????
-        header('Location: ' . getenv('WWWROOT'));
+        header('Location: ' . config('wwwroot'));
         exit;
     }
 

@@ -7,11 +7,7 @@ require_once __DIR__.'/../../app/bootstrap.php';
 use Uspdev\Ipcontrol\Ipcontrol;
 use Uspdev\Webservice\Webservice as WS;
 
-// Controle de acesso por IP (uspdev/ip-control)
-// Por padrão, restringe o acesso aos endereços de loopback (localhost)
-if (!getenv('USPDEV_IP_CONTROL')) {
-    putenv('USPDEV_IP_CONTROL=localhost');
-}
+// Controle de acesso por IP (uspdev/ip-control resolvido por config/app.php)
 if (!Ipcontrol::proteger(false)) {
     http_response_code(403);
     header('HTTP/1.1 403 Forbidden');
@@ -29,7 +25,7 @@ if (!Ipcontrol::proteger(false)) {
         error_log('[API Error] ' . $e->getMessage() . "\n" . $e->getTraceAsString());
     }
 
-    $isDev = getenv('AMBIENTE') === 'dev';
+    $isDev = config('is_dev');
     $erro = [
         'status' => 'erro',
         'msg' => $e->getMessage(),
@@ -66,6 +62,33 @@ if (!isset($_SERVER['PHP_AUTH_USER'])) {
             list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = $exploded;
         }
     }
+}
+
+// Sincronização automática das credenciais da API (.env <-> SQLite do webservice)
+// Garante que qualquer alteração de API_USER ou API_PWD no .env tenha efeito imediato
+$apiUser = config('api_user');
+$apiPwd = config('api_pwd');
+
+if (!file_exists(LOCAL . '/uspdev_webservice_auth.db3') ||
+    (isset($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER'] === $apiUser && isset($_SERVER['PHP_AUTH_PW']) && $_SERVER['PHP_AUTH_PW'] === $apiPwd)) {
+    if (!\RedBeanPHP\R::hasDatabase('webservice_auth')) {
+        \RedBeanPHP\R::addDatabase('webservice_auth', 'sqlite:' . LOCAL . '/uspdev_webservice_auth.db3');
+    }
+    \RedBeanPHP\R::selectDatabase('webservice_auth');
+    $sqliteUser = file_exists(LOCAL . '/uspdev_webservice_auth.db3')
+        ? \RedBeanPHP\R::findOne('usuario', 'username = ?', [$apiUser])
+        : null;
+
+    if (!$sqliteUser || !password_verify($apiPwd, $sqliteUser->pwd)) {
+        \RedBeanPHP\R::freeze(false);
+        \Uspdev\Webservice\Auth::salvarUsuario([
+            'username' => $apiUser,
+            'pwd' => $apiPwd,
+            'admin' => '1',
+            'allow' => ''
+        ]);
+    }
+    \RedBeanPHP\R::selectDatabase('votacao');
 }
 
 # Controlador de gerencia do webservice (opcional).
