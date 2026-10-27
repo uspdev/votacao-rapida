@@ -256,9 +256,14 @@ class Run
 
             case '9': // criar instantaneo
                 // aqui não precisa de $votacao, pois vai criar uma nova
-                $votacao = Votacao::novoInstantaneo($sessao, trim($data['texto']));
-                //$votacao->sessao_id = $sessao->id;
-                //R::store($votacao);
+                $texto = trim($data['texto'] ?? '');
+                if (empty($texto)) {
+                    return ['status' => 'erro', 'data' => 'O texto da votação não pode ser vazio.'];
+                }
+                $ret = Votacao::novoInstantaneo($sessao, $texto);
+                if (isset($ret['status']) && $ret['status'] === 'erro') {
+                    return $ret;
+                }
 
                 return ['status' => 'ok', 'msg' => 'Votação adicionada com sucesso'];
                 break;

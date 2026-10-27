@@ -242,12 +242,21 @@ class Run
         //$sessao = SELF::obterSessao($hash, $token);
         switch ($dataObj->acao) {
             case 'instantaneo':
+                $texto = trim($dataObj->texto ?? '');
+                if (empty($texto)) {
+                    SS::setMsg(['class' => 'alert-danger', 'msg' => 'O texto da votação não pode ser vazio.']);
+                    header('Location: ' . config('wwwroot') . '/apoio');
+                    exit;
+                }
+
                 $data['acao'] = '9';
-                $data['texto'] = $dataObj->texto;
+                $data['texto'] = $texto;
                 //print_r($data);
 
                 $res = Api::post($hash, $token, $data);
-                //var_dump($res);exit;
+                if (isset($res->status) && $res->status === 'erro') {
+                    SS::setMsg(['class' => 'alert-danger', 'msg' => $res->data ?? $res->msg ?? 'Erro ao criar votação instantânea']);
+                }
                 break;
         }
 

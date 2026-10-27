@@ -64,11 +64,11 @@
         <div id="instantaneo_body" class="card-body" style="display:none">
 
             <div class="card-body">
-                <form method="POST" target="apoio">
+                <form method="POST" target="apoio" id="form_instantaneo">
                     <h6 class="text-muted">
                         Digite o texto para essa votação. As alternativas serão "Favorável", "Contrário" e "Abstenção"
                     </h6>
-                    <input type="text" class="form-control mb-2" name="texto" value="">
+                    <input type="text" class="form-control mb-2" name="texto" value="" required>
                     <input type="hidden" name="acao" value="instantaneo">
                     <input type="submit" class="btn btn-primary btn-block" name="submit" value="Criar">
                 </form>
@@ -79,6 +79,16 @@
                 $('#instantaneo_button').click(function () {
                     $('#instantaneo_body').slideToggle(500);
                     $('#instantaneo_body input:text').focus();
+                });
+
+                $('#form_instantaneo').on('submit', function (e) {
+                    var texto = $(this).find('input[name="texto"]');
+                    if (!$.trim(texto.val())) {
+                        e.preventDefault();
+                        alert('O texto da votação não pode ser vazio.');
+                        texto.focus();
+                        return false;
+                    }
                 });
 
                 $('.btn-acao').on('click', function () {

@@ -81,7 +81,7 @@
                     <label class="col-form-label col-md-12">
                         <span class="text-secondary">Nome</span>
                         <div>
-                            <input type="text" name="nome" maxlength="300" style="width:100%">
+                            <input type="text" name="nome" maxlength="300" style="width:100%" required>
                         </div>
                     </label>
                 </div>
@@ -173,6 +173,17 @@
                 editAction: 'editarVotacao',
                 removeAction: 'removerVotacao',
                 addAction: 'adicionarVotacao'
+            });
+
+            // impede submissão de votação com nome vazio ou apenas espaços
+            votacoes.on('submit', 'form', function (e) {
+                var nome = $(this).find('input[name="nome"]');
+                if (nome.length && !$.trim(nome.val())) {
+                    e.preventDefault();
+                    alert('O nome da votação não pode ser vazio.');
+                    nome.focus();
+                    return false;
+                }
             });
 
             // vamos esconder algumas coisas quando estiver editando

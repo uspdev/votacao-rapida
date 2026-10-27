@@ -149,7 +149,31 @@
         </div>
         <div class="col-md-4">
             <div>
-                <h3>Controles</h3>
+                <h3>Controles <button type="button" class="ajuda_btn btn btn-link" data-toggle="modal" data-target="#modalAjudaControles"><i class="fas fa-question-circle"></i> Ajuda</button></h3>
+                
+                <div class="modal fade" id="modalAjudaControles" tabindex="-1" role="dialog" aria-labelledby="modalAjudaControlesTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalAjudaControlesTitle"><i class="fas fa-question-circle text-info"></i> Informações sobre Controles</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Os links desta seção dão acesso às diferentes interfaces operacionais da reunião:<br><br>
+                                    <b>Apoio:</b> É a interface utilizada pela mesa diretora e pelos operadores para conduzir as votações da sessão. Permite colocar uma votação na tela, abrir a urna para receber votos, pausar, encerrar, exibir o resultado na tela ou criar votações instantâneas durante a reunião.<br><br>
+                                    <b>Painel:</b> É a tela de projeção exibida no telão da assembleia ou compartilhada em videoconferências (Meet, Zoom, etc.). Mostra para os participantes a votação ativa no momento, a quantidade de votos recebidos e o resultado apurado com gráficos.<br><br>
+                                    <b>Recepção:</b> Interface voltada para a equipe de apoio presencial, destinada ao credenciamento e ativação de tokens para eleitores que comparecem à reunião. (Desativado)
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="ml-2">
                     <a href="{S->hash}/{S->apoio->token}" target="apoio">Apoio</a> |
                     <a href="{S->hash}/{S->painel->token}" target="painel">Painel</a> |

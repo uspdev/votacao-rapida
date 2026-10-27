@@ -106,6 +106,19 @@ class Votacao
 
     public static function adicionar($sessao, $data)
     {
+        $nome = trim($data->nome ?? '');
+        if (empty($nome)) {
+            Log::votacao(
+                'erro adicionar votacao',
+                [
+                    'sessao_id' => $sessao->id,
+                    'usr_msg' => 'O nome da votação não pode ser vazio',
+                    'data' => is_object($data) && method_exists($data, 'getData') ? $data->getData() : (array) $data
+                ]
+            );
+            return ['status' => 'erro', 'data' => 'O nome da votação não pode ser vazio.'];
+        }
+
         $ordem = (empty($data->ordem)) ? 0 : $data->ordem;
         if ($ordem < 0) {
             Log::votacao(
@@ -158,6 +171,10 @@ class Votacao
 
     public static function editar($votacao, $data)
     {
+        if (isset($data->nome) && empty(trim($data->nome))) {
+            return ['status' => 'erro', 'data' => 'O nome da votação não pode ser vazio.'];
+        }
+
         // a verificação por data_ini é preferencial mas como foi implementado depois de 22/5/2020
         // vamos verificar as respostas também
         if (empty($votacao->data_ini) and empty($votacao->ownRespostaList)) {
