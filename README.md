@@ -2,17 +2,22 @@
 
 ## Motivação
 
-No dia 11/3 na reunião do CO (COCEX ???) foi utilizado um sistema de votação eletrônica para eleição fechada (votos anônimos). Cada membro da reunião recebeu um papelete com um qrcode que direcionava para um formulário google que apresentava a cédula de votação. O diretor da EESC gostou do sistema e solicitou que fosse implantado um sistema similar em votação a ser realizada na Econ da unidade. A votação eletrônica foi realizada utilizando google forms com várias regras de geração de tokens, validação dos votos, totalização, etc, muitos desses passos sendo feito manualmente. Em reunião (google meet) realizada no dia 17/3/2020 com o Bruno, verificamos a viabilidade de se desenvolver um site em PHP a fim de atender a essa finalidade e permitir a automação de muitas das tarefas manuais empregadas até então.
+No dia 11/03/2020 na reunião do CO foi utilizado um sistema de votação eletrônica para eleição fechada (votos anônimos). Cada membro da reunião recebeu um papelete com um qrcode que direcionava para um formulário google que apresentava a cédula de votação. A votação eletrônica foi realizada utilizando google forms com várias regras de geração de tokens, validação dos votos, totalização, etc, muitos desses passos sendo feito manualmente. 
+
+O diretor da EESC gostou do sistema e solicitou que fosse implantado um sistema similar em votação a ser realizada na Econ da unidade. 
+
+Em reunião (google meet) realizada no dia 17/3/2020 com o Bruno, verificamos a viabilidade de se desenvolver um site em PHP a fim de atender a essa finalidade e permitir a automação de muitas das tarefas manuais empregadas até então.
 
 ## Objetivo
 
-O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a fim de atender reuniões de colegiados. A votação ocorre por meio de um token que identifica cada voto. O token pode ser ou não associado à uma pessoa. Em reuniões presenciais o token é distribuído em papel com QRCode, em reuniões por videoconferencia o token é distribuído por email.
+O objetivo desse sistema é fornecer uma plataforma de votação eletrônica a fim de atender reuniões de colegiados. 
+
+A votação ocorre por meio de um token que identifica cada voto. O token pode ser ou não associado à uma pessoa. O token pode ser distribuído em papel com QRCode ou distribuído por email, atendendo encontros presenciais ou online.
 
 ## Dependências
 
 * Servidor web (Apache ou Nginx)
 * PHP >= 8.2
-* Composer 2
 * ext-curl
 * ext-sqlite3
 * ext-pdo_mysql (caso utilize MySQL/MariaDB)
@@ -68,9 +73,9 @@ Para atualizar uma instalação existente (em desenvolvimento ou produção):
   Os e-mails gerados pelo sistema são registrados em fila na tabela `email`. A aplicação tenta disparar o processamento em background automaticamente via PHP CLI (`cli/processarEmailsFila.php`).
   Para garantir o envio ininterrupto e confiável em ambiente de produção, configure a execução a cada minuto na **crontab** do servidor (`crontab -e` do usuário que executa a aplicação):
   ```cron
-  * * * * * cd /caminho/do/projeto && php cli/processarEmailsFila.php >> local/log/email_worker.log 2>&1
+  * * * * * cd /caminho/votacao-rapida && php cli/processarEmailsFila.php >> local/log/email_worker.log 2>&1
   ```
-  *(Substitua `/caminho/do/projeto` pelo caminho absoluto da aplicação no servidor).*
+  *(Substitua `/caminho` pelo caminho absoluto da aplicação no servidor).*
 
 * **Servidor web de desenvolvimento:**
   Mesmo em desenvolvimento, recomenda-se utilizar Apache ou Nginx em vez do servidor embutido do PHP (`php -S`), pois o sistema realiza chamadas concorrentes entre front-end e API.
