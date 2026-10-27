@@ -225,7 +225,7 @@ class Run
                     $tpl->acao_href = 'javascript:void(0)';
                     $tpl->acao_attr = 'tabindex="-1" aria-disabled="true" style="pointer-events:none;opacity:0.5;" title="Desabilitado: a votação \'' . htmlspecialchars($votacaoEmAndamento->nome, ENT_QUOTES) . '\' está ativa/em exibição"';
                 } else {
-                    $tpl->acao_class = 'btn-primary';
+                    $tpl->acao_class = SELF::getAcaoClass($acao->cod);
                     $tpl->acao_href = 'apoio?acao=' . $acao->cod . '&votacao_id=' . $v->id;
                     $tpl->acao_attr = '';
                 }
@@ -575,6 +575,38 @@ class Run
             case 'Fechada':
                 return 'badge-success';
                 break;
+        }
+    }
+
+    /**
+     * Retorna a classe CSS Bootstrap correspondente à função da ação no painel de apoio.
+     *
+     * @param int|string $cod Código da ação
+     * @return string Classe CSS do botão
+     */
+    protected static function getAcaoClass($cod)
+    {
+        switch ((int) $cod) {
+            case 0: // Mostrar no telão
+                return 'btn-info text-white';
+            case 1: // Esconder do telão
+                return 'btn-secondary';
+            case 2: // Iniciar votação
+                return 'btn-success';
+            case 3: // Pausar votação
+                return 'btn-warning';
+            case 4: // Mostrar resultado
+                return 'btn-primary';
+            case 5: // Continuar votação pausada
+                return 'btn-success';
+            case 6: // Reiniciar votação (zera votos)
+                return 'btn-warning';
+            case 7: // Esconder resultado
+                return 'btn-secondary';
+            case 10: // Excluir votação
+                return 'btn-danger';
+            default:
+                return 'btn-primary';
         }
     }
 

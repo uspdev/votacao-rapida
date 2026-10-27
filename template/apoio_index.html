@@ -91,7 +91,20 @@
                     }
                 });
 
-                $('.btn-acao').on('click', function () {
+                $('.btn-acao').on('click', function (e) {
+                    var cod = $(this).data('cod');
+                    if (cod == 10) {
+                        if (!confirm('Deseja realmente excluir esta votação? Esta ação não poderá ser desfeita.')) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    }
+                    if (cod == 6) {
+                        if (!confirm('Deseja realmente reiniciar esta votação? Todos os votos computados serão apagados.')) {
+                            e.preventDefault();
+                            return false;
+                        }
+                    }
                     $(this).addClass('disabled').text('Processando...');
                 });
 
