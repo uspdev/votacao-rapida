@@ -137,6 +137,12 @@ Ao modificar este projeto, atenção especial deve ser dada aos seguintes itens:
 * O `public/api/index.php` implementa manipulador customizado `Flight::map('error', ...)` retornando JSON padronizado com código 500 e logando a exceção no PHP error_log. Em ambiente `dev`, o JSON inclui também a classe da exceção, arquivo, linha e stack trace.
 * O consumidor `src/View/Api.php` exibe automaticamente na tela, quando em ambiente `dev`, mensagens detalhadas e formatadas (código HTTP, endpoint, postdata, resposta com trace e log verbose do cURL) caso ocorra qualquer erro HTTP (>= 400).
 
+### 5.8. Segurança e Restrição de Acesso à API (`uspdev/ip-control`)
+* A API interna (`/public/api`) destina-se exclusivamente a chamadas do front-end web em loopback local (`127.0.0.1`).
+* O arquivo `public/api/index.php` utiliza `\Uspdev\Ipcontrol\Ipcontrol::proteger(false)` para restringir o acesso por IP.
+* Por padrão, caso `USPDEV_IP_CONTROL` não seja definido no `.env`, o sistema assume `localhost`, rejeitando automaticamente requisições externas com HTTP 403.
+* Pode ser configurado como `USPDEV_IP_CONTROL='localhost'` ou `USPDEV_IP_CONTROL='whitelist'`.
+
 ---
 
 ## 6. Comandos e Procedimentos Frequentes

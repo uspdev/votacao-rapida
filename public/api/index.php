@@ -4,7 +4,24 @@ require_once __DIR__.'/../../app/bootstrap.php';
 # ------------------------------------------------------------------
 # COISAS QUE GERALMENTE FICAM NO INDEX.PHP -------------------------
 
+use Uspdev\Ipcontrol\Ipcontrol;
 use Uspdev\Webservice\Webservice as WS;
+
+// Controle de acesso por IP (uspdev/ip-control)
+// Por padrão, restringe o acesso aos endereços de loopback (localhost)
+if (!getenv('USPDEV_IP_CONTROL')) {
+    putenv('USPDEV_IP_CONTROL=localhost');
+}
+if (!Ipcontrol::proteger(false)) {
+    http_response_code(403);
+    header('HTTP/1.1 403 Forbidden');
+    header('Content-Type: application/json; charset=utf-8');
+    echo json_encode([
+        'status' => 'erro',
+        'msg' => 'Acesso negado: API de uso restrito ao servidor local.'
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 // Tratamento padronizado de erros para a API (sempre retornar JSON estruturado)
 \Flight::map('error', function (\Throwable $e) {
