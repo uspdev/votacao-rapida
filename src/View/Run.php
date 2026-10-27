@@ -177,11 +177,11 @@ class Run
         $tpl->S = $sessao;
         $tpl->hash_estado = self::gerarHashApoio($sessao);
 
-        // Verifica se há alguma votação em andamento ou em exibição de resultado (Em votação, Em pausa ou Resultado)
+        // Verifica se há alguma votação em andamento, em exibição ou com resultado aberto (Em exibição, Em votação, Em pausa ou Resultado)
         $votacaoEmAndamento = null;
         if (!empty($sessao->votacoes)) {
             foreach ($sessao->votacoes as $item) {
-                if (in_array($item->estado, ['Em votação', 'Em pausa', 'Resultado'])) {
+                if (in_array($item->estado, ['Em exibição', 'Em votação', 'Em pausa', 'Resultado'])) {
                     $votacaoEmAndamento = $item;
                     break;
                 }

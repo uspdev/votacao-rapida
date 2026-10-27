@@ -174,8 +174,8 @@ class Run
         // vmos carregar a votação
         $votacao = Votacao::obter($data->votacao_id);
 
-        // Se houver alguma votação em andamento ou em exibição de resultado (Em votação, Em pausa ou Resultado), bloqueia ações em outras votações
-        $emAndamento = R::findOne('votacao', 'sessao_id = ? AND estado IN (2, 3, 4)', [$sessao->id]);
+        // Se houver alguma votação em andamento, em exibição ou resultado (Em exibição, Em votação, Em pausa ou Resultado), bloqueia ações em outras votações
+        $emAndamento = R::findOne('votacao', 'sessao_id = ? AND estado IN (1, 2, 3, 4)', [$sessao->id]);
         if ($emAndamento) {
             $acaoCod = intval($data['acao']);
             if ($acaoCod == 9) {

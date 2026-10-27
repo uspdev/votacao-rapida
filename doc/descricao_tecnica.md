@@ -124,7 +124,7 @@ stateDiagram-v2
 | `5` | **Finalizado** | `4` (Mostrar resultado) | Votação encerrada e arquivada; pode ser reexibida se necessário. |
 
 ### Regras Críticas de Concorrência e Bloqueio:
-* **Trava de Votação Ativa:** Enquanto houver uma votação em estado `Em votação` (2), `Em pausa` (3) ou `Resultado` (4):
+* **Trava de Votação Ativa:** Enquanto houver uma votação em estado `Em exibição` (1), `Em votação` (2), `Em pausa` (3) ou `Resultado` (4):
   * No painel de apoio (`/apoio`): os botões de todas as outras votações e o botão de *"Criar votação instantânea"* ficam **desabilitados visualmente**.
   * No backend (`Run::apoioPost`): requisições concorrentes ou diretas para alterar outras votações são **rejeitadas com erro**, impedindo que operadores em dispositivos paralelos interfiram no pleito em andamento.
 
